@@ -18,7 +18,9 @@ for name, fs in groups.items():
     h = round(ims[0].height * w / ims[0].width)
     pad = 6
     rows = -(-len(ims) // cols)
-    sheet = Image.new("RGB", (cols * (w + pad) + pad, rows * (h + pad) + pad), (221, 221, 221))
+    sheet = Image.new(
+        "RGB", (cols * (w + pad) + pad, rows * (h + pad) + pad), (221, 221, 221)
+    )
     for i, im in enumerate(ims):
         x = pad + (i % cols) * (w + pad)
         y = pad + (i // cols) * (h + pad)
