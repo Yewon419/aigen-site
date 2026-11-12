@@ -1,0 +1,102 @@
+:root {
+  --bg: #FFFFFF;
+  --ink: #0A0A0A;
+  --gray: #8A8A8A;
+  --m: clamp(20px, 5vw, 96px);
+  --D: clamp(40px, 9vw, 144px);
+  --S: clamp(22px, 3.8vw, 48px);
+  --S2: clamp(20px, 2.6vw, 34px);
+  --B: clamp(16px, 1.4vw, 21px);
+  --L: 12px;
+  --font: "Wanted Sans Variable", "Wanted Sans", "Pretendard", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); color: var(--ink); -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+a:hover, a:focus-visible { text-decoration: underline; text-underline-offset: 0.18em; }
+img { display: block; max-width: 100%; height: auto; }
+
+/* 모서리 라벨: 실제 정보만 */
+.corner {
+  position: fixed; z-index: 30;
+  font-size: var(--L); font-weight: 500; letter-spacing: 0.08em; line-height: 1.2;
+  color: var(--ink); pointer-events: none; white-space: nowrap;
+}
+.tl { top: var(--m); left: var(--m); }
+.tr { top: var(--m); right: var(--m); }
+.bl { bottom: var(--m); left: var(--m); }
+.br { bottom: var(--m); right: var(--m); }
+
+/* 띠 */
+#bar {
+  position: fixed; left: 0; top: 0; z-index: 20;
+  width: 0; height: 0;
+  background: var(--ink);
+  overflow: hidden;
+  transform-origin: 50% 50%;
+  will-change: transform, width, height;
+  pointer-events: none;
+}
+.bt {
+  position: absolute; left: var(--pad, 0); top: 50%;
+  transform: translateY(-50%);
+  color: var(--bg);
+  font-size: var(--D); font-weight: 900; letter-spacing: -0.03em; line-height: 1;
+  white-space: nowrap;
+}
+.bt span { display: inline-block; will-change: transform; }
+.bt.season { font-size: calc(var(--D) * 0.42); font-weight: 700; letter-spacing: -0.01em; }
+.bt.small { font-size: calc(var(--D) * 0.28); font-weight: 700; letter-spacing: 0; }
+.bt[data-bt="a2"] { transform: translateY(-50%) rotate(180deg); }
+.tick {
+  position: absolute; top: 72%; left: 0; width: 3px; height: 28%;
+  background: var(--bg); transform-origin: 50% 100%; transform: scaleY(0);
+}
+
+#gauge { position: fixed; left: 0; top: 0; z-index: 19; border: 1.5px solid var(--ink); opacity: 0; pointer-events: none; }
+
+/* 장면 */
+.scene { position: relative; height: calc(var(--beats) * 60vh + 100vh); }
+.stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.static-h { display: none; }
+
+.ln { position: absolute; margin: 0; left: var(--m); max-width: calc(100vw - 2 * var(--m)); }
+.ln .w { display: inline-block; will-change: transform, opacity, filter; }
+.st  { font-size: var(--S);  font-weight: 700; letter-spacing: -0.025em; line-height: 1.18; }
+.st2 { font-size: var(--S2); font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
+.bd  { font-size: var(--B);  font-weight: 400; line-height: 1.5; }
+.lb  { font-size: var(--B);  font-weight: 500; color: var(--gray); }
+.links { font-size: var(--B); font-weight: 600; display: flex; gap: 1.6em; flex-wrap: wrap; }
+.links a { display: inline-block; }
+
+.list { position: absolute; margin: 0; padding: 0; list-style: none; left: var(--m);
+  font-size: var(--B); line-height: 1.5; max-width: calc(100vw - 2 * var(--m)); }
+.list li { margin: 0 0 0.55em; will-change: transform, opacity; }
+.links-list { font-weight: 600; }
+
+.col { position: absolute; left: var(--m); max-width: calc(100vw - 2 * var(--m)); }
+.col .ln { position: relative; left: 0; margin: 0 0 0.9em; max-width: none; }
+
+.ph { position: absolute; will-change: transform; box-shadow: 0 0 0 1px rgba(10,10,10,0.08); border-radius: 2.4%; }
+.panel { position: absolute; will-change: transform; box-shadow: 0 0 0 1px rgba(10,10,10,0.12); }
+
+/* 접근성: 모션을 줄이면 띠 없이 전부 정적으로 읽힌다 */
+html.static .scene { height: auto; padding: 18vh var(--m) 10vh; }
+html.static .stage { position: static; height: auto; overflow: visible; }
+html.static #bar, html.static #gauge, html.static .bl { display: none; }
+html.static .static-h { display: block; margin: 0 0 0.5em; font-size: var(--D); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
+html.static .static-h.sm { font-size: var(--S); margin-top: 1.2em; }
+html.static .ln, html.static .list, html.static .col, html.static .ph, html.static .panel {
+  position: static; margin: 0 0 0.8em; transform: none !important; opacity: 1 !important; filter: none !important;
+}
+html.static .ln .w, html.static .list li { transform: none !important; opacity: 1 !important; filter: none !important; }
+html.static .ph { width: min(60vw, 320px); }
+html.static .panel { width: min(90vw, 560px); }
