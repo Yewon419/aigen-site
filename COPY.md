@@ -1,7 +1,7 @@
 # COPY.md · aigen-site 전 문장과 출처
 
 > 상태: 초안(2026-11-13 새벽, 대표님 검토 전). 출처 없는 문장은 "신규"로 표시. 결과 숫자(다운로드·베타 인원) 없음. em-dash 없음.
-> 출처 약어: q1~q4 = `Downloads\aigen\q*.txt` 확정본, pf = `portfolio.txt`, SC-README = 슈가캡 README, TR-README = 템포루틴 README, MASTER = 템포루틴 MASTER.md, 판넬 = `5팀_판넬.pdf`
+> 출처 약어: BD-README = 빛뜰 데스크 README(`Yewon419/bitteul-desk`), q1~q4 = `Downloads\aigen\q*.txt` 확정본, pf = `portfolio.txt`, SC-README = 슈가캡 README, TR-README = 템포루틴 README, MASTER = 템포루틴 MASTER.md, 판넬 = `5팀_판넬.pdf`
 
 ## 모서리 라벨 (전 섹션 고정)
 
@@ -9,7 +9,7 @@
 |---|---|---|
 | 좌상 | 한예원 · SK AIGEN 1기 지원 | 지원서 |
 | 우상 | 2026 | |
-| 좌하 | (현재 섹션명: 슈가캡 / 템포루틴 / 짐살라빔 / 일하는 방식) | |
+| 좌하 | (현재 섹션명: 슈가캡 / 템포루틴 / 짐살라빔 / 빛뜰 데스크 / 일하는 방식) | |
 | 우하 | 창업/비즈니스 | 지원서 1지망 |
 
 ## 0. 히어로
@@ -18,7 +18,7 @@
 |---|---|
 | 한예원 | |
 | Portfolio | 11-13 대표님 결정(이전 "iOS 앱 두 개를 혼자 만들어 출시했습니다." 폐기) |
-| 슈가캡 · 템포루틴 · 짐살라빔 | 목차 역할 |
+| 슈가캡 · 템포루틴 · 짐살라빔 · 빛뜰 데스크 | 목차 역할 (11-14 빛뜰 데스크 추가) |
 
 ## 1. 슈가캡
 
@@ -59,6 +59,19 @@
 | 6 | 데모데이 부스에서 시연하자 교수들까지 직접 스쿼트를 해 보고 갔다. | pf |
 | 6 | 판넬 PDF 보기 | `assets/gimsalabim-panel.pdf` |
 
+## 3.5 빛뜰 데스크 (11-14 추가, 대표님 지시)
+
+| 비트 | 문장 | 출처 |
+|---|---|---|
+| 1 | 빛뜰 데스크 | |
+| 2 | 맞는 도구가 없어서, 직접 만들었다. | q2(11-14 개정본) 요지 |
+| 3 | 오픈소스 Pixel Agents를 포크해, Claude Code 세션 하나를 사무실 직원 한 명으로. | BD-README 첫 줄·"세션마다 직원 한 명", 리포가 Pixel Agents(MIT) 포크 |
+| 4 | 직원을 누르면 그 세션의 대화 창. 답장도 도구 승인도 거기서 한다. | BD-README "누르면 대화 창", "대시보드에서 바로 답장" |
+| 5 | 밖에서는 폰으로. 사무실을 보고 지시와 승인까지 한다. | BD-README "폰으로 밖에서도" |
+| 6 | 답을 기다리거나 일을 마치면 폰으로 알림이 온다. | 리포 커밋 10-24 `Push phone alerts over Web Push when something waits on the user`, `feat(push): alert when a session finishes its turn` |
+| 7 | GitHub | `github.com/Yewon419/bitteul-desk` |
+| 보조 | 스크린샷 4장: 사무실, 대화 창, 폰 사무실, 폰 대화 창 | BD-README `docs/screenshots/`(격리 환경·가짜 세션으로 촬영) |
+
 ## 4. AI와 일하는 방식
 
 | 비트 | 문장 | 출처 |
@@ -67,7 +80,7 @@
 | 2 | 스펙 문서 하나가 단일 출처다. AI도 나도 거기서 출발한다. | SC-README("SPEC.md 제품 스펙 (SSOT)"), TR-README("설계 SSOT는 MASTER.md"). 신규 문장 |
 | 3 | AI가 쓴 코드는 린터·타입 체크·테스트 게이트를 지나야 들어온다. | SC-README 표. 신규 문장 |
 | 4 | 화면은 스크린샷으로 확인한다. CI가 찍고, 내가 본다. | SC store-screenshots 워크플로. 신규 문장 |
-| 5 | AI를 잘 쓰려면 그 일을 맡기는 영역을 먼저 이해해야 한다. | q2 마지막 문단 |
+| 5 | 반복되는 불편은 참기보다 환경부터 고친다. | q2(11-14 개정본) 마지막 문장. 이전 문장은 주식 Q2 폐기로 교체 |
 | 5 | 이 페이지도 같은 방식으로 만들었다. | 리포 링크(생성 후) |
 | 보조 | COPY.md 표 카드: "COPY.md: 이 페이지의 모든 문장과 출처" + 이 파일의 네 줄(문장·출처, 출처 약어는 풀어 씀) | 이 파일 |
 | 보조 | 검수 스틸 이미지: 슈가캡 컵 수위 장면 비트별 스틸(`tools/stills.mjs` 결과) | 이 리포 |
@@ -77,7 +90,7 @@
 | 문장 | 출처 |
 |---|---|
 | 한예원 | |
-| 슈가캡 App Store / 슈가캡 GitHub / 템포루틴 App Store / 템포루틴 GitHub / 짐살라빔 판넬 PDF / github.com/Yewon419 | 링크 전체 목록 |
+| 슈가캡 App Store / 슈가캡 GitHub / 템포루틴 App Store / 템포루틴 GitHub / 짐살라빔 판넬 PDF / 빛뜰 데스크 GitHub / github.com/Yewon419 | 링크 전체 목록 |
 
 ## 대표님 확인 필요 (신규 문장)
 

@@ -63,6 +63,8 @@
   const seasons = $$('.sphoto').sort((a, b) => a.dataset.s - b.dataset.s);
   const crops = {}; $$('.crop').forEach((el) => { crops[el.dataset.g] = el; });
   const doc = $('.doc');
+  // 빛뜰 데스크 화면은 띠(기기 테두리) 위에 올라가야 해서 #over 층으로 옮긴다
+  const dks = {}; $$('.dk').forEach((el) => { dks[el.dataset.d] = el; over.appendChild(el); });
   // 상태 기계 조각(1110x250)에서 잰 다섯 단계 원의 가로 중심 비율과 반폭
   const SMX = [0.132, 0.314, 0.495, 0.677, 0.859], SMR = 0.088;
   const AR = { sugar: 1, tempo: 1, gim: 855 / 207 };
@@ -195,6 +197,27 @@
     const msH = (L.narrow ? L.vh - L.m - 24 : 0.86 * L.vh) - msY;
     doc.style.left = msX + 'px'; doc.style.top = msY + 'px'; doc.style.width = msW + 'px';
     fitSlot(crops.stills, 1200 / 565, msX, msY, msW, msH);
+
+    // 빛뜰 데스크: 왼쪽(좁으면 위) 글, 오른쪽(좁으면 아래) 기기 칸. 띠가 PC 화면 → 대화 창 → 폰 몸체 테두리가 된다
+    const dw = L.narrow ? L.vw - 2 * L.m : 0.36 * L.vw;
+    place('de-1', L.m, under, L.narrow ? L.vw - 2 * L.m : 0.6 * L.vw);
+    const dty = L.narrow ? under : L.vh * 0.5;
+    let dth = 0;
+    ['de-2', 'de-3', 'de-4', 'de-5'].forEach((k) => { place(k, L.m, dty, dw); dth = Math.max(dth, lines[k].el.offsetHeight); });
+    place('de-links', L.m, dty);
+    L.fp = L.narrow ? 6 : 10;
+    const ax0 = L.narrow ? L.m : L.m + dw + 64;
+    const ay0 = (L.narrow ? under + dth + 24 : L.topY) + 4 * L.fp;
+    const aw = L.vw - L.m - ax0 - 2 * L.fp;
+    const ah = (L.narrow ? L.vh - L.m - 28 : 0.9 * L.vh) - ay0 - 4 * L.fp;
+    const fitC = (ar, maxH) => {
+      const h = Math.min(ah, maxH), w = Math.min(aw, h * ar), hh = w / ar;
+      return { x: ax0 + L.fp + (aw - w) / 2, y: ay0 + (ah - hh) / 2, w, h: hh };
+    };
+    L.dk = { office: fitC(1440 / 904, 1e9), chat: fitC(760 / 700, 1e9), phone: fitC(390 / 664, 664 * 1.3) };
+    const put = (el, r) => { el.style.left = r.x + 'px'; el.style.top = r.y + 'px'; el.style.width = r.w + 'px'; el.style.height = r.h + 'px'; };
+    put(dks.office, L.dk.office); put(dks.chat, L.dk.chat);
+    put(dks['phone-office'], L.dk.phone); put(dks['phone-chat'], L.dk.phone);
 
     placeList('end-list', L.m, sub);
   }
@@ -536,8 +559,56 @@
         const u0 = ease.inOutCubic(prog(b, 6.0, 6.5));
         setBar(M.lerp(ax, u.x, u0), M.lerp(ay, u.y, u0), M.lerp(L.angleW, u.w, u0), M.lerp(L.angleH, u.h, u0), M.lerp(-108.35, 0, u0));
       } else {
-        floodTo(b, u, 'method', 7.5);
+        floodTo(b, u, 'desk', 7.5);
       }
+    }
+  }
+
+  // 빛뜰 데스크 11.7비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
+  // 본문: 선언(0.1) → 선언이 빠진 뒤 이름표가 PC 화면 테두리가 되고 사무실이 드러난다(1.4~2.6)
+  // → 테두리가 대화 창 크기로(3.6) → 폰 몸체로 줄어든다(5.2) → 폰 사무실, 폰 대화 창과 승인 요청
+  // 7.95~8.45 폰 몸체가 링크 밑줄 / 9.4 밑줄이 화면을 덮고 「AI와 일하는 방식」
+  const DESK_OFF = 1.3;
+  const frameR = (r, p, ky = 1) => ({ x: r.x - p, y: r.y - p * ky, w: r.w + 2 * p, h: r.h + 2 * p * ky });
+  // 화면 하나: [i0, i1]에 아래에서 위(또는 왼쪽에서 오른쪽)로 드러나고, [f0, f1]에 아래에서 위로 접힌다
+  function screenIn(el, b, i0, i1, f0, f1, dir = 'up') {
+    const u = ease.outExpo(prog(b, i0, i1));
+    const f = ease.inCubic(prog(b, f0, f1));
+    el.style.opacity = u > 0 && f < 1 ? '1' : '0';
+    const top = dir === 'up' ? (1 - u) * 100 : 0;
+    const right = dir === 'right' ? (1 - u) * 100 : 0;
+    el.style.clipPath = `inset(${top.toFixed(2)}% ${right.toFixed(2)}% ${(f * 100).toFixed(2)}% 0)`;
+  }
+  scene('desk', (bRaw, A) => {
+    const b = bRaw - DESK_OFF;
+    deskBody(b, A);
+    if (A && bRaw < DESK_OFF) chapterBar(bRaw, 'desk', 0.6);
+  });
+  function deskBody(b, A) {
+    words('de-1', b, 0.1, 1.0);
+    words('de-2', b, 2.0, 3.4);
+    words('de-3', b, 4.0, 5.0);
+    words('de-4', b, 5.6, 6.3);
+    words('de-5', b, 6.9, 7.6);
+    screenIn(dks.office, b, 2.0, 2.6, 3.3, 3.6);
+    screenIn(dks.chat, b, 3.95, 4.55, 4.85, 5.2);
+    screenIn(dks['phone-office'], b, 5.6, 6.2, 7.1, 7.11);
+    screenIn(dks['phone-chat'], b, 6.5, 7.1, 7.6, 7.95, 'right');
+    if (!A) { words('de-links', b, NEVER); return; }
+    glyphsIn('desk', b, -10, 0.9);
+    const phoneF = frameR(L.dk.phone, L.fp * 1.4, 2.2);
+    if (b < 7.95) {
+      const R = [frameR(L.dk.office, L.fp), frameR(L.dk.chat, L.fp), phoneF];
+      const f = kf(b, [[3.6, 0], [3.95, 1, ease.inOutCubic], [5.2, 1], [5.6, 2, ease.inOutCubic]]);
+      const i = Math.floor(f);
+      const dev = lerpR(R[i], R[Math.min(2, i + 1)], f - i);
+      setBarR(lerpR(plateR('desk', L.topY), dev, ease.inOutCubic(prog(b, 1.4, 2.0))));
+      words('de-links', b, NEVER);
+    } else {
+      const u = underline('de-links');
+      words('de-links', b, 8.45, 9.3);
+      if (b < 9.4) setBarR(lerpR(phoneF, u, ease.inOutCubic(prog(b, 7.95, 8.45))));
+      else floodTo(b, u, 'method', 9.4);
     }
   }
 
@@ -608,6 +679,6 @@
     requestAnimationFrame(frame);
   }
   // 투명한 채로 기다리던 사진이 첫 등장 프레임에 비어 보이지 않게 미리 디코드한다
-  [...phones, ...tphones, ...seasons, ...Object.values(crops), ...Object.values(cups), ...Object.values(chars)].forEach((el) => el.decode().catch((e) => console.warn('decode', el.src, e)));
+  [...phones, ...tphones, ...seasons, ...Object.values(crops), ...Object.values(dks), ...Object.values(cups), ...Object.values(chars)].forEach((el) => el.decode().catch((e) => console.warn('decode', el.src, e)));
   document.fonts.ready.then(() => { layout(); requestAnimationFrame(frame); });
 })();
