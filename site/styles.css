@@ -28,7 +28,7 @@ img { display: block; max-width: 100%; height: auto; }
 .corner {
   position: fixed; z-index: 30;
   font-size: var(--L); font-weight: 500; letter-spacing: 0.08em; line-height: 1.2;
-  color: var(--ink); pointer-events: none; white-space: nowrap;
+  color: #FFFFFF; mix-blend-mode: difference; pointer-events: none; white-space: nowrap;
 }
 .tl { top: var(--m); left: var(--m); }
 .tr { top: var(--m); right: var(--m); }
@@ -52,6 +52,8 @@ img { display: block; max-width: 100%; height: auto; }
   font-size: var(--D); font-weight: 900; letter-spacing: -0.03em; line-height: 1;
   white-space: nowrap;
 }
+/* 글자 줄마다 자기 마스크: 띠가 화면을 덮어도 숨은 글자가 비치지 않는다 */
+.bt { overflow: hidden; padding: 0.12em 0; }
 .bt span { display: inline-block; will-change: transform; }
 .bt.season { font-size: calc(var(--D) * 0.42); font-weight: 700; letter-spacing: -0.01em; }
 .bt.small { font-size: calc(var(--D) * 0.28); font-weight: 700; letter-spacing: 0; }
@@ -61,11 +63,24 @@ img { display: block; max-width: 100%; height: auto; }
   background: var(--bg); transform-origin: 50% 100%; transform: scaleY(0);
 }
 
-#gauge { position: fixed; left: 0; top: 0; z-index: 19; border: 1.5px solid var(--ink); opacity: 0; pointer-events: none; }
+.bt.count { font-variant-numeric: tabular-nums; }
 
-/* 장면 */
+/* 띠 위 층 */
+#over { position: fixed; inset: 0; z-index: 22; pointer-events: none; }
+.chi { position: absolute; left: 0; top: 0; width: 100px; height: 100px; transform-origin: 0 0; opacity: 0; border-radius: 22.5%; }
+.ln.inv { color: var(--bg); }
+
+/* 장면: 다음 장면은 앞 장면이 끝나는 스크롤 지점에서 바로 고정된다 (빈 스크롤 없음) */
 .scene { position: relative; height: calc(var(--beats) * 60vh + 100vh); }
-.stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.scene + .scene { margin-top: -100vh; }
+.stage { position: sticky; top: 0; height: 100vh; overflow: hidden; pointer-events: none; }
+.stage a { pointer-events: auto; }
+
+.tile { position: absolute; left: 0; top: 0; border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(10,10,10,0.1); transform-origin: 0 0; }
+.tile.wide { border-radius: 8px; }
+.cup, .ch, .ph3 { position: absolute; left: 0; top: 0; max-width: none; transform-origin: 0 0; opacity: 0; }
+.cup, .ch { will-change: transform, clip-path, opacity; }
+.ph3 { transform-origin: 50% 100%; border-radius: 6%; box-shadow: 0 0 0 1px rgba(10,10,10,0.1), 0 24px 60px -24px rgba(10,10,10,0.35); }
 .static-h { display: none; }
 
 .ln { position: absolute; margin: 0; left: var(--m); max-width: calc(100vw - 2 * var(--m)); }
@@ -90,8 +105,17 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* 접근성: 모션을 줄이면 띠 없이 전부 정적으로 읽힌다 */
 html.static .scene { height: auto; padding: 18vh var(--m) 10vh; }
-html.static .stage { position: static; height: auto; overflow: visible; }
-html.static #bar, html.static #gauge, html.static .bl { display: none; }
+html.static .scene + .scene { margin-top: 0; }
+html.static .stage { position: static; height: auto; overflow: visible; pointer-events: auto; }
+html.static #bar, html.static #over, html.static .bl { display: none; }
+html.static .corner { color: var(--ink); mix-blend-mode: normal; }
+html.static .tile { position: static; display: inline-block; width: 64px; margin: 0 12px 0 0; }
+html.static .tile.wide { width: auto; height: 64px; }
+html.static .cup { display: none; }
+html.static .cup[data-c="100"] { display: block; position: static; opacity: 1; width: min(50vw, 260px); margin: 0 0 0.8em; }
+html.static .ch { position: static; display: inline-block; opacity: 1; width: 120px; margin: 0 16px 0.8em 0; }
+html.static .ph3 { position: static; display: inline-block; opacity: 1; width: min(28vw, 180px); margin: 0 12px 0.8em 0; }
+html.static .ln.inv { color: var(--ink); }
 html.static .static-h { display: block; margin: 0 0 0.5em; font-size: var(--D); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
 html.static .static-h.sm { font-size: var(--S); margin-top: 1.2em; }
 html.static .ln, html.static .list, html.static .col, html.static .ph, html.static .panel {

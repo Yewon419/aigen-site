@@ -21,6 +21,7 @@
 <div id="bar" aria-hidden="true">
   <span class="bt" data-bt="name">한예원</span>
   <span class="bt" data-bt="sugar">슈가캡</span>
+  <span class="bt count" data-bt="count" data-nosplit><span>2,057종</span></span>
   <span class="bt" data-bt="made1">만든 방법</span>
   <span class="bt" data-bt="tempo">템포루틴</span>
   <span class="bt season" data-bt="s0">겨울</span>
@@ -36,7 +37,11 @@
   <span class="bt" data-bt="method">AI와 일하는 방식</span>
 </div>
 
-<div id="gauge" aria-hidden="true"></div>
+<!-- 띠 위에 올라가는 층: 챕터 아이콘, 밤 장면의 흰 글줄 -->
+<div id="over">
+  <img class="chi" data-i="sugar" src="assets/icon-sugarcap.webp" width="360" height="360" alt="" aria-hidden="true">
+  <img class="chi" data-i="tempo" src="assets/icon-tempo.webp" width="360" height="360" alt="" aria-hidden="true">
+</div>
 
 <main id="main">
 
@@ -45,17 +50,29 @@
     <h1 class="static-h">한예원</h1>
     <p class="ln st" data-k="hero-sub">Portfolio</p>
     <p class="ln lb" data-k="hero-list">슈가캡 · 템포루틴 · 짐살라빔</p>
+    <img class="tile" data-t="sugar" src="assets/icon-sugarcap.webp" width="360" height="360" alt="슈가캡 앱 아이콘">
+    <img class="tile" data-t="tempo" src="assets/icon-tempo.webp" width="360" height="360" alt="템포루틴 앱 아이콘">
+    <img class="tile wide" data-t="gim" src="assets/gim-logo.webp" width="855" height="207" alt="짐살라빔 로고">
   </div>
 </section>
 
-<section class="scene" data-scene="sugar" data-beats="11" data-label="슈가캡">
+<section class="scene" data-scene="sugar" data-beats="14" data-label="슈가캡">
   <div class="stage">
     <h2 class="static-h">슈가캡</h2>
     <p class="ln st" data-k="su-1">참는 대신, 즐겁게 줄인다.</p>
-    <p class="ln bd" data-k="su-2">오늘 마실 수 있는 양이 컵 하나에 담기고, 한 잔 기록할 때마다 그만큼 비워진다.</p>
-    <img class="ph" data-k="su-ph" src="assets/sugar-01.webp" width="900" height="1950" alt="슈가캡 오늘 화면: 오늘 남은 당 20g이 컵에 담겨 있다" loading="eager" decoding="async">
-    <p class="ln st2" data-k="su-3">카페 브랜드 16곳 메뉴 2,057종.</p>
-    <p class="ln st2" data-k="su-4">밤이 되면 남은 음료를 로슈와 카인에게 먹인다.</p>
+    <p class="ln st2" data-k="su-2">오늘 마실 수 있는 양이 컵 하나에 담기고, 한 잔 기록할 때마다 그만큼 비워진다.</p>
+    <img class="cup" data-c="30" src="assets/cup-30.webp" width="720" height="1292" alt="" aria-hidden="true">
+    <img class="cup" data-c="50" src="assets/cup-50.webp" width="720" height="1292" alt="" aria-hidden="true">
+    <img class="cup" data-c="80" src="assets/cup-80.webp" width="720" height="1292" alt="" aria-hidden="true">
+    <img class="cup" data-c="100" src="assets/cup-100.webp" width="720" height="1292" alt="슈가캡의 컵: 한 잔 기록할 때마다 딸기 라떼가 줄어든다">
+    <p class="static-h sm">2,057종</p>
+    <p class="ln st2" data-k="su-3">카페 브랜드 16곳 메뉴를 검색해 한 번에 기록한다.</p>
+    <p class="ln st inv" data-k="su-4">밤이 되면 남은 음료를 로슈와 카인에게 먹인다.</p>
+    <img class="ch" data-ch="kain" src="assets/kain.webp" width="408" height="614" alt="카인">
+    <img class="ch" data-ch="roshu" src="assets/roshu.webp" width="560" height="613" alt="로슈">
+    <img class="ph3" data-p="0" src="assets/sugar-02.webp" width="900" height="1950" alt="슈가캡 화면" decoding="async">
+    <img class="ph3" data-p="2" src="assets/sugar-03.webp" width="900" height="1950" alt="슈가캡 화면" decoding="async">
+    <img class="ph3" data-p="1" src="assets/sugar-01.webp" width="900" height="1950" alt="슈가캡 오늘 화면: 오늘 남은 당이 컵에 담겨 있다" decoding="async">
     <p class="ln st2" data-k="su-5">서버도 계정도 없다. 기록은 기기에만 남는다.</p>
     <h3 class="static-h sm">만든 방법</h3>
     <ul class="list" data-k="su-list">
@@ -72,7 +89,7 @@
   </div>
 </section>
 
-<section class="scene" data-scene="tempo" data-beats="11" data-label="템포루틴">
+<section class="scene" data-scene="tempo" data-beats="12.5" data-label="템포루틴">
   <div class="stage">
     <h2 class="static-h">템포루틴</h2>
     <p class="ln st" data-k="te-1">당신 몸의 템포에 맞게.</p>
