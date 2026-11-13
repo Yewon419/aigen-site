@@ -67,7 +67,7 @@
   const dks = {}; $$('.dk').forEach((el) => { dks[el.dataset.d] = el; over.appendChild(el); });
   // 상태 기계 조각(1110x250)에서 잰 다섯 단계 원의 가로 중심 비율과 반폭
   const SMX = [0.132, 0.314, 0.495, 0.677, 0.859], SMR = 0.088;
-  const AR = { sugar: 1, tempo: 1, gim: 855 / 207 };
+  const AR = { sugar: 1, tempo: 1, gim: 855 / 207, desk: 1 };
   const countEl = bts.count.glyphs[0];
   const COUNT = 2057;
   // 컵 사진(720x1292)에서 잰 수면 높이 비율
@@ -581,6 +581,7 @@
   }
   scene('desk', (bRaw, A) => {
     const b = bRaw - DESK_OFF;
+    if (A && bRaw < DESK_OFF + 1.5) chapterIcon(bRaw, 'desk', 0.6, DESK_OFF + 0.75);
     deskBody(b, A);
     if (A && bRaw < DESK_OFF) chapterBar(bRaw, 'desk', 0.6);
   });
