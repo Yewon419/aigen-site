@@ -58,7 +58,15 @@
   const chi = {}; $$('.chi').forEach((el) => { chi[el.dataset.i] = el; });
   const cups = {}; $$('.cup').forEach((el) => { cups[el.dataset.c] = el; });
   const chars = {}; $$('.ch').forEach((el) => { chars[el.dataset.ch] = el; });
-  const phones = $$('.ph3').sort((a, b) => a.dataset.p - b.dataset.p);
+  const byP = (a, b) => a.dataset.p - b.dataset.p;
+  const phones = $$('.ph3[data-s="sugar"]').sort(byP);
+  const tphones = $$('.ph3[data-s="tempo"]').sort(byP);
+  const seasons = $$('.sphoto').sort((a, b) => a.dataset.s - b.dataset.s);
+  const crops = {}; $$('.crop').forEach((el) => { crops[el.dataset.g] = el; });
+  const doc = $('.doc');
+  // 상태 기계 조각(1110x250)에서 잰 다섯 단계 원의 가로 중심 비율과 반폭
+  const SMX = [0.132, 0.314, 0.495, 0.677, 0.859], SMR = 0.088;
+  const AR = { sugar: 1, tempo: 1, gim: 855 / 207 };
   const countEl = bts.count.glyphs[0];
   const COUNT = 2057;
   // 컵 사진(720x1292)에서 잰 수면 높이 비율
@@ -106,7 +114,6 @@
     });
     // 챕터 막: 아이콘은 가운데 제목 위
     L.C = Math.min(0.16 * L.vh, 150, 0.3 * L.vw);
-    L.chR = { x: (L.vw - L.C) / 2, y: L.vh / 2 - L.H / 2 - 32 - L.C, w: L.C, h: L.C };
 
     // 슈가캡: 큰 컵(제품 컷)과 왼쪽 글 기둥
     const under = L.topY + L.H + 32;
@@ -147,7 +154,7 @@
       { x: pcx - L.pw / 2, y: py, r: 0 },
       { x: pcx + 0.78 * L.pw - L.pw / 2, y: py + 0.04 * L.ph, r: 7 },
     ];
-    phones.forEach((el) => { el.style.width = L.pw + 'px'; el.style.height = L.ph + 'px'; });
+    [...phones, ...tphones].forEach((el) => { el.style.width = L.pw + 'px'; el.style.height = L.ph + 'px'; });
     const col2 = L.narrow ? L.vw - 2 * L.m : 0.42 * L.vw;
     place('su-5', L.m, under, col2);
     placeList('su-list', L.m, under + lines['su-5'].el.offsetHeight + 28, col2);
@@ -160,21 +167,44 @@
     const tpy = L.narrow ? L.vh * 0.66 : L.vh * 0.42;
     setImg('te-ph1', L.phoneX, tpy, L.phoneW);
     setImg('te-ph2', L.phoneX, tpy, L.phoneW);
-    placeList('te-list', L.m, under, L.narrow ? null : 0.62 * L.vw);
+    placeList('te-list', L.m, under, col2);
+    seasons.forEach((el) => { el.style.width = L.vw + 'px'; el.style.height = L.stripY + 'px'; });
     place('te-links', L.m, under);
 
     place('gi-1', L.m, under);
     setImg('gi-panel', L.panelX, L.panelY, L.panelW);
-    const gy = L.narrow ? L.vh * 0.16 : L.vh * 0.72;
-    const gw = L.narrow ? L.vw - 2 * L.m : L.panelX - L.m - 48;
+    const gy = L.narrow ? L.vh * 0.16 : L.vh * 0.78;
+    // 판넬 조각: 위에 상태 기계, 아래 칸에 체크포인트 → 아키텍처 → 기준값
+    L.gcW = L.narrow ? L.vw - 2 * L.m : Math.min(0.42 * L.vw, 620);
+    L.gcX = L.narrow ? L.m : L.vw - L.m - L.gcW;
+    L.smH = L.gcW * (250 / 1110);
+    L.smY = L.narrow ? 0.5 * L.vh : L.topY;
+    L.slotY = L.smY + L.smH + 20;
+    L.slotH = (L.narrow ? L.vh - L.m - 24 : 0.88 * L.vh) - L.slotY;
+    [crops.sm, crops.smlit].forEach((el) => { el.style.left = L.gcX + 'px'; el.style.top = L.smY + 'px'; el.style.width = L.gcW + 'px'; el.style.height = L.smH + 'px'; });
+    fitSlot(crops.skel, 940 / 550, L.gcX, L.slotY, L.gcW, L.slotH);
+    fitSlot(crops.arch, 1600 / 347, L.gcX, L.slotY, L.gcW, L.slotH);
+    fitSlot(crops.table, 656 / 548, L.gcX, L.slotY, L.gcW, L.slotH);
+    const gw = L.narrow ? L.vw - 2 * L.m : L.gcX - L.m - 48;
     ['gi-2', 'gi-3', 'gi-4', 'gi-5', 'gi-links'].forEach((k) => place(k, L.m, gy, gw));
     L.angleCx = L.narrow ? L.vw * 0.5 : L.m + 0.2 * L.vw;
-    L.angleCy = L.narrow ? L.vh * 0.36 : L.vh * 0.5;
+    L.angleCy = L.narrow ? L.vh * 0.36 : L.vh * 0.46;
     L.angleW = L.narrow ? 0.5 * L.vw : 0.3 * L.vw;
     L.angleH = L.H * 0.42;
 
     col.style.top = under + 'px';
-    col.style.width = (L.narrow ? L.vw - 2 * L.m : 0.66 * L.vw) + 'px';
+    col.style.width = (L.narrow ? L.vw - 2 * L.m : 0.5 * L.vw) + 'px';
+    // 방식: 띠가 지금 읽는 문장 왼쪽 표시줄이 된다. 오른쪽(좁으면 아래) 칸에 COPY.md 표와 검수 스틸
+    L.meR = ['me-1', 'me-2', 'me-3', 'me-4', 'me-5'].map((k) => {
+      const el = lines[k].el;
+      return { x: Math.max(6, L.m - 18), y: under + el.offsetTop, w: 5, h: el.offsetHeight };
+    });
+    const msX = L.narrow ? L.m : L.m + 0.5 * L.vw + 48;
+    const msW = L.vw - L.m - msX;
+    const msY = L.narrow ? Math.max(0.64 * L.vh, under + col.offsetHeight + 16) : under;
+    const msH = (L.narrow ? L.vh - L.m - 24 : 0.86 * L.vh) - msY;
+    doc.style.left = msX + 'px'; doc.style.top = msY + 'px'; doc.style.width = msW + 'px';
+    fitSlot(crops.stills, 1200 / 565, msX, msY, msW, msH);
 
     placeList('end-list', L.m, sub);
   }
@@ -185,6 +215,10 @@
   }
   function placeList(k, x, y, w) {
     const li = lists[k]; li.el.style.left = x + 'px'; li.el.style.top = y + 'px'; if (w) li.el.style.width = w + 'px';
+  }
+  function fitSlot(el, ar, x, y, w, h) {
+    const fw = Math.min(w, h * ar);
+    el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = fw + 'px'; el.style.height = fw / ar + 'px';
   }
   function setImg(k, x, y, w) {
     const el = imgs[k]; el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = w + 'px';
@@ -233,7 +267,15 @@
   const shrinkR = (r, s) => ({ x: r.x + (r.w * (1 - s)) / 2, y: r.y + (r.h * (1 - s)) / 2, w: r.w * s, h: r.h * s });
   const fullR = () => ({ x: 0, y: 0, w: L.vw, h: L.vh });
   const plateR = (id, y) => ({ x: L.m, y, w: bw(id), h: L.H });
-  const sideR = (id) => ({ x: L.m + bw(id) + 16, y: L.topY, w: L.H, h: L.H });
+  const sideR = (id) => {
+    const h = id === 'gim' ? L.H * 0.62 : L.H;
+    return { x: L.m + bw(id) + 16, y: L.topY + (L.H - h) / 2, w: h * AR[id], h };
+  };
+  // 챕터 막에서 제목 위 아이콘 자리
+  const chRf = (id) => {
+    const h = id === 'gim' ? L.C * 0.5 : L.C, w = h * AR[id];
+    return { x: (L.vw - w) / 2, y: L.vh / 2 - L.H / 2 - 32 - h, w, h };
+  };
   const setBarR = (r) => setBar(r.x, r.y, r.w, r.h);
   // 띠 안 글자를 화면 가로 중앙에 둔다 (띠 사각형 기준 좌표로 환산)
   function centerBt(id, r) { bts[id].el.style.left = (L.vw / 2 - r.x - bts[id].w / 2) + 'px'; }
@@ -256,7 +298,7 @@
     const u = ease.inOutCubic(prog(b, t0, t0 + 0.7));
     const o = ease.inCubic(prog(b, outAt, outAt + 0.35));
     if (o >= 1) return;
-    icon(id, shrinkR(lerpR(L.chR, sideR(id), u), 1 - o), 1);
+    icon(id, shrinkR(lerpR(chRf(id), sideR(id), u), 1 - o), 1);
   }
   // 띠가 화면 전체로 번지고 다음 제목이 가운데에서 솟는다. [t0, t0+0.6]
   function floodTo(b, from, nextId, t0) {
@@ -265,7 +307,7 @@
     glyphsIn(nextId, b, t0 + 0.45);
     centerBt(nextId, r);
     const i = ease.outExpo(prog(b, t0 + 0.5, t0 + 0.95));
-    if (i > 0) icon(nextId, shrinkR(L.chR, 0.6 + 0.4 * i), i);
+    if (i > 0 && chi[nextId]) icon(nextId, shrinkR(chRf(nextId), 0.6 + 0.4 * i), i);
     return r;
   }
 
@@ -309,11 +351,12 @@
       el.style.transform = `translate(${r.x}px, ${r.y + (1 - u) * (L.vh - r.y + 20) + out * (L.vh - r.y + 20)}px)`;
     });
   }
-  function renderPhones(b) {
-    const out = ease.inCubic(prog(b, 12.55, 12.95));
-    phones.forEach((el, i) => {
+  // 폰 세 대 부채꼴: t0에 아래에서 솟고 [o0, o1]에 내려간다
+  function renderFan(set, b, t0, o0, o1) {
+    const out = ease.inCubic(prog(b, o0, o1));
+    set.forEach((el, i) => {
       const p = L.phones[i];
-      const t = 10.5 + [0.12, 0, 0.24][i];
+      const t = t0 + [0.12, 0, 0.24][i];
       const u = ease.outExpo(prog(b, t, t + 0.7));
       el.style.opacity = u > 0 && out < 1 ? '1' : '0';
       el.style.transform = `translate(${p.x}px, ${p.y + (1 - u) * (L.vh - p.y + 40) + out * (L.vh - p.y + 40)}px) rotate(${p.r * u}deg)`;
@@ -325,23 +368,6 @@
     const ln = lines[linksKey]; const el = ln.el;
     let lw = 0; ln.words.forEach((w) => { lw = Math.max(lw, w.offsetLeft + w.offsetWidth); });
     return { x: parseFloat(el.style.left), y: parseFloat(el.style.top) + el.offsetHeight + 8, w: lw, h: 4 };
-  }
-  // 공통 꼬리. tL = 링크 등장 비트.
-  // [tL-0.5, tL] 제목 띠 → 밑줄 / 링크 tL~tL+0.45 등장, tL+0.9 퇴장 / [tL+1.0, tL+1.55] 밑줄 → 다음 제목 띠 / 다음 글자 tL+1.15
-  function tailLinks(b, tL, linksKey, prevId, nextId, prevOut) {
-    const u = underline(linksKey);
-    words(linksKey, b, tL, tL + 0.9);
-    glyphsIn(prevId, b, -10, prevOut);
-    glyphsIn(nextId, b, tL + 1.15);
-    const u1 = ease.inOutCubic(prog(b, tL - 0.5, tL));
-    const u2 = ease.inOutCubic(prog(b, tL + 1.0, tL + 1.55));
-    return {
-      x: L.m,
-      y: M.lerp(M.lerp(L.topY, u.y, u1), L.topY, u2),
-      w: M.lerp(M.lerp(bw(prevId), u.w, u1), bw(nextId), u2),
-      h: M.lerp(M.lerp(L.H, u.h, u1), L.H, u2),
-      under: u,
-    };
   }
 
   // ---- 장면 ----
@@ -365,7 +391,7 @@
     setBarR(r);
     glyphsIn('sugar', b, 1.8);
     centerBt('sugar', r);
-    if (b >= 1.3) icon('sugar', lerpR(L.tile.sugar, L.chR, ease.inOutCubic(prog(b, 1.3, 2.1))), 1);
+    if (b >= 1.3) icon('sugar', lerpR(L.tile.sugar, chRf('sugar'), ease.inOutCubic(prog(b, 1.3, 2.1))), 1);
   });
 
   // 슈가캡 14비트
@@ -383,7 +409,7 @@
     words('su-links', b, 12.25, 13.0);
     renderCups(b);
     renderChars(b);
-    renderPhones(b);
+    renderFan(phones, b, 10.5, 12.55, 12.95);
     if (!A) return;
     glyphsIn('sugar', b, -10, 2.0);
     chapterIcon(b, 'sugar', 0.6, 1.75);
@@ -403,8 +429,27 @@
     else floodTo(b, underline('su-links'), 'tempo', 13.0);
   });
 
-  // 템포루틴 12.5비트: 0~1.3 챕터 막 → 이름표, 이후는 기존 타임라인을 1.3비트 밀어서 쓴다
-  // 기존: 제목 → 계절 띠(1.9~6) → 만든 방법(6.6~8.1) → 링크 → 짐살라빔 제목
+  // 사진 여러 장을 한 칸에서 바꿔 닦는다. ins[k] = [t0, t1, 방향]. 다음 장이 다 덮으면 앞 장은 숨긴다.
+  // 방향 'up' = 아래에서 위로 드러남, 'right' = 왼쪽에서 오른쪽으로 드러남
+  // cover=false면 크기가 다른 장끼리라 덮지 않고, 앞 장이 다음 장 직전 0.35비트 동안 위로 접힌다
+  function wipeSet(set, b, ins, out, cover = true) {
+    set.forEach((el, k) => {
+      const [t0, t1, dir] = ins[k];
+      const u = ease.outExpo(prog(b, t0, t1));
+      const nx = ins[k + 1];
+      const n = nx ? ease.outExpo(prog(b, nx[0], nx[1])) : 0;
+      const fold = nx && !cover ? ease.inCubic(prog(b, nx[0] - 0.35, nx[0])) : 0;
+      const vis = u > 0 && (cover ? n < 1 : fold < 1) && out < 1;
+      el.style.opacity = vis ? '1' : '0';
+      if (!vis) return;
+      const top = dir === 'up' ? (1 - u) * 100 : 0;
+      const right = dir === 'right' ? (1 - u) * 100 : 0;
+      el.style.clipPath = `inset(${Math.max(top, out * 100).toFixed(2)}% ${right.toFixed(2)}% ${(fold * 100).toFixed(2)}% 0)`;
+    });
+  }
+
+  // 템포루틴 12.1비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
+  // 본문: 제목 → 계절 띠(1.9~6, 띠 위로 그 계절 사진) → 만든 방법과 폰 세 대(6.6~) → 링크(8.8) → 밑줄이 화면을 덮고 「짐살라빔」(9.8)
   const TEMPO_OFF = 1.3;
   scene('tempo', (bRaw, A) => {
     const b = bRaw - TEMPO_OFF;
@@ -414,15 +459,18 @@
   });
   function tempoBody(b, A) {
     words('te-1', b, 0.1, 1.0);
-    words('te-2', b, 2.0, 2.95);
-    words('te-3', b, 3.0, 3.95);
-    words('te-4', b, 4.0, 4.95);
-    words('te-5', b, 5.0, 5.95);
+    words('te-2', b, 2.0, 2.6);
+    words('te-3', b, 3.05, 3.6);
+    words('te-4', b, 4.05, 4.6);
+    words('te-5', b, 5.05, 5.95);
     listIn('te-list', b, 6.9, 8.0);
     const p1in = ease.outExpo(prog(b, 2.3, 3.0)), p1out = ease.inCubic(prog(b, 4.0, 4.5));
     img('te-ph1', 0, (1 - p1in) * L.vh + p1out * L.vh);
     const p2in = ease.outExpo(prog(b, 4.4, 5.1)), p2out = ease.inCubic(prog(b, 6.0, 6.6));
     img('te-ph2', 0, (1 - p2in) * L.vh + p2out * L.vh);
+    // 계절 사진: 겨울은 띠에서 위로 자라고, 커서가 다음 칸으로 갈 때마다 다음 계절이 왼쪽부터 덮는다. 6.0에 띠 안으로 접힌다
+    wipeSet(seasons, b, [[1.9, 2.6, 'up'], [3.0, 3.7, 'right'], [4.0, 4.7, 'right'], [5.0, 5.7, 'right']], ease.inOutCubic(prog(b, 5.9, 6.4)));
+    renderFan(tphones, b, 6.7, 9.3, 9.75);
     if (!A) { words('te-links', b, NEVER); return; }
     glyphsIn('tempo', b, -10, 0.9);
     const stripW = L.vw - 2 * L.m;
@@ -443,20 +491,48 @@
       setBar(L.m, y, w, h);
       words('te-links', b, NEVER);
     } else {
-      const r = tailLinks(b, 8.8, 'te-links', 'made2', 'gim', 8.0);
-      setBar(r.x, r.y, r.w, r.h);
+      const u = underline('te-links');
+      words('te-links', b, 8.8, 9.7);
+      if (b < 9.8) setBarR(lerpR(plateR('made2', L.topY), u, ease.inOutCubic(prog(b, 8.3, 8.8))));
+      else floodTo(b, u, 'gim', 9.8);
     }
   }
 
-  // 짐살라빔 9비트: 제목 → 각도선(1.9~6, 몸통→엉덩이→무릎) → 각도선이 눕혀져 링크 밑줄(6~6.5) → 링크 → 방식 제목
-  scene('gim', (b, A) => {
+  // 짐살라빔 9.8비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
+  // 본문: 제목 → 이름표가 각도선이 된다(1.0~1.9). 각도선이 몸통→엉덩이→무릎 기준값으로 기울 때
+  // 오른쪽 판넬 조각: 상태 기계는 다섯 단계가 차례로 켜지고, 아래 칸은 체크포인트 → 아키텍처 → 기준값 표
+  // 6.0~6.5 각도선이 눕혀져 링크 밑줄, 판넬 전체가 들어온다 / 7.5 밑줄이 화면을 덮고 「AI와 일하는 방식」
+  const GIM_OFF = 1.3;
+  scene('gim', (bRaw, A) => {
+    const b = bRaw - GIM_OFF;
+    if (A && bRaw < GIM_OFF + 1.5) chapterIcon(bRaw, 'gim', 0.6, GIM_OFF + 0.75);
+    gimBody(b, A);
+    if (A && bRaw < GIM_OFF) chapterBar(bRaw, 'gim', 0.6);
+  });
+  function gimBody(b, A) {
     words('gi-1', b, 0.1, 1.0);
-    words('gi-2', b, 2.0, 2.95);
-    words('gi-3', b, 3.0, 3.95);
-    words('gi-4', b, 4.0, 4.95);
-    words('gi-5', b, 5.0, 5.95);
-    const pin = ease.outExpo(prog(b, 1.3, 2.1)), pout = ease.inCubic(prog(b, 6.0, 6.6));
-    img('gi-panel', (1 - pin) * (L.vw - L.panelX + 40) + pout * (L.vw - L.panelX + 40), 0);
+    words('gi-2', b, 2.0, 2.6);
+    words('gi-3', b, 3.05, 3.6);
+    words('gi-4', b, 4.05, 4.6);
+    words('gi-5', b, 5.05, 5.95);
+    // 판넬 조각은 오른쪽으로 밀려나고 판넬 전체가 그 자리에 들어온다
+    const push = ease.inCubic(prog(b, 5.95, 6.4));
+    const dx = push * (L.vw - L.gcX + 40);
+    const smIn = ease.outExpo(prog(b, 1.6, 2.3));
+    crops.sm.style.opacity = smIn > 0 && push < 1 ? '0.3' : '0';
+    crops.sm.style.transform = `translate(${dx}px, ${(1 - smIn) * 24}px)`;
+    // 켜진 단계: 1.9부터 0.68비트마다 한 칸씩
+    const st = kf(b, [[1.9, 0], [2.4, 0], [2.6, 1, ease.outExpo], [3.1, 1], [3.3, 2, ease.outExpo], [3.8, 2], [4.0, 3, ease.outExpo], [4.5, 3], [4.7, 4, ease.outExpo]]);
+    const i0 = Math.floor(st), cx = M.lerp(SMX[i0], SMX[Math.min(4, i0 + 1)], st - i0);
+    const lit = crops.smlit;
+    lit.style.opacity = smIn > 0 && push < 1 ? smIn.toFixed(3) : '0';
+    lit.style.transform = crops.sm.style.transform;
+    lit.style.clipPath = `inset(0 ${((1 - cx - SMR) * 100).toFixed(2)}% 0 ${((cx - SMR) * 100).toFixed(2)}%)`;
+    const slot = [crops.skel, crops.arch, crops.table];
+    wipeSet(slot, b, [[1.9, 2.6, 'up'], [3.0, 3.7, 'up'], [4.0, 4.7, 'up']], 0, false);
+    slot.forEach((el) => { el.style.transform = `translateX(${dx}px)`; if (push >= 1) el.style.opacity = '0'; });
+    const pin = ease.outExpo(prog(b, 6.3, 7.0));
+    img('gi-panel', (1 - pin) * (L.vw - L.panelX + 40), 0, b < 8.1 ? 1 : 0);
     if (!A) { words('gi-links', b, NEVER); return; }
     glyphsIn('gim', b, -10, 0.9);
     glyphsIn('a0', b, 1.9, 2.9, 0.04);
@@ -469,29 +545,50 @@
       setBar(M.lerp(L.m, ax, toLine), M.lerp(L.topY, ay, toLine), M.lerp(bw('gim'), L.angleW, toLine), M.lerp(L.H, L.angleH, toLine), rot);
       words('gi-links', b, NEVER);
     } else {
-      const r = tailLinks(b, 6.5, 'gi-links', 'a2', 'method', 5.5);
-      if (b < 6.5) {
+      const u = underline('gi-links');
+      words('gi-links', b, 6.5, 7.4);
+      if (b < 7.5) {
         const u0 = ease.inOutCubic(prog(b, 6.0, 6.5));
-        setBar(M.lerp(ax, r.under.x, u0), M.lerp(ay, r.under.y, u0), M.lerp(L.angleW, r.under.w, u0), M.lerp(L.angleH, r.under.h, u0), M.lerp(-108.35, 0, u0));
+        setBar(M.lerp(ax, u.x, u0), M.lerp(ay, u.y, u0), M.lerp(L.angleW, u.w, u0), M.lerp(L.angleH, u.h, u0), M.lerp(-108.35, 0, u0));
       } else {
-        setBar(r.x, r.y, r.w, r.h);
+        floodTo(b, u, 'method', 7.5);
       }
     }
-  });
+  }
 
-  scene('method', (b, A) => {
+  // 방식 7비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
+  // 본문: 이름표가 지금 읽는 문장 왼쪽 표시줄로 줄어들어 문장마다 내려간다. 오른쪽은 COPY.md 표 → 이 페이지 검수 스틸
+  // 5.1~5.6 표시줄이 가운데 이름표가 된다(엔드와 같은 자리)
+  const METHOD_OFF = 1.3;
+  const meMark = (f) => { const i = Math.floor(f), j = Math.min(4, i + 1); return lerpR(L.meR[i], L.meR[j], f - i); };
+  scene('method', (bRaw, A) => {
+    const b = bRaw - METHOD_OFF;
     const ks = ['me-1', 'me-2', 'me-3', 'me-4', 'me-5'];
-    const cur = Math.min(4, Math.floor(b));
+    const cur = clamp(Math.floor(b - 0.6), 0, 4);
     ks.forEach((k, i) => {
-      words(k, b, i + 0.15, 4.5);
-      const dim = i < cur ? ease.outCubic(prog(b, cur + 0.1, cur + 0.5)) : 0;
+      words(k, b, i + 0.75, 5.1);
+      const dim = i < cur ? ease.outCubic(prog(b, cur + 0.7, cur + 1.1)) : 0;
       lines[k].el.style.color = dim > 0 ? `rgb(${Math.round(10 + 128 * dim)}, ${Math.round(10 + 128 * dim)}, ${Math.round(10 + 128 * dim)})` : '';
     });
+    const out = ease.inCubic(prog(b, 5.0, 5.4));
+    const dIn = ease.outExpo(prog(b, 0.85, 1.5));
+    const sIn = ease.outExpo(prog(b, 2.75, 3.45));
+    const dFold = ease.inCubic(prog(b, 2.4, 2.75));
+    doc.style.opacity = dIn > 0 && dFold < 1 ? '1' : '0';
+    doc.style.transform = `translateY(${(1 - dIn) * 24}px)`;
+    doc.style.clipPath = `inset(0 0 ${(dFold * 100).toFixed(2)}% 0)`;
+    const st = crops.stills;
+    st.style.opacity = sIn > 0 && out < 1 ? '1' : '0';
+    st.style.clipPath = `inset(${((1 - sIn) * 100).toFixed(2)}% 0 0 0)`;
+    st.style.transform = `translateY(${out * 40}px)`;
     if (!A) return;
-    glyphsIn('method', b, -10, 4.4);
-    glyphsIn('name', b, 4.75);
-    const u = ease.inOutCubic(prog(b, 4.5, 5.0));
-    setBar(L.m, M.lerp(L.topY, L.centerY, u), M.lerp(bw('method'), bw('name'), u), L.H);
+    if (bRaw < METHOD_OFF) { glyphsIn('method', b, -10); chapterBar(bRaw, 'method', 0.6); return; }
+    glyphsIn('method', b, -10, 0.5);
+    glyphsIn('name', b, 5.35);
+    const f = kf(b, [[0.6, 0], [1.55, 0], [1.9, 1, ease.inOutCubic], [2.55, 1], [2.9, 2, ease.inOutCubic], [3.55, 2], [3.9, 3, ease.inOutCubic], [4.55, 3], [4.9, 4, ease.inOutCubic]]);
+    if (b < 1.0) setBarR(lerpR(plateR('method', L.topY), meMark(0), ease.inOutCubic(prog(b, 0.55, 1.0))));
+    else if (b < 5.1) setBarR(meMark(f));
+    else setBarR(lerpR(meMark(4), plateR('name', L.centerY), ease.inOutCubic(prog(b, 5.1, 5.6))));
   });
 
   scene('end', (b, A) => {
@@ -526,6 +623,6 @@
     requestAnimationFrame(frame);
   }
   // 투명한 채로 기다리던 사진이 첫 등장 프레임에 비어 보이지 않게 미리 디코드한다
-  [...phones, ...Object.values(cups), ...Object.values(chars)].forEach((el) => el.decode().catch((e) => console.warn('decode', el.src, e)));
+  [...phones, ...tphones, ...seasons, ...Object.values(crops), ...Object.values(cups), ...Object.values(chars)].forEach((el) => el.decode().catch((e) => console.warn('decode', el.src, e)));
   document.fonts.ready.then(() => { layout(); requestAnimationFrame(frame); });
 })();

@@ -68,6 +68,7 @@ img { display: block; max-width: 100%; height: auto; }
 /* 띠 위 층 */
 #over { position: fixed; inset: 0; z-index: 22; pointer-events: none; }
 .chi { position: absolute; left: 0; top: 0; width: 100px; height: 100px; transform-origin: 0 0; opacity: 0; border-radius: 22.5%; }
+.chi.wide { height: 24.21px; border-radius: 4px; }
 .ln.inv { color: var(--bg); }
 
 /* 장면: 다음 장면은 앞 장면이 끝나는 스크롤 지점에서 바로 고정된다 (빈 스크롤 없음) */
@@ -81,6 +82,17 @@ img { display: block; max-width: 100%; height: auto; }
 .cup, .ch, .ph3 { position: absolute; left: 0; top: 0; max-width: none; transform-origin: 0 0; opacity: 0; }
 .cup, .ch { will-change: transform, clip-path, opacity; }
 .ph3 { transform-origin: 50% 100%; border-radius: 6%; box-shadow: 0 0 0 1px rgba(10,10,10,0.1), 0 24px 60px -24px rgba(10,10,10,0.35); }
+.sphoto { position: absolute; left: 0; top: 0; max-width: none; object-fit: cover; opacity: 0; }
+.crop { position: absolute; left: 0; top: 0; max-width: none; opacity: 0; box-shadow: 0 0 0 1px rgba(10,10,10,0.1); border-radius: 6px; }
+.crop.lit { box-shadow: none; }
+.doc { position: absolute; left: 0; top: 0; opacity: 0; background: var(--bg); border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(10,10,10,0.14), 0 24px 60px -30px rgba(10,10,10,0.3);
+  padding: clamp(12px, 1.4vw, 20px); font-size: clamp(12px, 1vw, 15px); line-height: 1.4; }
+.doc-h { margin: 0 0 0.7em; font-weight: 700; }
+.doc table { border-collapse: collapse; width: 100%; }
+.doc th, .doc td { text-align: left; vertical-align: top; padding: 0.5em 0.8em 0.5em 0; border-top: 1px solid rgba(10,10,10,0.12); }
+.doc th { border-top: 0; font-weight: 600; color: var(--gray); font-size: 0.9em; }
+.doc td:last-child { color: var(--gray); white-space: nowrap; padding-right: 0; }
 .static-h { display: none; }
 
 .ln { position: absolute; margin: 0; left: var(--m); max-width: calc(100vw - 2 * var(--m)); }
@@ -116,6 +128,9 @@ html.static .cup[data-c="100"] { display: block; position: static; opacity: 1; w
 html.static .ch { position: static; display: inline-block; opacity: 1; width: 120px; margin: 0 16px 0.8em 0; }
 html.static .ph3 { position: static; display: inline-block; opacity: 1; width: min(28vw, 180px); margin: 0 12px 0.8em 0; }
 html.static .ln.inv { color: var(--ink); }
+html.static .sphoto, html.static .ph3[data-s="tempo"], html.static .crop.lit { display: none; }
+html.static .crop { position: static; display: block; opacity: 1; width: min(90vw, 560px); margin: 0 0 0.8em; }
+html.static .doc { position: static; opacity: 1; max-width: 560px; margin: 1.2em 0 0.8em; }
 html.static .static-h { display: block; margin: 0 0 0.5em; font-size: var(--D); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
 html.static .static-h.sm { font-size: var(--S); margin-top: 1.2em; }
 html.static .ln, html.static .list, html.static .col, html.static .ph, html.static .panel {
