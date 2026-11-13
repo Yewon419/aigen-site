@@ -54,7 +54,6 @@
   const imgs = {};
   $$('.ph, .panel').forEach((el) => { imgs[el.dataset.k] = el; });
   const col = $('[data-k="me-col"]');
-  const tiles = {}; $$('.tile').forEach((el) => { tiles[el.dataset.t] = el; });
   const chi = {}; $$('.chi').forEach((el) => { chi[el.dataset.i] = el; });
   const cups = {}; $$('.cup').forEach((el) => { cups[el.dataset.c] = el; });
   const chars = {}; $$('.ch').forEach((el) => { chars[el.dataset.ch] = el; });
@@ -103,15 +102,6 @@
     const sub = L.centerY + L.H + 28;
     place('hero-sub', L.m, sub);
     place('hero-list', L.m, sub + L.S * 1.18 + 20);
-    L.T = Math.min(clamp(0.075 * L.vh, 48, 76), (L.vw - 2 * L.m - 28) / (2 + 855 / 207));
-    const tileY = sub + L.S * 1.18 + 20 + 48;
-    L.tile = {};
-    let tx = L.m;
-    [['sugar', 1], ['tempo', 1], ['gim', 855 / 207]].forEach(([t, ar]) => {
-      const r = { x: tx, y: tileY, w: L.T * ar, h: L.T };
-      L.tile[t] = r; tx += r.w + 14;
-      const el = tiles[t]; el.style.left = r.x + 'px'; el.style.top = r.y + 'px'; el.style.width = r.w + 'px'; el.style.height = r.h + 'px';
-    });
     // 챕터 막: 아이콘은 가운데 제목 위
     L.C = Math.min(0.16 * L.vh, 150, 0.3 * L.vw);
 
@@ -374,24 +364,19 @@
   const scenes = [];
   const scene = (name, render) => scenes.push({ name, render });
 
-  // 히어로 3비트: 로드 즉시 완성 상태. 1.0부터 글과 타일 퇴장,
-  // 1.3~2.0 이름표가 화면 전체로 번지고, 슈가캡 타일이 그대로 날아가 챕터 막의 아이콘이 된다.
+  // 히어로 3비트: 로드 즉시 완성 상태. 1.0부터 글 퇴장,
+  // 1.3~2.0 이름표가 화면 전체로 번지고, 슈가캡 제목과 아이콘이 가운데에서 솟는다.
   scene('hero', (b, A) => {
     words('hero-sub', b, -1, 1.0);
     words('hero-list', b, -1, 1.1);
-    [['tempo', 1.05], ['gim', 1.13]].forEach(([t, t0]) => {
-      const v = ease.inCubic(prog(b, t0, t0 + 0.35));
-      tiles[t].style.transform = `translateY(${-v * 28}px)`;
-      tiles[t].style.opacity = (1 - v).toFixed(3);
-    });
-    tiles.sugar.style.opacity = b < 1.3 ? '1' : '0';
     if (!A) return;
     glyphsIn('name', b, -10, 1.15);
     const r = lerpR(plateR('name', L.centerY), fullR(), ease.inOutCubic(prog(b, 1.3, 2.0)));
     setBarR(r);
     glyphsIn('sugar', b, 1.8);
     centerBt('sugar', r);
-    if (b >= 1.3) icon('sugar', lerpR(L.tile.sugar, chRf('sugar'), ease.inOutCubic(prog(b, 1.3, 2.1))), 1);
+    const ic = ease.outExpo(prog(b, 1.8, 2.25));
+    if (ic > 0) icon('sugar', shrinkR(chRf('sugar'), 0.6 + 0.4 * ic), ic);
   });
 
   // 슈가캡 14비트

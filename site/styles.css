@@ -77,8 +77,6 @@ img { display: block; max-width: 100%; height: auto; }
 .stage { position: sticky; top: 0; height: 100vh; overflow: hidden; pointer-events: none; }
 .stage a { pointer-events: auto; }
 
-.tile { position: absolute; left: 0; top: 0; border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(10,10,10,0.1); transform-origin: 0 0; }
-.tile.wide { border-radius: 8px; }
 .cup, .ch, .ph3 { position: absolute; left: 0; top: 0; max-width: none; transform-origin: 0 0; opacity: 0; }
 .cup, .ch { will-change: transform, clip-path, opacity; }
 .ph3 { transform-origin: 50% 100%; border-radius: 6%; box-shadow: 0 0 0 1px rgba(10,10,10,0.1), 0 24px 60px -24px rgba(10,10,10,0.35); }
@@ -121,9 +119,7 @@ html.static .scene + .scene { margin-top: 0; }
 html.static .stage { position: static; height: auto; overflow: visible; pointer-events: auto; }
 html.static #bar, html.static #over, html.static .bl { display: none; }
 html.static .corner { color: var(--ink); mix-blend-mode: normal; }
-html.static .tile { position: static; display: inline-block; width: 64px; margin: 0 12px 0 0; }
-html.static .tile.wide { width: auto; height: 64px; }
-html.static .cup { display: none; }
+html.static html.static html.static .cup { display: none; }
 html.static .cup[data-c="100"] { display: block; position: static; opacity: 1; width: min(50vw, 260px); margin: 0 0 0.8em; }
 html.static .ch { position: static; display: inline-block; opacity: 1; width: 120px; margin: 0 16px 0.8em 0; }
 html.static .ph3 { position: static; display: inline-block; opacity: 1; width: min(28vw, 180px); margin: 0 12px 0.8em 0; }
