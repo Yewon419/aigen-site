@@ -74,6 +74,9 @@ img { display: block; max-width: 100%; height: auto; }
 /* 장면: 다음 장면은 앞 장면이 끝나는 스크롤 지점에서 바로 고정된다 (빈 스크롤 없음) */
 .scene { position: relative; height: calc(var(--beats) * 60vh + 100vh); }
 .scene + .scene { margin-top: -100vh; }
+/* 슬라이드처럼: 장면마다 정해 둔 멈춤 지점에서만 선다 */
+html.snap { scroll-snap-type: y mandatory; }
+.stop { position: absolute; left: 0; width: 1px; height: 1px; scroll-snap-align: start; scroll-snap-stop: always; pointer-events: none; }
 .stage { position: sticky; top: 0; height: 100vh; overflow: hidden; pointer-events: none; }
 .stage a { pointer-events: auto; }
 

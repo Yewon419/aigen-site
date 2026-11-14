@@ -8,10 +8,11 @@ import { chromium } from 'file:///C:/Users/windg/.claude/skills/kinetic-motion/s
 
 const args = process.argv.slice(2);
 const mobile = args.includes('--mobile');
+const stops = args.includes('--stops');
 const port = Number((args.find((a) => a.startsWith('--port=')) || '--port=8771').split('=')[1]);
 const root = resolve(import.meta.dirname, '..');
 const site = resolve(root, 'site');
-const out = resolve(root, 'stills', mobile ? 'mobile' : 'desktop');
+const out = resolve(root, 'stills', (stops ? 'stops_' : '') + (mobile ? 'mobile' : 'desktop'));
 mkdirSync(out, { recursive: true });
 
 const server = spawn('python', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], { cwd: site, stdio: 'ignore' });
@@ -25,13 +26,23 @@ page.on('pageerror', (e) => errors.push(String(e)));
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'networkidle' });
 await page.evaluate(() => document.fonts.ready);
+// 프로그램 스크롤이 멈춤 지점으로 끌려가지 않게 스냅을 끈다
+await page.addStyleTag({ content: 'html.snap { scroll-snap-type: none !important; }' });
 await page.waitForTimeout(300);
 
 const beats = await page.evaluate(() => [...document.querySelectorAll('.scene')].map((s) => ({ top: s.offsetTop, n: Number(s.dataset.beats), name: s.dataset.scene })));
 const vh = vp.height;
 const shots = [];
 let idx = 0;
-for (const s of beats) {
+const stopList = stops ? await page.evaluate(() => [...document.querySelectorAll('.stop')].map((el) => { const sec = el.parentElement; return { name: sec.dataset.scene, y: sec.offsetTop + parseFloat(el.style.top), b: Math.round(parseFloat(el.style.top) / (0.6 * innerHeight) * 100) / 100 }; })) : [];
+for (const p of stopList) {
+  await page.evaluate((yy) => window.scrollTo(0, yy), Math.round(p.y));
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+  const file = resolve(out, `${String(idx).padStart(3, '0')}_${p.name}_${p.b}.png`);
+  await page.screenshot({ path: file });
+  shots.push(file); idx++;
+}
+for (const s of stops ? [] : beats) {
   for (let k = 0; k <= s.n; k += 0.5) {
     if (k === s.n && s !== beats[beats.length - 1]) continue; // 다음 장면 0비트와 같은 프레임
     const y = Math.round(s.top + k * 0.6 * vh);
