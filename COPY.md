@@ -44,6 +44,10 @@
 | 4 | 평균을 내면 패턴이 사라진다. 그래서 정답 대신 본인 기록을 돌려준다. | q1 두 문장 압축 |
 | 5 | "기록상 이때 에너지가 높았어요" 단정 대신 관찰한 사실만. | q1 |
 | 6 | 무계정, 자체 서버 없음. Apple 건강 앱 연동은 선택. | TR-README 프라이버시 |
+| 6.1 | 출시 티저 영상도 만들었다. 앱 화면 없이 계절만 보여 준다. | 템포루틴 `marketing/ad-teaser/README.md` "앱 화면 없이 계절만 보여준다" (11-14 대표님 지시로 추가) |
+| 보조 | 티저 영상: `ad-teaser/final/temporoutine-teaser-4k.mp4`를 540x960·무음으로 줄임 | 같은 폴더 |
+| 6.2 | 체크인으로 모은 씨앗으로 테마를 연다. | TR-README "체크인으로 모으는 씨앗으로 잠금 해제하는 테마". 테마 수는 코드와 촬영본이 달라 쓰지 않음 |
+| 보조 | 테마 화면 6장(Standard·Plain·Modern·Letterpress·Ticket·Weather의 오늘 화면) | Kayla 릴스 000 에셋 `컷/apps_shots/temporoutine/ThemeShot*Today.jpg` (11-14 대표님 허가) |
 | 7 | 만든 방법: Windows에서 개발, 빌드는 GitHub Actions macOS 러너에서 TestFlight로 / 예측 엔진은 순수 Foundation 패키지(TempoCore)에 테스트와 함께 / 베타 피드백을 열 차례 넘게 반영해 출시 | TR-README 개발 방식·구조, pf |
 | 8 | App Store · GitHub | `apps.apple.com/kr/app/id6791803620` · `github.com/Yewon419/TempoRoutine` |
 
@@ -70,6 +74,7 @@
 | 5 | 밖에서는 폰으로. 사무실을 보고 지시와 승인까지 한다. | BD-README "폰으로 밖에서도" |
 | 6 | 답을 기다리거나 일을 마치면 폰으로 알림이 온다. | 리포 커밋 10-24 `Push phone alerts over Web Push when something waits on the user`, `feat(push): alert when a session finishes its turn` |
 | 7 | GitHub | `github.com/Yewon419/bitteul-desk` |
+| 보조 | 첫 문장 옆 그림: 큐브 사무실 여섯 칸(Kayla 릴스 000 에셋 `컷/company/gen/cube_1.png` 위 두 줄 크롭, 11-14 대표님 허가) | 장식 그림, 실제 화면 아님 |
 | 보조 | 챕터 아이콘: 빛뜰 컴퍼니 큐브 사무실(Kayla 릴스 000 에셋 `컷/company/gen/box_3.png`, 11-14 대표님 허가) | 정사각 크롭 |
 | 보조 | 스크린샷 4장: 사무실, 대화 창, 폰 사무실, 폰 대화 창 | BD-README `docs/screenshots/`(격리 환경·가짜 세션으로 촬영) |
 

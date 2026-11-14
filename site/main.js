@@ -9,7 +9,12 @@
   const NEVER = 1e9;
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) { document.documentElement.classList.add('static'); return; }
+  if (reduced) {
+    document.documentElement.classList.add('static');
+    // 모션 줄이기면 티저는 자동 재생하지 않고 직접 튼다
+    document.querySelectorAll('video').forEach((v) => { v.controls = true; });
+    return;
+  }
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -65,6 +70,10 @@
   const doc = $('.doc');
   // 빛뜰 데스크 화면은 띠(기기 테두리) 위에 올라가야 해서 #over 층으로 옮긴다
   const dks = {}; $$('.dk').forEach((el) => { dks[el.dataset.d] = el; over.appendChild(el); });
+  // 템포루틴 티저도 띠(필름 테두리) 위에 올라간다
+  const tfilm = $('.tv'); over.appendChild(tfilm);
+  let filmOn = false;
+  const themes = $$('.th').sort((a, b) => a.dataset.t - b.dataset.t);
   // 상태 기계 조각(1110x250)에서 잰 다섯 단계 원의 가로 중심 비율과 반폭
   const SMX = [0.132, 0.314, 0.495, 0.677, 0.859], SMR = 0.088;
   const AR = { sugar: 1, tempo: 1, gim: 855 / 207, desk: 1 };
@@ -162,6 +171,28 @@
     placeList('te-list', L.m, under, col2);
     seasons.forEach((el) => { el.style.width = L.vw + 'px'; el.style.height = L.stripY + 'px'; });
     place('te-links', L.m, under);
+    // 티저: 왼쪽(좁으면 위) 글, 오른쪽(좁으면 아래) 9:16 필름. 띠가 필름 테두리가 된다
+    const fcw = L.narrow ? L.vw - 2 * L.m : 0.36 * L.vw;
+    place('te-6', L.m, L.narrow ? under : L.vh * 0.5, fcw);
+    const ffp = L.narrow ? 6 : 10;
+    const fx0 = L.narrow ? L.m : L.m + fcw + 64;
+    const fy0 = (L.narrow ? under + lines['te-6'].el.offsetHeight + 24 : L.topY) + ffp;
+    const fah = Math.min((L.narrow ? L.vh - L.m - 28 : 0.9 * L.vh) - fy0 - ffp, 960);
+    const faw = L.vw - L.m - fx0 - 2 * ffp;
+    const ffw = Math.min(faw, fah * 9 / 16), ffh = ffw * 16 / 9;
+    L.film = { x: fx0 + ffp + (faw - ffw) / 2, y: fy0 + (fah - ffh) / 2, w: ffw, h: ffh };
+    L.filmF = { x: L.film.x - ffp, y: L.film.y - ffp, w: ffw + 2 * ffp, h: ffh + 2 * ffp };
+    putR(tfilm, L.film);
+    // 테마 여섯 장: 글 아래 한 줄(좁으면 세 장씩 두 줄), 띠는 그 아래 선반
+    place('te-7', L.m, under, L.narrow ? L.vw - 2 * L.m : 0.6 * L.vw);
+    const cols = L.narrow ? 3 : 6, rows = 6 / cols, tg = L.narrow ? 10 : 16;
+    const thy = under + lines['te-7'].el.offsetHeight + (L.narrow ? 24 : 40);
+    const thAvail = (L.narrow ? L.vh - L.m - 40 : 0.9 * L.vh) - thy - 24;
+    const thw = Math.min((L.vw - 2 * L.m - (cols - 1) * tg) / cols, ((thAvail - (rows - 1) * tg) / rows) * (480 / 968));
+    const thh = thw * (968 / 480);
+    L.themes = themes.map((el, i) => ({ x: L.m + (i % cols) * (thw + tg), y: thy + Math.floor(i / cols) * (thh + tg), w: thw, h: thh }));
+    themes.forEach((el, i) => putR(el, L.themes[i]));
+    L.shelf = { x: L.m, y: thy + rows * thh + (rows - 1) * tg + 14, w: cols * thw + (cols - 1) * tg, h: L.lineT };
 
     place('gi-1', L.m, under);
     setImg('gi-panel', L.panelX, L.panelY, L.panelW);
@@ -217,6 +248,12 @@
     L.dk = { office: fitC(1440 / 904, 1e9), chat: fitC(760 / 700, 1e9), phone: fitC(390 / 664, 664 * 1.3) };
     const put = (el, r) => { el.style.left = r.x + 'px'; el.style.top = r.y + 'px'; el.style.width = r.w + 'px'; el.style.height = r.h + 'px'; };
     put(dks.office, L.dk.office); put(dks.chat, L.dk.chat);
+    // 큐브 사무실 그림: 첫 문장 아래 칸(좁으면 가운데)
+    const cy0 = under + lines['de-1'].el.offsetHeight + (L.narrow ? 24 : 32) + L.fp;
+    const cah = (L.narrow ? L.vh - L.m - 28 : 0.9 * L.vh) - cy0 - L.fp;
+    const cw = Math.min(L.vw - 2 * L.m - 2 * L.fp, cah * (1200 / 1050));
+    L.dk.cubes = { x: L.narrow ? (L.vw - cw) / 2 : L.m + L.fp, y: cy0, w: cw, h: cw * (1050 / 1200) };
+    put(dks.cubes, L.dk.cubes);
     put(dks['phone-office'], L.dk.phone); put(dks['phone-chat'], L.dk.phone);
 
     placeList('end-list', L.m, sub);
@@ -233,6 +270,7 @@
     const fw = Math.min(w, h * ar);
     el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = fw + 'px'; el.style.height = fw / ar + 'px';
   }
+  function putR(el, r) { el.style.left = r.x + 'px'; el.style.top = r.y + 'px'; el.style.width = r.w + 'px'; el.style.height = r.h + 'px'; }
   function setImg(k, x, y, w) {
     const el = imgs[k]; el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = w + 'px';
   }
@@ -456,9 +494,11 @@
     });
   }
 
-  // 템포루틴 12.1비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
-  // 본문: 제목 → 계절 띠(1.9~6, 띠 위로 그 계절 사진) → 만든 방법과 폰 세 대(6.6~) → 링크(8.8) → 밑줄이 화면을 덮고 「짐살라빔」(9.8)
+  // 템포루틴 15.7비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
+  // 본문: 제목 → 계절 띠(1.9~6, 띠 위로 그 계절 사진) → 띠가 세로 필름 테두리, 출시 티저(6.35~8.2)
+  // → 띠가 선반, 그 위로 테마 여섯 장(8.15~9.9) → 만든 방법과 폰 세 대(10.2~) → 링크(12.4) → 밑줄이 화면을 덮고 「짐살라빔」(13.4)
   const TEMPO_OFF = 1.3;
+  const TS = 3.6;
   scene('tempo', (bRaw, A) => {
     const b = bRaw - TEMPO_OFF;
     if (A && bRaw < TEMPO_OFF + 1.5) chapterIcon(bRaw, 'tempo', 0.6, TEMPO_OFF + 0.75);
@@ -471,14 +511,32 @@
     words('te-3', b, 3.05, 3.6);
     words('te-4', b, 4.05, 4.6);
     words('te-5', b, 5.05, 5.95);
-    listIn('te-list', b, 6.9, 8.0);
+    words('te-6', b, 6.8, 7.95);
+    words('te-7', b, 8.6, 9.5);
+    listIn('te-list', b, 6.9 + TS, 8.0 + TS);
     const p1in = ease.outExpo(prog(b, 2.3, 3.0)), p1out = ease.inCubic(prog(b, 4.0, 4.5));
     img('te-ph1', 0, (1 - p1in) * L.vh + p1out * L.vh);
-    const p2in = ease.outExpo(prog(b, 4.4, 5.1)), p2out = ease.inCubic(prog(b, 6.0, 6.6));
+    const p2in = ease.outExpo(prog(b, 4.4, 5.1)), p2out = ease.inCubic(prog(b, 5.9, 6.4));
     img('te-ph2', 0, (1 - p2in) * L.vh + p2out * L.vh);
     // 계절 사진: 겨울은 띠에서 위로 자라고, 커서가 다음 칸으로 갈 때마다 다음 계절이 왼쪽부터 덮는다. 6.0에 띠 안으로 접힌다
     wipeSet(seasons, b, [[1.9, 2.6, 'up'], [3.0, 3.7, 'right'], [4.0, 4.7, 'right'], [5.0, 5.7, 'right']], ease.inOutCubic(prog(b, 5.9, 6.4)));
-    renderFan(tphones, b, 6.7, 9.3, 9.75);
+    // 티저: 필름 테두리 안에서 아래부터 드러나고, 보일 때만 처음부터 재생한다
+    screenIn(tfilm, b, 6.75, 7.3, 7.9, 8.2);
+    const on = tfilm.style.opacity === '1';
+    if (on && !filmOn) { tfilm.currentTime = 0; tfilm.play().catch((e) => console.warn('teaser play', e)); }
+    if (!on && filmOn) tfilm.pause();
+    filmOn = on;
+    // 테마: 선반 위로 한 장씩 솟고, 9.5부터 선반 안으로 가라앉는다
+    themes.forEach((el, i) => {
+      const r = L.themes[i];
+      const u = ease.outExpo(prog(b, 8.4 + i * 0.08, 9.0 + i * 0.08));
+      const o = ease.inCubic(prog(b, 9.5 + i * 0.04, 9.9 + i * 0.04));
+      const d = Math.max(1 - u, o);
+      el.style.opacity = d < 1 ? '1' : '0';
+      el.style.transform = `translateY(${(d * r.h).toFixed(2)}px)`;
+      el.style.clipPath = `inset(0 0 ${(d * 100).toFixed(2)}% 0)`;
+    });
+    renderFan(tphones, b, 6.7 + TS, 9.3 + TS, 9.75 + TS);
     if (!A) { words('te-links', b, NEVER); return; }
     glyphsIn('tempo', b, -10, 0.9);
     const stripW = L.vw - 2 * L.m;
@@ -489,20 +547,27 @@
     const k = kf(b, [[2, 0], [3, 1, ease.outExpo], [4, 2, ease.outExpo], [5, 3, ease.outExpo]]);
     const tv = ease.outExpo(prog(b, 1.95, 2.3)) * (1 - ease.inCubic(prog(b, 5.9, 6.2)));
     tick.style.transform = `translateX(${stripW * (k + 0.5) / 4}px) scaleY(${tv.toFixed(3)})`;
-    if (b < 8.3) {
-      glyphsIn('made2', b, 6.6, 8.0);
+    const stripR = { x: L.m, y: L.stripY, w: stripW, h: L.stripH };
+    if (b < 6.35) {
       const toStrip = ease.inOutCubic(prog(b, 1.0, 1.9));
-      const back = ease.inOutCubic(prog(b, 6.0, 6.8));
-      const y = M.lerp(M.lerp(L.topY, L.stripY, toStrip), L.topY, back);
-      const w = M.lerp(M.lerp(bw('tempo'), stripW, toStrip), bw('made2'), back);
-      const h = M.lerp(M.lerp(L.H, L.stripH, toStrip), L.H, back);
-      setBar(L.m, y, w, h);
+      setBarR(lerpR(plateR('tempo', L.topY), stripR, toStrip));
+      words('te-links', b, NEVER);
+    } else if (b < 9.6) {
+      // 계절 띠 → 필름 테두리 → 테마 선반
+      const R = [stripR, L.filmF, L.shelf];
+      const f = kf(b, [[6.35, 0], [6.95, 1, ease.inOutCubic], [8.15, 1], [8.6, 2, ease.inOutCubic]]);
+      const i = Math.floor(f);
+      setBarR(lerpR(R[i], R[Math.min(2, i + 1)], f - i));
+      words('te-links', b, NEVER);
+    } else if (b < 8.3 + TS) {
+      glyphsIn('made2', b, 6.6 + TS, 8.0 + TS);
+      setBarR(lerpR(L.shelf, plateR('made2', L.topY), ease.inOutCubic(prog(b, 6.0 + TS, 6.8 + TS))));
       words('te-links', b, NEVER);
     } else {
       const u = underline('te-links');
-      words('te-links', b, 8.8, 9.7);
-      if (b < 9.8) setBarR(lerpR(plateR('made2', L.topY), u, ease.inOutCubic(prog(b, 8.3, 8.8))));
-      else floodTo(b, u, 'gim', 9.8);
+      words('te-links', b, 8.8 + TS, 9.7 + TS);
+      if (b < 9.8 + TS) setBarR(lerpR(plateR('made2', L.topY), u, ease.inOutCubic(prog(b, 8.3 + TS, 8.8 + TS))));
+      else floodTo(b, u, 'gim', 9.8 + TS);
     }
   }
 
@@ -565,6 +630,7 @@
   }
 
   // 빛뜰 데스크 11.7비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
+  // 이름표 글자가 빠지면(0~0.7) 이름표가 큐브 사무실 그림의 액자가 되고(0.55~0.95) 첫 문장이 뜬다(0.75). 1.7~2.05 PC 화면 테두리로
   // 본문: 선언(0.1) → 선언이 빠진 뒤 이름표가 PC 화면 테두리가 되고 사무실이 드러난다(1.4~2.6)
   // → 테두리가 대화 창 크기로(3.6) → 폰 몸체로 줄어든다(5.2) → 폰 사무실, 폰 대화 창과 승인 요청
   // 7.95~8.45 폰 몸체가 링크 밑줄 / 9.4 밑줄이 화면을 덮고 「AI와 일하는 방식」
@@ -581,29 +647,32 @@
   }
   scene('desk', (bRaw, A) => {
     const b = bRaw - DESK_OFF;
-    if (A && bRaw < DESK_OFF + 1.5) chapterIcon(bRaw, 'desk', 0.6, DESK_OFF + 0.75);
+    if (A && bRaw < DESK_OFF + 1.5) chapterIcon(bRaw, 'desk', 0.6, DESK_OFF);
     deskBody(b, A);
     if (A && bRaw < DESK_OFF) chapterBar(bRaw, 'desk', 0.6);
   });
   function deskBody(b, A) {
-    words('de-1', b, 0.1, 1.0);
+    words('de-1', b, 0.75, 1.6);
     words('de-2', b, 2.0, 3.4);
     words('de-3', b, 4.0, 5.0);
     words('de-4', b, 5.6, 6.3);
     words('de-5', b, 6.9, 7.6);
+    screenIn(dks.cubes, b, 0.85, 1.3, 1.5, 1.75);
     screenIn(dks.office, b, 2.0, 2.6, 3.3, 3.6);
     screenIn(dks.chat, b, 3.95, 4.55, 4.85, 5.2);
     screenIn(dks['phone-office'], b, 5.6, 6.2, 7.1, 7.11);
     screenIn(dks['phone-chat'], b, 6.5, 7.1, 7.6, 7.95, 'right');
     if (!A) { words('de-links', b, NEVER); return; }
-    glyphsIn('desk', b, -10, 0.9);
+    glyphsIn('desk', b, -10, 0.0);
     const phoneF = frameR(L.dk.phone, L.fp * 1.4, 2.2);
     if (b < 7.95) {
       const R = [frameR(L.dk.office, L.fp), frameR(L.dk.chat, L.fp), phoneF];
       const f = kf(b, [[3.6, 0], [3.95, 1, ease.inOutCubic], [5.2, 1], [5.6, 2, ease.inOutCubic]]);
       const i = Math.floor(f);
       const dev = lerpR(R[i], R[Math.min(2, i + 1)], f - i);
-      setBarR(lerpR(plateR('desk', L.topY), dev, ease.inOutCubic(prog(b, 1.4, 2.0))));
+      const cubesF = frameR(L.dk.cubes, L.fp);
+      if (b < 1.7) setBarR(lerpR(plateR('desk', L.topY), cubesF, ease.inOutCubic(prog(b, 0.55, 0.95))));
+      else setBarR(lerpR(cubesF, dev, ease.inOutCubic(prog(b, 1.7, 2.05))));
       words('de-links', b, NEVER);
     } else {
       const u = underline('de-links');
@@ -680,6 +749,6 @@
     requestAnimationFrame(frame);
   }
   // 투명한 채로 기다리던 사진이 첫 등장 프레임에 비어 보이지 않게 미리 디코드한다
-  [...phones, ...tphones, ...seasons, ...Object.values(crops), ...Object.values(dks), ...Object.values(cups), ...Object.values(chars)].forEach((el) => el.decode().catch((e) => console.warn('decode', el.src, e)));
+  [...phones, ...tphones, ...seasons, ...themes, ...Object.values(crops), ...Object.values(dks), ...Object.values(cups), ...Object.values(chars)].forEach((el) => el.decode().catch((e) => console.warn('decode', el.src, e)));
   document.fonts.ready.then(() => { layout(); requestAnimationFrame(frame); });
 })();
