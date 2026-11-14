@@ -88,11 +88,12 @@
     L.vw = window.innerWidth; L.vh = window.innerHeight;
     L.narrow = L.vw < 720;
     L.m = clamp(0.05 * L.vw, 20, 96);
-    L.D = clamp(0.09 * L.vw, 40, 144);
+    L.D = clamp(Math.min(0.09 * L.vw, 0.145 * L.vh), 40, 144);
     L.H = L.D * 1.18;
     L.pad = L.D * 0.32;
     L.S = clamp(0.038 * L.vw, 22, 48);
     L.topY = Math.max(L.m, 32) + 40;
+    L.safeB = L.vh - L.m - 40;
     L.centerY = L.vh / 2 - L.H / 2;
     L.phoneW = L.narrow ? 0.46 * L.vw : Math.min(0.3 * L.vw, 360, 0.78 * L.vh / (1950 / 900));
     L.phoneH = L.phoneW * (1950 / 900);
@@ -132,8 +133,8 @@
     L.cntY = L.narrow ? under : 0.34 * L.vh;
     place('su-3', L.m, L.cntY + L.H + 24, colW);
     // 밤: 띠가 하늘이 되고, 작아진 컵 양옆에 로슈와 카인
-    L.bandH = (L.narrow ? 0.42 : 0.46) * L.vh;
     place('su-4', L.m, under, L.narrow ? L.vw - 2 * L.m : 0.6 * L.vw);
+    L.bandH = Math.max((L.narrow ? 0.42 : 0.46) * L.vh, under + lines['su-4'].el.offsetHeight + 0.04 * L.vh);
     L.cupHn = (L.narrow ? 0.26 : 0.42) * L.vh;
     L.cupWn = L.cupHn * (720 / 1292);
     L.floor = 0.93 * L.vh;
@@ -160,6 +161,11 @@
     const col2 = L.narrow ? L.vw - 2 * L.m : 0.42 * L.vw;
     place('su-5', L.m, under, col2);
     placeList('su-list', L.m, under + lines['su-5'].el.offsetHeight + 28, col2);
+    // 좁은 화면: 폰은 목록 아래에서 시작한다(넘치면 화면 아래로 잘린다)
+    if (L.narrow) {
+      const dy = Math.max(0, under + lines['su-5'].el.offsetHeight + 28 + lists['su-list'].el.offsetHeight + 16 - py);
+      L.phones.forEach((p) => { p.y += dy; });
+    }
     place('su-links', L.m, under);
 
     place('te-1', L.m, under);
@@ -178,7 +184,7 @@
     const ffp = L.narrow ? 6 : 10;
     const fx0 = L.narrow ? L.m : L.m + fcw + 64;
     const fy0 = (L.narrow ? under + lines['te-6'].el.offsetHeight + 24 : L.topY) + ffp;
-    const fah = Math.min((L.narrow ? L.vh - L.m - 28 : 0.9 * L.vh) - fy0 - ffp, 960);
+    const fah = Math.min((L.narrow ? L.vh - L.m - 28 : Math.min(0.9 * L.vh, L.vh - L.m - 24)) - fy0 - ffp, 960);
     const faw = L.vw - L.m - fx0 - 2 * ffp;
     const ffw = Math.min(faw, fah * 9 / 16), ffh = ffw * 16 / 9;
     L.film = { x: fx0 + ffp + (faw - ffw) / 2, y: fy0 + (fah - ffh) / 2, w: ffw, h: ffh };
@@ -188,7 +194,7 @@
     place('te-7', L.m, under, L.narrow ? L.vw - 2 * L.m : 0.6 * L.vw);
     const cols = L.narrow ? 3 : 6, rows = 6 / cols, tg = L.narrow ? 10 : 16;
     const thy = under + lines['te-7'].el.offsetHeight + (L.narrow ? 24 : 40);
-    const thAvail = (L.narrow ? L.vh - L.m - 40 : 0.9 * L.vh) - thy - 24;
+    const thAvail = (L.narrow ? L.vh - L.m - 40 : Math.min(0.9 * L.vh, L.vh - L.m - 24)) - thy - 24;
     const thw = Math.min((L.vw - 2 * L.m - (cols - 1) * tg) / cols, ((thAvail - (rows - 1) * tg) / rows) * (480 / 968));
     const thh = thw * (968 / 480);
     L.themes = themes.map((el, i) => ({ x: L.m + (i % cols) * (thw + tg), y: thy + Math.floor(i / cols) * (thh + tg), w: thw, h: thh }));
@@ -204,30 +210,37 @@
     L.smH = L.gcW * (250 / 1110);
     L.smY = L.narrow ? 0.5 * L.vh : L.topY;
     L.slotY = L.smY + L.smH + 20;
-    L.slotH = (L.narrow ? L.vh - L.m - 24 : 0.88 * L.vh) - L.slotY;
+    L.slotH = (L.narrow ? L.vh - L.m - 24 : Math.min(0.88 * L.vh, L.vh - L.m - 24)) - L.slotY;
     [crops.sm, crops.smlit].forEach((el) => { el.style.left = L.gcX + 'px'; el.style.top = L.smY + 'px'; el.style.width = L.gcW + 'px'; el.style.height = L.smH + 'px'; });
     fitSlot(crops.skel, 940 / 550, L.gcX, L.slotY, L.gcW, L.slotH);
     fitSlot(crops.arch, 1600 / 347, L.gcX, L.slotY, L.gcW, L.slotH);
     fitSlot(crops.table, 656 / 548, L.gcX, L.slotY, L.gcW, L.slotH);
     const gw = L.narrow ? L.vw - 2 * L.m : L.gcX - L.m - 48;
     ['gi-2', 'gi-3', 'gi-4', 'gi-5', 'gi-links'].forEach((k) => place(k, L.m, gy, gw));
+    if (!L.narrow) ['gi-2', 'gi-3', 'gi-4', 'gi-5'].forEach((k) => place(k, L.m, Math.min(gy, L.safeB - lines[k].el.offsetHeight)));
     L.angleCx = L.narrow ? L.vw * 0.5 : L.m + 0.2 * L.vw;
-    L.angleCy = L.narrow ? L.vh * 0.36 : L.vh * 0.46;
-    L.angleW = L.narrow ? 0.5 * L.vw : 0.3 * L.vw;
+    // 좁은 화면: 각도선은 글 아래, 상태 기계 위 빈칸에 들어가도록 길이와 중심을 맞춘다
+    const gtb = gy + Math.max(...['gi-2', 'gi-3', 'gi-4', 'gi-5'].map((k) => lines[k].el.offsetHeight));
+    L.angleW = L.narrow ? Math.min(0.5 * L.vw, L.smY - gtb - 24) : 0.3 * L.vw;
+    L.angleCy = L.narrow ? Math.min(Math.max(L.vh * 0.36, gtb + 12 + L.angleW / 2), L.smY - 12 - L.angleW / 2) : L.vh * 0.46;
     L.angleH = L.H * 0.42;
 
-    col.style.top = under + 'px';
     col.style.width = (L.narrow ? L.vw - 2 * L.m : 0.5 * L.vw) + 'px';
+    const colY = Math.max(L.topY, Math.min(under, L.safeB - col.offsetHeight));
+    col.style.top = colY + 'px';
     // 방식: 띠가 지금 읽는 문장 왼쪽 표시줄이 된다. 오른쪽(좁으면 아래) 칸에 COPY.md 표와 검수 스틸
     L.meR = ['me-1', 'me-2', 'me-3', 'me-4', 'me-5'].map((k) => {
       const el = lines[k].el;
-      return { x: Math.max(6, L.m - 18), y: under + el.offsetTop, w: 5, h: el.offsetHeight };
+      return { x: Math.max(6, L.m - 18), y: colY + el.offsetTop, w: 5, h: el.offsetHeight };
     });
     const msX = L.narrow ? L.m : L.m + 0.5 * L.vw + 48;
     const msW = L.vw - L.m - msX;
-    const msY = L.narrow ? Math.max(0.64 * L.vh, under + col.offsetHeight + 16) : under;
-    const msH = (L.narrow ? L.vh - L.m - 24 : 0.86 * L.vh) - msY;
-    doc.style.left = msX + 'px'; doc.style.top = msY + 'px'; doc.style.width = msW + 'px';
+    doc.style.width = msW + 'px';
+    // 좁은 화면: 스틸 묶음은 글 기둥 아래, 표는 앞 두 문장과만 함께 보이므로 라벨 위까지 올려도 된다
+    const msY = L.narrow ? Math.max(0.64 * L.vh, colY + col.offsetHeight + 16) : under;
+    const docY = L.narrow ? Math.min(msY, L.safeB - doc.offsetHeight) : under;
+    const msH = (L.narrow ? L.vh - L.m - 24 : Math.min(0.86 * L.vh, L.vh - L.m - 24)) - msY;
+    doc.style.left = msX + 'px'; doc.style.top = docY + 'px';
     fitSlot(crops.stills, 1200 / 565, msX, msY, msW, msH);
 
     // 빛뜰 데스크: 왼쪽(좁으면 위) 글, 오른쪽(좁으면 아래) 기기 칸. 띠가 PC 화면 → 대화 창 → 폰 몸체 테두리가 된다
@@ -241,7 +254,7 @@
     const ax0 = L.narrow ? L.m : L.m + dw + 64;
     const ay0 = (L.narrow ? under + dth + 24 : L.topY) + 4 * L.fp;
     const aw = L.vw - L.m - ax0 - 2 * L.fp;
-    const ah = (L.narrow ? L.vh - L.m - 28 : 0.9 * L.vh) - ay0 - 4 * L.fp;
+    const ah = (L.narrow ? L.vh - L.m - 28 : Math.min(0.9 * L.vh, L.vh - L.m - 24)) - ay0 - 4 * L.fp;
     const fitC = (ar, maxH) => {
       const h = Math.min(ah, maxH), w = Math.min(aw, h * ar), hh = w / ar;
       return { x: ax0 + L.fp + (aw - w) / 2, y: ay0 + (ah - hh) / 2, w, h: hh };
@@ -251,7 +264,7 @@
     put(dks.office, L.dk.office); put(dks.chat, L.dk.chat);
     // 큐브 사무실 그림: 첫 문장 아래 칸(좁으면 가운데)
     const cy0 = under + lines['de-1'].el.offsetHeight + (L.narrow ? 24 : 32) + L.fp;
-    const cah = (L.narrow ? L.vh - L.m - 28 : 0.9 * L.vh) - cy0 - L.fp;
+    const cah = (L.narrow ? L.vh - L.m - 28 : Math.min(0.9 * L.vh, L.vh - L.m - 24)) - cy0 - L.fp;
     const cw = Math.min(L.vw - 2 * L.m - 2 * L.fp, cah * (1200 / 1050));
     L.dk.cubes = { x: L.narrow ? (L.vw - cw) / 2 : L.m + L.fp, y: cy0, w: cw, h: cw * (1050 / 1200) };
     put(dks.cubes, L.dk.cubes);
