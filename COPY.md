@@ -31,8 +31,7 @@
 | 4 | 2,057종 (띠 안 카운터) / 카페 브랜드 16곳 메뉴를 검색해 한 번에 기록한다. 판매는 한국부터 시작했고, 영어·중국어와 미국·대만 카탈로그까지 갖춰 뒀다. | SC-README(16곳·2,057종, "앱은 한국어·영어·중국어(번체)를 지원한다. 판매는 한국부터 시작했고, 미국·대만 카탈로그는 구현해 두었다"), pf(검색해 한 번에 기록) |
 | 5 | 밤이 되면 남은 음료를 로슈와 카인에게 먹인다. | pf |
 | 6 | 기획, 데이터 수집, 캐릭터 원화, 개발, 출시를 혼자 했다. | pf 마지막 문장 그대로. 11-14 "서버도 계정도 없다"를 대표님 지시로 교체(슈가캡엔 약한 장점) |
-| 7 | 만든 방법: Swift·SwiftUI·SwiftData로 만든 iOS 앱(11-14 "기획부터 출시까지 혼자"는 6번과 겹쳐 뺌) / 메뉴 데이터는 Python 파서로만 만들고 손으로 고치지 않는다 / CI가 빌드·UI 테스트·스토어 스크린샷까지 / 캐릭터 원화는 직접 | SC-README "만든 방법"·"데이터" |
-| 7 | AI와 같이 쓴 코드는 ruff·mypy·pytest를 지나야 들어온다. | SC-README 표(ruff, mypy, pytest). "AI와 같이" 부분은 신규, 확인 필요 |
+| 7 | 만든 방법 도표(11-14 글 목록을 도표로 교체): 카페 공식 홈페이지(브랜드 16곳) → Python 수집기(ruff · mypy · pytest) → catalog.json(손으로 고치지 않는다) → iOS 앱(Swift · SwiftUI · 직접 그린 원화) → GitHub Actions(빌드 · UI 테스트 · 스토어 스크린샷) → App Store(한국부터 판매) | SC-README "데이터"(브랜드 공식 홈페이지 값을 `tools/scrape/` 파이프라인으로 수집, `data/catalog.json`은 손으로 고치지 않음), "만든 방법" 표(Python 3.13·ruff·mypy·pytest / Swift·SwiftUI·SwiftData / GitHub Actions macOS 러너 빌드·UI 테스트·스토어 스크린샷 / 직접 그린 원화), 판매는 한국부터 |
 | 8 | App Store · GitHub · sugarcap.vercel.app | `apps.apple.com/kr/app/id6814832068` · `github.com/Yewon419/sugarcap` · `sugarcap.vercel.app` |
 
 ## 2. 템포루틴
@@ -49,7 +48,7 @@
 | 보조 | 개념 영상: `ad-teaser/final/temporoutine-teaser-4k.mp4`를 540x960·무음으로 줄임, 장 앞쪽(제목 다음) | 같은 폴더 |
 | 6.2 | 체크인할 때마다 씨앗이 모이고, 그 씨앗으로 테마를 연다. | TR-README "체크인으로 모으는 씨앗으로 잠금 해제하는 테마". 테마 수는 코드와 촬영본이 달라 쓰지 않음 |
 | 보조 | 테마 화면 6장(Standard·Plain·Modern·Letterpress·Ticket·Weather의 오늘 화면) | Kayla 릴스 000 에셋 `컷/apps_shots/temporoutine/ThemeShot*Today.jpg` (11-14 대표님 허가) |
-| 7 | 만든 방법: Windows에서 개발, 빌드는 GitHub Actions macOS 러너에서 TestFlight로 / 예측 엔진은 순수 Foundation 패키지(TempoCore)에 테스트와 함께 / 베타 피드백을 꾸준히 받아 고치며 만들었다 | TR-README 개발 방식·구조, 템포루틴 리포 커밋 제목의 「베타 N건」 기록(1.0 출시 전후 계속). 11-14 대표님 지시로 횟수 대신 꾸준함으로 |
+| 7 | 만든 방법 도표(11-14 글 목록을 도표로 교체): Windows(여기서 개발하고 push) → 예측 엔진 테스트(GitHub Actions · Linux) → 앱 빌드(GitHub Actions · macOS) → TestFlight(실기기 베타) → App Store(출시), TestFlight에서 Windows로 되돌아가는 화살표 「베타 피드백을 꾸준히 반영」 | TR-README 개발 방식(Windows 개발, 로컬 Swift 컴파일 없음, CI 3잡: TempoCore 테스트는 Linux 공식 Swift 컨테이너, 앱 빌드는 macOS 러너, TestFlight 업로드, 런타임 동작은 TestFlight 실기기에서 최종 확인), 구조(TempoCore = 예측 엔진, 순수 Foundation 패키지), TR-README 개발 방식·구조, 템포루틴 리포 커밋 제목의 「베타 N건」 기록(1.0 출시 전후 계속). 11-14 대표님 지시로 횟수 대신 꾸준함으로 |
 | 8 | App Store · GitHub | `apps.apple.com/kr/app/id6791803620` · `github.com/Yewon419/TempoRoutine` |
 
 ## 3. 짐살라빔
@@ -84,10 +83,11 @@
 | 비트 | 문장 | 출처 |
 |---|---|---|
 | 1 | AI와 일하는 방식 | |
-| 2 | 스펙 문서 하나가 단일 출처다. AI도 나도 거기서 출발한다. | SC-README("SPEC.md 제품 스펙 (SSOT)"), TR-README("설계 SSOT는 MASTER.md"). 신규 문장 |
-| 3 | AI가 쓴 코드는 린터·타입 체크·테스트 게이트를 지나야 들어온다. | SC-README 표. 신규 문장 |
-| 4 | 화면은 스크린샷으로 확인한다. CI가 찍고, 내가 본다. | SC store-screenshots 워크플로. 신규 문장 |
-| 5 | 반복되는 불편은 참기보다 환경부터 고친다. | q2(11-14 개정본) 마지막 문장. 이전 문장은 주식 Q2 폐기로 교체 |
+| 2~5 | 다섯 단계 도표(11-14 문장 다섯 줄을 도표로 교체, 띠가 지금 단계 상자를 칠함): 스펙 문서(단일 출처. AI도 나도 여기서) → 구현(AI가 코드를 쓴다) → 게이트(린터 · 타입 체크 · 테스트) → 스크린샷 검수(CI가 찍고, 내가 본다) → 환경 고치기(반복되는 불편은 참지 않는다), 마지막 상자에서 첫 상자로 「다음 작업으로」 | 아래 원문 문장들을 상자로 줄임. 「다음 작업으로」 되돌이 화살표는 신규, 확인 필요 |
+| (원문) | 스펙 문서 하나가 단일 출처다. AI도 나도 거기서 출발한다. | SC-README("SPEC.md 제품 스펙 (SSOT)"), TR-README("설계 SSOT는 MASTER.md"). 신규 문장 |
+| (원문) | AI가 쓴 코드는 린터·타입 체크·테스트 게이트를 지나야 들어온다. | SC-README 표. 신규 문장 |
+| (원문) | 화면은 스크린샷으로 확인한다. CI가 찍고, 내가 본다. | SC store-screenshots 워크플로. 신규 문장 |
+| (원문) | 반복되는 불편은 참기보다 환경부터 고친다. | q2(11-14 개정본) 마지막 문장. 이전 문장은 주식 Q2 폐기로 교체 |
 | 5 | 이 페이지도 같은 방식으로 만들었다. | 리포 링크(생성 후) |
 | 보조 | COPY.md 표 카드: "COPY.md: 이 페이지의 모든 문장과 출처" + 이 파일의 네 줄(문장·출처, 출처 약어는 풀어 씀) | 이 파일 |
 | 보조 | 검수 스틸 이미지: 슈가캡 컵 수위 장면 비트별 스틸(`tools/stills.mjs` 결과) | 이 리포 |

@@ -59,13 +59,23 @@
   $$('.list').forEach((el) => { lists[el.dataset.k] = { el, items: $$('li', el) }; });
   const imgs = {};
   $$('.ph, .panel').forEach((el) => { imgs[el.dataset.k] = el; });
-  const col = $('[data-k="me-col"]');
+  // 도표: 상자(.nd) 사이 화살표와 되돌이 화살표(data-back="from>to")는 SVG로 그린다
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const flows = {};
+  $$('.flow').forEach((el) => {
+    const svg = document.createElementNS(SVGNS, 'svg'); svg.setAttribute('class', 'fl-ar'); svg.setAttribute('aria-hidden', 'true');
+    el.prepend(svg);
+    const path = (cls) => { const p = document.createElementNS(SVGNS, 'path'); p.setAttribute('class', cls); if (cls === 'ar') p.setAttribute('pathLength', '1'); svg.appendChild(p); return p; };
+    const nodes = $$('.nd', el);
+    const arrows = nodes.slice(1).map(() => ({ line: path('ar'), head: path('hd') }));
+    const bk = el.dataset.back ? el.dataset.back.split('>').map(Number) : null;
+    const back = bk ? { from: bk[0], to: bk[1], line: path('ar'), head: path('hd'), label: $('.fl-bk', el) } : null;
+    flows[el.dataset.k] = { el, svg, nodes, arrows, back, R: [], x: 0, y: 0, w: 0, h: 0 };
+  });
+  over.appendChild(flows['me-flow'].el);
   const chi = {}; $$('.chi').forEach((el) => { chi[el.dataset.i] = el; });
   const cups = {}; $$('.cup').forEach((el) => { cups[el.dataset.c] = el; });
   const chars = {}; $$('.ch').forEach((el) => { chars[el.dataset.ch] = el; });
-  const byP = (a, b) => a.dataset.p - b.dataset.p;
-  const phones = $$('.ph3[data-s="sugar"]').sort(byP);
-  const tphones = $$('.ph3[data-s="tempo"]').sort(byP);
   const seasons = $$('.sphoto').sort((a, b) => a.dataset.s - b.dataset.s);
   const crops = {}; $$('.crop').forEach((el) => { crops[el.dataset.g] = el; });
   const doc = $('.doc');
@@ -148,25 +158,12 @@
       roshu: { x: L.vw / 2 + L.cupWn / 2 + gap, y: L.floor - chH, w: rW, h: chH },
     };
     Object.entries(chars).forEach(([k, el]) => { el.style.width = L.chars[k].w + 'px'; el.style.height = L.chars[k].h + 'px'; });
-    // 만든 방법: 왼쪽 글, 오른쪽 폰 세 대
-    L.pw = L.narrow ? 0.3 * L.vw : Math.min(0.15 * L.vw, 0.62 * L.vh / (1950 / 900));
-    L.ph = L.pw * (1950 / 900);
-    const pcx = L.narrow ? L.vw / 2 : 0.7 * L.vw;
-    const py = L.narrow ? L.vh - L.ph - 0.05 * L.vh : (L.vh - L.ph) / 2 + 0.04 * L.vh;
-    L.phones = [
-      { x: pcx - 0.78 * L.pw - L.pw / 2, y: py + 0.04 * L.ph, r: -7 },
-      { x: pcx - L.pw / 2, y: py, r: 0 },
-      { x: pcx + 0.78 * L.pw - L.pw / 2, y: py + 0.04 * L.ph, r: 7 },
-    ];
-    [...phones, ...tphones].forEach((el) => { el.style.width = L.pw + 'px'; el.style.height = L.ph + 'px'; });
-    const col2 = L.narrow ? L.vw - 2 * L.m : 0.42 * L.vw;
-    place('su-5', L.m, under, col2);
-    placeList('su-list', L.m, under + lines['su-5'].el.offsetHeight + 28, col2);
-    // 좁은 화면: 폰은 목록 아래에서 시작한다(넘치면 화면 아래로 잘린다)
-    if (L.narrow) {
-      const dy = Math.max(0, under + lines['su-5'].el.offsetHeight + 28 + lists['su-list'].el.offsetHeight + 16 - py);
-      L.phones.forEach((p) => { p.y += dy; });
-    }
+    // 만든 방법: 한 줄 요약 아래 데이터에서 스토어까지 이어지는 도표(좁으면 세로)
+    place('su-5', L.m, under, L.vw - 2 * L.m);
+    const sf = flows['su-flow'];
+    const sfy = under + lines['su-5'].el.offsetHeight + (L.narrow ? 20 : 40);
+    layoutFlow(sf, L.m, L.vw - 2 * L.m, L.narrow);
+    moveFlow(sf, L.narrow ? sfy : Math.max(sfy, (sfy + L.safeB - sf.h) / 2 - 0.04 * L.vh));
     place('su-links', L.m, under);
 
     place('te-1', L.m, under);
@@ -176,7 +173,9 @@
     const tpy = L.narrow ? L.vh * 0.66 : L.vh * 0.42;
     setImg('te-ph1', L.phoneX, tpy, L.phoneW);
     setImg('te-ph2', L.phoneX, tpy, L.phoneW);
-    placeList('te-list', L.m, under, col2);
+    const tf = flows['te-flow'];
+    layoutFlow(tf, L.m, L.vw - 2 * L.m, L.narrow);
+    moveFlow(tf, L.narrow ? under : Math.max(under, (under + L.safeB - tf.h) / 2));
     seasons.forEach((el) => { el.style.width = L.vw + 'px'; el.style.height = L.stripY + 'px'; });
     place('te-links', L.m, under);
     // 티저: 왼쪽(좁으면 위) 글, 오른쪽(좁으면 아래) 9:16 필름. 띠가 필름 테두리가 된다
@@ -226,23 +225,18 @@
     L.angleCy = L.narrow ? Math.min(Math.max(L.vh * 0.36, gtb + 12 + L.angleW / 2), L.smY - 12 - L.angleW / 2) : L.vh * 0.46;
     L.angleH = L.H * 0.42;
 
-    col.style.width = (L.narrow ? L.vw - 2 * L.m : 0.5 * L.vw) + 'px';
-    const colY = Math.max(L.topY, Math.min(under, L.safeB - col.offsetHeight));
-    col.style.top = colY + 'px';
-    // 방식: 띠가 지금 읽는 문장 왼쪽 표시줄이 된다. 오른쪽(좁으면 아래) 칸에 COPY.md 표와 검수 스틸
-    L.meR = ['me-1', 'me-2', 'me-3', 'me-4', 'me-5'].map((k) => {
-      const el = lines[k].el;
-      return { x: Math.max(6, L.m - 18), y: colY + el.offsetTop, w: 5, h: el.offsetHeight };
-    });
-    const msX = L.narrow ? L.m : L.m + 0.5 * L.vw + 48;
-    const msW = L.vw - L.m - msX;
-    doc.style.width = msW + 'px';
-    // 좁은 화면: 스틸 묶음은 글 기둥 아래, 표는 앞 두 문장과만 함께 보이므로 라벨 위까지 올려도 된다
-    const msY = L.narrow ? Math.max(0.64 * L.vh, colY + col.offsetHeight + 16) : under;
-    const docY = L.narrow ? Math.min(msY, L.safeB - doc.offsetHeight) : under;
-    const msH = (L.narrow ? L.vh - L.m - 24 : Math.min(0.86 * L.vh, L.vh - L.m - 24)) - msY;
+    // 방식: 다섯 단계 도표(되돌이 화살표 포함). 띠가 지금 단계 상자를 칠한다. 아래 칸에 COPY.md 표 → 검수 스틸 → 마지막 문장
+    const mf = flows['me-flow'];
+    layoutFlow(mf, L.m, L.vw - 2 * L.m, L.narrow);
+    moveFlow(mf, under);
+    const msX = L.m, msW = L.narrow ? L.vw - 2 * L.m : Math.min(0.6 * L.vw, L.vw - 2 * L.m);
+    const msY = mf.y + mf.h + (L.narrow ? 16 : 40);
+    doc.style.width = (L.narrow ? msW : Math.min(msW, 640)) + 'px';
+    // 좁은 화면: 표는 앞 두 단계와만 함께 보이므로, 아직 안 뜬 아래 상자 자리까지 올려도 된다
+    const docY = L.narrow ? Math.min(msY, L.safeB - doc.offsetHeight) : msY;
     doc.style.left = msX + 'px'; doc.style.top = docY + 'px';
-    fitSlot(crops.stills, 1200 / 565, msX, msY, msW, msH);
+    fitSlot(crops.stills, 1200 / 565, msX, msY, msW, (L.narrow ? L.vh - L.m - 24 : L.safeB + 24) - msY);
+    place('me-5', L.m, msY, msW);
 
     // 빛뜰 데스크: 왼쪽(좁으면 위) 글, 오른쪽(좁으면 아래) 기기 칸. 띠가 PC 화면 → 대화 창 → 폰 몸체 테두리가 된다
     const dw = L.narrow ? L.vw - 2 * L.m : 0.36 * L.vw;
@@ -417,16 +411,70 @@
       el.style.transform = `translate(${r.x}px, ${r.y + (1 - u) * (L.vh - r.y + 20) + out * (L.vh - r.y + 20)}px)`;
     });
   }
-  // 폰 세 대 부채꼴: t0에 아래에서 솟고 [o0, o1]에 내려간다
-  function renderFan(set, b, t0, o0, o1) {
-    const out = ease.inCubic(prog(b, o0, o1));
-    set.forEach((el, i) => {
-      const p = L.phones[i];
-      const t = t0 + [0.12, 0, 0.24][i];
-      const u = ease.outExpo(prog(b, t, t + 0.7));
-      el.style.opacity = u > 0 && out < 1 ? '1' : '0';
-      el.style.transform = `translate(${p.x}px, ${p.y + (1 - u) * (L.vh - p.y + 40) + out * (L.vh - p.y + 40)}px) rotate(${p.r * u}deg)`;
+  // 도표 배치: 가로 한 줄(좁으면 세로 한 줄). 되돌이 화살표는 가로면 아래로, 세로면 오른쪽으로 돈다
+  function layoutFlow(f, x, w, vert) {
+    const n = f.nodes.length;
+    const g = vert ? 16 : clamp(0.024 * L.vw, 22, 44);
+    const bk = f.back ? (vert ? 34 : 44) : 0;
+    const nw = vert ? w - bk : (w - (n - 1) * g) / n;
+    f.nodes.forEach((el) => { el.style.width = nw + 'px'; el.style.height = 'auto'; });
+    const nh = Math.max(...f.nodes.map((el) => el.offsetHeight));
+    f.R = f.nodes.map((el, i) => (vert ? { x: 0, y: i * (nh + g), w: nw, h: nh } : { x: i * (nw + g), y: 0, w: nw, h: nh }));
+    f.nodes.forEach((el, i) => putR(el, f.R[i]));
+    const d = (pts) => 'M' + pts.map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L');
+    const HD = { r: [[-7, -4.5], [-7, 4.5]], d: [[-4.5, -7], [4.5, -7]], u: [[-4.5, 7], [4.5, 7]], l: [[7, -4.5], [7, 4.5]] };
+    const head = (p, dir) => { const [a, c] = HD[dir]; return d([[p[0] + a[0], p[1] + a[1]], p, [p[0] + c[0], p[1] + c[1]]]); };
+    f.arrows.forEach((a, i) => {
+      const r = f.R[i];
+      const pts = vert ? [[nw / 2, r.y + nh + 3], [nw / 2, r.y + nh + g - 3]] : [[r.x + nw + 3, nh / 2], [r.x + nw + g - 3, nh / 2]];
+      a.line.setAttribute('d', d(pts)); a.head.setAttribute('d', head(pts[1], vert ? 'd' : 'r'));
     });
+    f.w = w; f.h = vert ? n * nh + (n - 1) * g : nh + bk;
+    if (f.back) {
+      const a = f.R[f.back.from], c = f.R[f.back.to], lb = f.back.label;
+      let pts;
+      if (vert) {
+        const xr = nw + bk - 8;
+        pts = [[nw + 3, a.y + nh / 2], [xr, a.y + nh / 2], [xr, c.y + nh / 2], [nw + 3, c.y + nh / 2]];
+        lb.style.left = (xr - lb.offsetWidth / 2) + 'px';
+        lb.style.top = ((a.y + c.y + nh) / 2 - lb.offsetHeight / 2) + 'px';
+        lb.style.transform = 'rotate(90deg)';
+      } else {
+        const yb = nh + bk - 8;
+        pts = [[a.x + nw / 2, nh + 3], [a.x + nw / 2, yb], [c.x + nw / 2, yb], [c.x + nw / 2, nh + 3]];
+        lb.style.left = ((a.x + c.x + nw) / 2 - lb.offsetWidth / 2) + 'px';
+        lb.style.top = (yb - lb.offsetHeight / 2) + 'px';
+        lb.style.transform = 'none';
+      }
+      f.back.line.setAttribute('d', d(pts)); f.back.head.setAttribute('d', head(pts[3], vert ? 'l' : 'u'));
+    }
+    f.x = x;
+    f.el.style.left = x + 'px'; f.el.style.width = f.w + 'px'; f.el.style.height = f.h + 'px';
+    f.svg.setAttribute('width', f.w); f.svg.setAttribute('height', f.h);
+  }
+  function moveFlow(f, y) { f.y = y; f.el.style.top = y + 'px'; }
+  // 도표 등장: ts[i]에 상자 i가 솟고, 그 직전에 앞 상자에서 화살표가 그어진다. tb에 되돌이 화살표. tOut에 통째로 위로 빠진다
+  function flowIn(k, b, ts, tb, tOut) {
+    const f = flows[k];
+    const v = ease.inCubic(prog(b, tOut, tOut + 0.35));
+    f.el.style.opacity = (1 - v).toFixed(3);
+    f.el.style.transform = `translateY(${(-v * 40).toFixed(2)}px)`;
+    f.nodes.forEach((el, i) => {
+      const u = ease.outExpo(prog(b, ts[i], ts[i] + 0.45));
+      el.style.opacity = u.toFixed(3);
+      el.style.transform = `translateY(${((1 - u) * 16).toFixed(2)}px)`;
+    });
+    const draw = (a, t0, t1) => {
+      const u = ease.inOutCubic(prog(b, t0, t1));
+      a.line.style.strokeDashoffset = (1 - u).toFixed(4);
+      a.line.style.opacity = u > 0 ? '1' : '0';
+      a.head.style.opacity = u > 0.98 ? '1' : '0';
+    };
+    f.arrows.forEach((a, i) => draw(a, Math.max(ts[i] + 0.1, ts[i + 1] - 0.2), ts[i + 1] + 0.1));
+    if (f.back) {
+      draw(f.back, tb, tb + 0.4);
+      f.back.label.style.opacity = ease.outCubic(prog(b, tb + 0.25, tb + 0.5)).toFixed(3);
+    }
   }
 
   // 링크 줄 밑줄 사각형 (단어 실측)
@@ -467,11 +515,10 @@
     words('su-3', b, 6.7, 7.85, 0.03);
     words('su-4', b, 8.45, 9.85);
     words('su-5', b, 10.6, 11.85);
-    listIn('su-list', b, 11.0, 11.85);
+    flowIn('su-flow', b, [0, 1, 2, 3, 4, 5].map((i) => 10.75 + i * 0.12), 0, 11.85);
     words('su-links', b, 12.25, 13.0);
     renderCups(b);
     renderChars(b);
-    renderFan(phones, b, 10.5, 12.55, 12.95);
     if (!A) return;
     glyphsIn('sugar', b, -10, 2.0);
     chapterIcon(b, 'sugar', 0.6, 1.75);
@@ -526,7 +573,7 @@
     words('te-6', b, 1.9, 3.8, 0.03);
     ['te-2', 'te-3', 'te-4', 'te-5'].forEach((k, i) => words(k, b, TS0 + i * TC + 0.1, TS0 + i * TC + 1.0, 0.025));
     words('te-7', b, TE + 0.95, TE + 2.0, 0.03);
-    listIn('te-list', b, TM + 0.9, TM + 2.0);
+    flowIn('te-flow', b, [0, 1, 2, 3, 4].map((i) => TM + 0.85 + i * 0.13), TM + 1.5, TM + 2.0);
     const p1in = ease.outExpo(prog(b, TS0 + 0.4, TS0 + 1.1)), p1out = ease.inCubic(prog(b, TS0 + 2 * TC, TS0 + 2 * TC + 0.5));
     img('te-ph1', 0, (1 - p1in) * L.vh + p1out * L.vh);
     const p2in = ease.outExpo(prog(b, TS0 + 2 * TC + 0.4, TS0 + 2 * TC + 1.1)), p2out = ease.inCubic(prog(b, TE - 0.1, TE + 0.4));
@@ -549,7 +596,6 @@
       el.style.transform = `translateY(${(d * r.h).toFixed(2)}px)`;
       el.style.clipPath = `inset(0 0 ${(d * 100).toFixed(2)}% 0)`;
     });
-    renderFan(tphones, b, TM + 0.7, TM + 3.3, TM + 3.75);
     if (!A) { words('te-links', b, NEVER); return; }
     glyphsIn('tempo', b, -10, 0.75);
     const stripW = L.vw - 2 * L.m;
@@ -688,38 +734,48 @@
   }
 
   // 방식 7.5비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
-  // 본문: 이름표가 지금 읽는 문장 왼쪽 표시줄로 줄어들어 문장마다 내려간다. 오른쪽은 COPY.md 표 → 이 페이지 검수 스틸
-  // 5.6~6.1 표시줄이 가운데 이름표가 된다(엔드와 같은 자리)
+  // 본문: 이름표가 첫 상자(스펙 문서)를 칠하고, 단계마다 다음 상자로 옮겨 간다. 상자와 화살표는 띠가 닿기 직전에 생긴다
+  // 아래 칸: COPY.md 표(스펙, 구현) → 검수 스틸(스크린샷 검수) → 마지막 문장(환경 고치기, 되돌이 화살표)
+  // 5.6~6.1 띠가 가운데 이름표가 된다(엔드와 같은 자리)
   const METHOD_OFF = 1.3;
-  const meMark = (f) => { const i = Math.floor(f), j = Math.min(4, i + 1); return lerpR(L.meR[i], L.meR[j], f - i); };
+  const ME_T = [0.8, 1.75, 2.75, 3.75, 4.75];
+  const meNode = (i) => { const f = flows['me-flow'], r = f.R[i]; return { x: f.x + r.x, y: f.y + r.y, w: r.w, h: r.h }; };
+  const meMark = (f) => { const i = Math.floor(f), j = Math.min(4, i + 1); return lerpR(meNode(i), meNode(j), f - i); };
   scene('method', (bRaw, A) => {
     const b = bRaw - METHOD_OFF;
-    const ks = ['me-1', 'me-2', 'me-3', 'me-4', 'me-5'];
-    const cur = clamp(Math.floor(b - 0.6), 0, 4);
-    ks.forEach((k, i) => {
-      words(k, b, i + 0.75, 5.6);
-      const dim = i < cur ? ease.outCubic(prog(b, cur + 0.7, cur + 1.1)) : 0;
-      lines[k].el.style.color = dim > 0 ? `rgb(${Math.round(10 + 128 * dim)}, ${Math.round(10 + 128 * dim)}, ${Math.round(10 + 128 * dim)})` : '';
-    });
-    const out = ease.inCubic(prog(b, 5.5, 5.9));
+    const fl = flows['me-flow'];
+    flowIn('me-flow', b, ME_T, 4.9, 5.55);
+    words('me-5', b, 5.0, 5.6);
     const dIn = ease.outExpo(prog(b, 0.85, 1.5));
-    const sIn = ease.outExpo(prog(b, 2.9, 3.6));
     const dFold = ease.inCubic(prog(b, 2.55, 2.9));
     doc.style.opacity = dIn > 0 && dFold < 1 ? '1' : '0';
     doc.style.transform = `translateY(${(1 - dIn) * 24}px)`;
     doc.style.clipPath = `inset(0 0 ${(dFold * 100).toFixed(2)}% 0)`;
+    const sIn = ease.outExpo(prog(b, 3.6, 4.3));
+    const sFold = ease.inCubic(prog(b, 4.55, 4.9));
     const st = crops.stills;
-    st.style.opacity = sIn > 0 && out < 1 ? '1' : '0';
-    st.style.clipPath = `inset(${((1 - sIn) * 100).toFixed(2)}% 0 0 0)`;
-    st.style.transform = `translateY(${out * 40}px)`;
-    if (!A) return;
-    if (bRaw < METHOD_OFF) { glyphsIn('method', b, -10); chapterBar(bRaw, 'method', 0.6); return; }
+    st.style.opacity = sIn > 0 && sFold < 1 ? '1' : '0';
+    st.style.clipPath = `inset(${((1 - sIn) * 100).toFixed(2)}% 0 ${(sFold * 100).toFixed(2)}% 0)`;
+    const lit = (R) => fl.nodes.forEach((el, i) => {
+      const n = meNode(i);
+      const ox = Math.max(0, Math.min(R.x + R.w, n.x + n.w) - Math.max(R.x, n.x));
+      const oy = Math.max(0, Math.min(R.y + R.h, n.y + n.h) - Math.max(R.y, n.y));
+      el.classList.toggle('on', ox * oy > 0.5 * n.w * n.h);
+    });
+    if (!A || bRaw < METHOD_OFF) {
+      fl.nodes.forEach((el) => el.classList.remove('on'));
+      if (A) { glyphsIn('method', b, -10); chapterBar(bRaw, 'method', 0.6); }
+      return;
+    }
     glyphsIn('method', b, -10, 0.5);
     glyphsIn('name', b, 5.85);
     const f = kf(b, [[0.6, 0], [1.55, 0], [1.9, 1, ease.inOutCubic], [2.55, 1], [2.9, 2, ease.inOutCubic], [3.55, 2], [3.9, 3, ease.inOutCubic], [4.55, 3], [4.9, 4, ease.inOutCubic]]);
-    if (b < 1.0) setBarR(lerpR(plateR('method', L.topY), meMark(0), ease.inOutCubic(prog(b, 0.55, 1.0))));
-    else if (b < 5.6) setBarR(meMark(f));
-    else setBarR(lerpR(meMark(4), plateR('name', L.centerY), ease.inOutCubic(prog(b, 5.6, 6.1))));
+    let R;
+    if (b < 1.0) R = lerpR(plateR('method', L.topY), meNode(0), ease.inOutCubic(prog(b, 0.55, 1.0)));
+    else if (b < 5.6) R = meMark(f);
+    else R = lerpR(meMark(4), plateR('name', L.centerY), ease.inOutCubic(prog(b, 5.6, 6.1)));
+    setBarR(R);
+    lit(R);
   });
 
   scene('end', (b, A) => {
@@ -792,6 +848,6 @@
     requestAnimationFrame(frame);
   }
   // 투명한 채로 기다리던 사진이 첫 등장 프레임에 비어 보이지 않게 미리 디코드한다
-  [...phones, ...tphones, ...seasons, ...themes, ...Object.values(crops), ...Object.values(dks), ...Object.values(cups), ...Object.values(chars)].forEach((el) => el.decode().catch((e) => console.warn('decode', el.src, e)));
+  [...seasons, ...themes, ...Object.values(crops), ...Object.values(dks), ...Object.values(cups), ...Object.values(chars)].forEach((el) => el.decode().catch((e) => console.warn('decode', el.src, e)));
   document.fonts.ready.then(() => { layout(); placeSnaps(); document.documentElement.classList.add('snap'); requestAnimationFrame(frame); });
 })();

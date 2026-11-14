@@ -113,8 +113,25 @@ html.snap { scroll-snap-type: y mandatory; }
 .list li { margin: 0 0 0.55em; will-change: transform, opacity; }
 .links-list { font-weight: 600; }
 
-.col { position: absolute; left: var(--m); max-width: calc(100vw - 2 * var(--m)); }
-.col .ln { position: relative; left: 0; margin: 0 0 0.9em; max-width: none; }
+/* 도표: 상자와 화살표. 방식 도표는 #over 층에서 띠가 지금 단계의 상자를 칠한다 */
+.flow { position: absolute; left: 0; top: 0; }
+.nd { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; justify-content: center; gap: 0.3em;
+  padding: 0.85em 1em; border: 1.5px solid var(--ink); background: var(--bg);
+  font-size: clamp(15px, 1.35vw, 24px); line-height: 1.25; word-break: keep-all; opacity: 0; will-change: transform, opacity; }
+.nd b { font-weight: 700; letter-spacing: -0.01em; }
+.nd span { font-size: 0.74em; font-weight: 500; color: var(--gray); }
+#over .nd { background: transparent; }
+.nd.on { color: var(--bg); }
+.nd.on span { color: rgba(255, 255, 255, 0.72); }
+.fl-ar { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.fl-ar path { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+.fl-ar path.ar { stroke-dasharray: 1 1; }
+.fl-bk { position: absolute; left: 0; top: 0; padding: 0 0.6em; background: var(--bg); white-space: nowrap;
+  font-size: clamp(12px, 0.95vw, 15px); font-weight: 600; line-height: 1.6; opacity: 0; }
+@media (max-width: 719px) {
+  .nd { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 0.8em; padding: 0.6em 0.8em; font-size: 15px; }
+  .nd span { text-align: right; }
+}
 
 .ph { position: absolute; will-change: transform; box-shadow: 0 0 0 1px rgba(10,10,10,0.08); border-radius: 2.4%; }
 .panel { position: absolute; will-change: transform; box-shadow: 0 0 0 1px rgba(10,10,10,0.12); }
@@ -131,7 +148,7 @@ html.static .cup[data-c="100"] { display: block; position: static; opacity: 1; w
 html.static .ch { position: static; display: inline-block; opacity: 1; width: 120px; margin: 0 16px 0.8em 0; }
 html.static .ph3 { position: static; display: inline-block; opacity: 1; width: min(28vw, 180px); margin: 0 12px 0.8em 0; }
 html.static .ln.inv { color: var(--ink); }
-html.static .sphoto, html.static .ph3[data-s="tempo"], html.static .crop.lit { display: none; }
+html.static .sphoto, html.static .crop.lit { display: none; }
 html.static .crop { position: static; display: block; opacity: 1; width: min(90vw, 560px); margin: 0 0 0.8em; }
 html.static .dk { position: static; display: inline-block; opacity: 1; width: min(90vw, 560px); margin: 0 12px 0.8em 0; vertical-align: top; }
 html.static .dk.dkp { width: min(42vw, 220px); }
@@ -140,7 +157,11 @@ html.static .th { position: static; display: inline-block; opacity: 1; width: mi
 html.static .doc { position: static; opacity: 1; max-width: 560px; margin: 1.2em 0 0.8em; }
 html.static .static-h { display: block; margin: 0 0 0.5em; font-size: var(--D); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
 html.static .static-h.sm { font-size: var(--S); margin-top: 1.2em; }
-html.static .ln, html.static .list, html.static .col, html.static .ph, html.static .panel {
+html.static .flow { position: static; margin: 0 0 0.8em; max-width: 460px; }
+html.static .nd { position: static; opacity: 1 !important; transform: none !important; width: auto !important; height: auto !important; margin: 0 0 10px; }
+html.static .fl-ar { display: none; }
+html.static .fl-bk { position: static; display: block; opacity: 1 !important; transform: none !important; padding: 0; color: var(--gray); }
+html.static .ln, html.static .list, html.static .ph, html.static .panel {
   position: static; margin: 0 0 0.8em; transform: none !important; opacity: 1 !important; filter: none !important;
 }
 html.static .ln .w, html.static .list li { transform: none !important; opacity: 1 !important; filter: none !important; }

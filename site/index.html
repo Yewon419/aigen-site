@@ -71,17 +71,16 @@
     <p class="ln st inv" data-k="su-4">밤이 되면 남은 음료를 로슈와 카인에게 먹인다.</p>
     <img class="ch" data-ch="kain" src="assets/kain.webp" width="408" height="614" alt="카인">
     <img class="ch" data-ch="roshu" src="assets/roshu.webp" width="560" height="613" alt="로슈">
-    <img class="ph3" data-s="sugar" data-p="0" src="assets/sugar-02.webp" width="900" height="1950" alt="슈가캡 화면" decoding="async">
-    <img class="ph3" data-s="sugar" data-p="2" src="assets/sugar-03.webp" width="900" height="1950" alt="슈가캡 화면" decoding="async">
-    <img class="ph3" data-s="sugar" data-p="1" src="assets/sugar-01.webp" width="900" height="1950" alt="슈가캡 오늘 화면: 오늘 남은 당이 컵에 담겨 있다" decoding="async">
     <p class="ln st2" data-k="su-5">기획, 데이터 수집, 캐릭터 원화, 개발, 출시를 혼자 했다.</p>
     <h3 class="static-h sm">만든 방법</h3>
-    <ul class="list" data-k="su-list">
-      <li>Swift, SwiftUI, SwiftData로 만든 iOS 앱.</li>
-      <li>메뉴 데이터는 Python 파서로만 만들고 손으로 고치지 않는다.</li>
-      <li>CI가 빌드, UI 테스트, 스토어 스크린샷까지 찍는다.</li>
-      <li>AI와 같이 쓴 코드는 ruff, mypy, pytest를 지나야 들어온다.</li>
-    </ul>
+    <div class="flow" data-k="su-flow" role="list" aria-label="슈가캡을 만든 흐름">
+      <div class="nd" role="listitem"><b>카페 공식 홈페이지</b><span>브랜드 16곳</span></div>
+      <div class="nd" role="listitem"><b>Python 수집기</b><span>ruff · mypy · pytest</span></div>
+      <div class="nd" role="listitem"><b>catalog.json</b><span>손으로 고치지 않는다</span></div>
+      <div class="nd" role="listitem"><b>iOS 앱</b><span>Swift · SwiftUI · 직접 그린 원화</span></div>
+      <div class="nd" role="listitem"><b>GitHub Actions</b><span>빌드 · UI 테스트 · 스토어 스크린샷</span></div>
+      <div class="nd" role="listitem"><b>App Store</b><span>한국부터 판매</span></div>
+    </div>
     <p class="ln links" data-k="su-links">
       <a href="https://apps.apple.com/kr/app/id6814832068" target="_blank" rel="noopener">App Store</a>
       <a href="https://github.com/Yewon419/sugarcap" target="_blank" rel="noopener">GitHub</a>
@@ -115,14 +114,14 @@
     <img class="ph" data-k="te-ph1" src="assets/tempo-3.webp" width="900" height="1950" alt="템포루틴 캘린더: 날짜 아래 계절 밑줄 띠" loading="lazy" decoding="async">
     <img class="ph" data-k="te-ph2" src="assets/tempo-2.webp" width="900" height="1950" alt="템포루틴 나의 템포: 계절별 에너지와 기분" loading="lazy" decoding="async">
     <h3 class="static-h sm">만든 방법</h3>
-    <img class="ph3" data-s="tempo" data-p="0" src="assets/tempo-1.webp" width="900" height="1950" alt="" aria-hidden="true" decoding="async">
-    <img class="ph3" data-s="tempo" data-p="2" src="assets/tempo-2.webp" width="900" height="1950" alt="" aria-hidden="true" decoding="async">
-    <img class="ph3" data-s="tempo" data-p="1" src="assets/tempo-3.webp" width="900" height="1950" alt="" aria-hidden="true" decoding="async">
-    <ul class="list" data-k="te-list">
-      <li>Windows에서 개발. 빌드는 GitHub Actions macOS 러너에서 TestFlight로.</li>
-      <li>예측 엔진은 순수 Foundation 패키지(TempoCore)에 테스트와 함께.</li>
-      <li>베타 피드백을 꾸준히 받아 고치며 만들었다.</li>
-    </ul>
+    <div class="flow" data-k="te-flow" data-back="3>0" role="list" aria-label="템포루틴을 만든 흐름">
+      <div class="nd" role="listitem"><b>Windows</b><span>여기서 개발하고 push</span></div>
+      <div class="nd" role="listitem"><b>예측 엔진 테스트</b><span>GitHub Actions · Linux</span></div>
+      <div class="nd" role="listitem"><b>앱 빌드</b><span>GitHub Actions · macOS</span></div>
+      <div class="nd" role="listitem"><b>TestFlight</b><span>실기기 베타</span></div>
+      <div class="nd" role="listitem"><b>App Store</b><span>출시</span></div>
+      <span class="fl-bk">베타 피드백을 꾸준히 반영</span>
+    </div>
     <p class="ln links" data-k="te-links">
       <a href="https://apps.apple.com/kr/app/id6791803620" target="_blank" rel="noopener">App Store</a>
       <a href="https://github.com/Yewon419/TempoRoutine" target="_blank" rel="noopener">GitHub</a>
@@ -172,13 +171,15 @@
 <section class="scene" data-scene="method" data-beats="7.5" data-label="일하는 방식">
   <div class="stage">
     <h2 class="static-h">AI와 일하는 방식</h2>
-    <div class="col" data-k="me-col">
-      <p class="ln st2" data-k="me-1">스펙 문서 하나가 단일 출처다. AI도 나도 거기서 출발한다.</p>
-      <p class="ln st2" data-k="me-2">AI가 쓴 코드는 린터, 타입 체크, 테스트 게이트를 지나야 들어온다.</p>
-      <p class="ln st2" data-k="me-3">화면은 스크린샷으로 확인한다. CI가 찍고, 내가 본다.</p>
-      <p class="ln st2" data-k="me-4">반복되는 불편은 참기보다 환경부터 고친다.</p>
-      <p class="ln st2" data-k="me-5">이 페이지도 같은 방식으로 만들었다. <a href="https://github.com/Yewon419/aigen-site" target="_blank" rel="noopener">GitHub에서 보기</a></p>
+    <div class="flow" data-k="me-flow" data-back="4>0" role="list" aria-label="AI와 일하는 흐름">
+      <div class="nd" role="listitem"><b>스펙 문서</b><span>단일 출처. AI도 나도 여기서</span></div>
+      <div class="nd" role="listitem"><b>구현</b><span>AI가 코드를 쓴다</span></div>
+      <div class="nd" role="listitem"><b>게이트</b><span>린터 · 타입 체크 · 테스트</span></div>
+      <div class="nd" role="listitem"><b>스크린샷 검수</b><span>CI가 찍고, 내가 본다</span></div>
+      <div class="nd" role="listitem"><b>환경 고치기</b><span>반복되는 불편은 참지 않는다</span></div>
+      <span class="fl-bk">다음 작업으로</span>
     </div>
+    <p class="ln st2" data-k="me-5">이 페이지도 같은 방식으로 만들었다. <a href="https://github.com/Yewon419/aigen-site" target="_blank" rel="noopener">GitHub에서 보기</a></p>
     <div class="doc" data-k="me-doc">
       <p class="doc-h">COPY.md: 이 페이지의 모든 문장과 출처</p>
       <table>
