@@ -125,6 +125,7 @@ html.static .scene + .scene { margin-top: 0; }
 html.static .stage { position: static; height: auto; overflow: visible; pointer-events: auto; }
 html.static #bar, html.static #over, html.static .bl { display: none; }
 html.static .corner { color: var(--ink); mix-blend-mode: normal; }
+html.static .bl, html.static .br { position: absolute; top: calc(100vh - var(--m) - 1.2em); bottom: auto; }
 html.static html.static html.static .cup { display: none; }
 html.static .cup[data-c="100"] { display: block; position: static; opacity: 1; width: min(50vw, 260px); margin: 0 0 0.8em; }
 html.static .ch { position: static; display: inline-block; opacity: 1; width: 120px; margin: 0 16px 0.8em 0; }

@@ -23,6 +23,7 @@
   const tick = $('#tick');
   const over = $('#over');
   const cornerSection = $('#cornerSection');
+  const cornersB = [...document.querySelectorAll('.corner.bl, .corner.br')];
   const bts = {};
   $$('.bt').forEach((el) => {
     const glyphs = el.hasAttribute('data-nosplit') ? [el.firstElementChild] : M.splitGlyphs(el);
@@ -784,6 +785,9 @@
       Object.values(chi).forEach((el) => (el.style.opacity = '0'));
       scenes.forEach((sc, i) => sc.render(bs[i], i === active));
       cornerSection.textContent = sections[active].dataset.label;
+      // 아래 모서리 라벨은 첫 화면에서만. 본문 글과 겹치므로 히어로를 벗어나며 사라진다
+      const cb = (1 - prog(bs[0], 0.1, 0.5)).toFixed(3);
+      cornersB.forEach((el) => { el.style.opacity = cb; });
     }
     requestAnimationFrame(frame);
   }
