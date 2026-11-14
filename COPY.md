@@ -49,7 +49,7 @@
 | 보조 | 개념 영상: `ad-teaser/final/temporoutine-teaser-4k.mp4`를 540x960·무음으로 줄임, 장 앞쪽(제목 다음) | 같은 폴더 |
 | 6.2 | 체크인할 때마다 씨앗이 모이고, 그 씨앗으로 테마를 연다. | TR-README "체크인으로 모으는 씨앗으로 잠금 해제하는 테마". 테마 수는 코드와 촬영본이 달라 쓰지 않음 |
 | 보조 | 테마 화면 6장(Standard·Plain·Modern·Letterpress·Ticket·Weather의 오늘 화면) | Kayla 릴스 000 에셋 `컷/apps_shots/temporoutine/ThemeShot*Today.jpg` (11-14 대표님 허가) |
-| 7 | 만든 방법: Windows에서 개발, 빌드는 GitHub Actions macOS 러너에서 TestFlight로 / 예측 엔진은 순수 Foundation 패키지(TempoCore)에 테스트와 함께 / 베타 피드백을 100건 넘게 반영 | TR-README 개발 방식·구조, 템포루틴 리포 커밋 제목의 「베타 N건」 합계 142건(34개 커밋, 단건 커밋 제외). 다수가 1.0 출시 뒤 반영분이라 「출시」는 뺌(11-14 대표님 지적으로 「열 차례 넘게」에서 교체) |
+| 7 | 만든 방법: Windows에서 개발, 빌드는 GitHub Actions macOS 러너에서 TestFlight로 / 예측 엔진은 순수 Foundation 패키지(TempoCore)에 테스트와 함께 / 베타 피드백을 꾸준히 받아 고치며 만들었다 | TR-README 개발 방식·구조, 템포루틴 리포 커밋 제목의 「베타 N건」 기록(1.0 출시 전후 계속). 11-14 대표님 지시로 횟수 대신 꾸준함으로 |
 | 8 | App Store · GitHub | `apps.apple.com/kr/app/id6791803620` · `github.com/Yewon419/TempoRoutine` |
 
 ## 3. 짐살라빔
