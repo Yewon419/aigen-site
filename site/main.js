@@ -489,7 +489,7 @@
   const scene = (name, render) => scenes.push({ name, render });
 
   // 히어로 3비트: 로드 즉시 완성 상태. 1.0부터 글 퇴장,
-  // 1.3~2.0 이름표가 화면 전체로 번지고, 슈가캡 제목과 아이콘이 가운데에서 솟는다.
+  // 1.3~2.0 이름표가 화면 전체로 번지고, 첫 장(템포루틴) 제목과 아이콘이 가운데에서 솟는다.
   scene('hero', (b, A) => {
     words('hero-sub', b, -1, 1.0);
     words('hero-list', b, -1, 1.1);
@@ -497,17 +497,17 @@
     glyphsIn('name', b, -10, 1.15);
     const r = lerpR(plateR('name', L.centerY), fullR(), ease.inOutCubic(prog(b, 1.3, 2.0)));
     setBarR(r);
-    glyphsIn('sugar', b, 1.8);
-    centerBt('sugar', r);
+    glyphsIn('tempo', b, 1.8);
+    centerBt('tempo', r);
     const ic = ease.outExpo(prog(b, 1.8, 2.25));
-    if (ic > 0) icon('sugar', shrinkR(chRf('sugar'), 0.6 + 0.4 * ic), ic);
+    if (ic > 0) icon('tempo', shrinkR(chRf('tempo'), 0.6 + 0.4 * ic), ic);
   });
 
   // 슈가캡 14비트
   // 0~1.3 챕터 막 → 이름표 / 1.3 선언과 컵 등장 / 2.1~2.8 이름표가 수면선이 된다
   // 3.0~5.7 기록할 때마다 수면선이 다음 수위로 내려가며 사진을 바꿔 닦는다
   // 5.9~6.6 수면선 → 카운터 이름표 / 7.85~8.6 카운터 → 밤하늘 / 9.85~10.55 밤하늘 → 「만든 방법」
-  // 11.85~12.3 이름표 → 링크 밑줄 / 13.0~13.6 밑줄이 화면을 덮고 「템포루틴」
+  // 11.85~12.3 이름표 → 링크 밑줄 / 13.0~13.6 밑줄이 화면을 덮고 「AI와 일하는 방식」
   scene('sugar', (b, A) => {
     words('su-1', b, 1.3, 2.3);
     words('su-2', b, 2.6, 3.9);
@@ -535,7 +535,7 @@
     else if (b < 9.85) setBarR(lerpR(cnt, band, ease.inOutCubic(prog(b, 7.85, 8.6))));
     else if (b < 11.85) setBarR(lerpR(band, made, ease.inOutCubic(prog(b, 9.85, 10.55))));
     else if (b < 13.0) setBarR(lerpR(made, underline('su-links'), ease.inOutCubic(prog(b, 11.85, 12.3))));
-    else floodTo(b, underline('su-links'), 'tempo', 13.0);
+    else floodTo(b, underline('su-links'), 'method', 13.0);
   });
 
   // 사진 여러 장을 한 칸에서 바꿔 닦는다. ins[k] = [t0, t1, 방향]. 다음 장이 다 덮으면 앞 장은 숨긴다.
@@ -559,7 +559,7 @@
 
   // 템포루틴 18.6비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
   // 본문: 제목(0.1) → 이름표가 세로 필름 테두리, 개념 영상(1.3~4.2) → 계절 띠(TS0~, 계절마다 TC비트, 띠 위로 그 계절 사진)
-  // → 띠가 선반, 그 위로 테마 여섯 장(TE~) → 만든 방법과 폰 세 대(TM~) → 링크 → 밑줄이 화면을 덮고 「짐살라빔」(TM+3.8)
+  // → 띠가 선반, 그 위로 테마 여섯 장(TE~) → 만든 방법과 폰 세 대(TM~) → 링크 → 밑줄이 화면을 덮고 「빛뜰 데스크」(TM+3.8)
   const TEMPO_OFF = 1.3;
   const TS0 = 4.8, TC = 1.4, TE = TS0 + 4 * TC, TM = TE + 2.1;
   scene('tempo', (bRaw, A) => {
@@ -618,14 +618,14 @@
       const u = underline('te-links');
       words('te-links', b, TM + 2.8, TM + 3.7);
       if (b < TM + 3.8) setBarR(lerpR(plateR('made2', L.topY), u, ease.inOutCubic(prog(b, TM + 2.3, TM + 2.8))));
-      else floodTo(b, u, 'gim', TM + 3.8);
+      else floodTo(b, u, 'desk', TM + 3.8);
     }
   }
 
   // 짐살라빔 9.8비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
   // 본문: 제목 → 이름표가 각도선이 된다(1.0~1.9). 각도선이 몸통→엉덩이→무릎 기준값으로 기울 때
   // 오른쪽 판넬 조각: 상태 기계는 다섯 단계가 차례로 켜지고, 아래 칸은 체크포인트 → 아키텍처 → 기준값 표
-  // 6.0~6.5 각도선이 눕혀져 링크 밑줄, 판넬 전체가 들어온다 / 7.5 밑줄이 화면을 덮고 「AI와 일하는 방식」
+  // 6.0~6.5 각도선이 눕혀져 링크 밑줄, 판넬 전체가 들어온다 / 7.5 밑줄이 화면을 덮고 「슈가캡」
   const GIM_OFF = 1.3;
   scene('gim', (bRaw, A) => {
     const b = bRaw - GIM_OFF;
@@ -675,7 +675,7 @@
         const u0 = ease.inOutCubic(prog(b, 6.0, 6.5));
         setBar(M.lerp(ax, u.x, u0), M.lerp(ay, u.y, u0), M.lerp(L.angleW, u.w, u0), M.lerp(L.angleH, u.h, u0), M.lerp(-108.35, 0, u0));
       } else {
-        floodTo(b, u, 'desk', 7.5);
+        floodTo(b, u, 'sugar', 7.5);
       }
     }
   }
@@ -684,7 +684,7 @@
   // 이름표 글자가 빠지면(0~0.7) 이름표가 큐브 사무실 그림의 액자가 되고(0.55~0.95) 첫 문장이 뜬다(0.75). 1.7~2.05 PC 화면 테두리로
   // 본문: 선언(0.1) → 선언이 빠진 뒤 이름표가 PC 화면 테두리가 되고 사무실이 드러난다(1.4~2.6)
   // → 테두리가 대화 창 크기로(3.6) → 폰 몸체로 줄어든다(5.2) → 폰 사무실, 폰 대화 창과 승인 요청
-  // 7.95~8.45 폰 몸체가 링크 밑줄 / 9.4 밑줄이 화면을 덮고 「AI와 일하는 방식」
+  // 7.95~8.45 폰 몸체가 링크 밑줄 / 9.4 밑줄이 화면을 덮고 「짐살라빔」
   const DESK_OFF = 1.3;
   const frameR = (r, p, ky = 1) => ({ x: r.x - p, y: r.y - p * ky, w: r.w + 2 * p, h: r.h + 2 * p * ky });
   // 화면 하나: [i0, i1]에 아래에서 위(또는 왼쪽에서 오른쪽)로 드러나고, [f0, f1]에 아래에서 위로 접힌다
@@ -729,7 +729,7 @@
       const u = underline('de-links');
       words('de-links', b, 8.45, 9.3);
       if (b < 9.4) setBarR(lerpR(phoneF, u, ease.inOutCubic(prog(b, 7.95, 8.45))));
-      else floodTo(b, u, 'method', 9.4);
+      else floodTo(b, u, 'gim', 9.4);
     }
   }
 
@@ -822,6 +822,7 @@
 
   // ---- 드라이버 ----
   const sections = $$('.scene');
+  const ordered = sections.map((s) => scenes.find((sc) => sc.name === s.dataset.scene));
   sections.forEach((s) => s.style.setProperty('--beats', s.dataset.beats));
   let lastY = -1, lastW = 0, lastH = 0;
   function frame() {
@@ -839,7 +840,7 @@
       Object.keys(bts).forEach(hideGlyphs);
       Object.values(bts).forEach((g) => (g.el.style.left = ''));
       Object.values(chi).forEach((el) => (el.style.opacity = '0'));
-      scenes.forEach((sc, i) => sc.render(bs[i], i === active));
+      ordered.forEach((sc, i) => sc.render(bs[i], i === active));
       cornerSection.textContent = sections[active].dataset.label;
       // 아래 모서리 라벨은 첫 화면에서만. 본문 글과 겹치므로 히어로를 벗어나며 사라진다
       const cb = (1 - prog(bs[0], 0.1, 0.5)).toFixed(3);
