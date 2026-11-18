@@ -76,6 +76,8 @@
   // 슈가캡 주간 기준 막대와 나라별 카탈로그
   const wk = { el: $('.wk'), bars: $$('.wk-b'), marks: $$('.wk-b i, .wk-b u'), cap: $('.wk figcaption') };
   const cat = { el: $('.cat'), boxes: $$('.cn'), cap: $('.cat figcaption') };
+  // 템포루틴 데이터가 가는 곳
+  const pv = { el: $('.pv'), rows: $$('.pv-r').map((r) => [...r.children]), cap: $('.pv figcaption') };
   const chi = {}; $$('.chi').forEach((el) => { chi[el.dataset.i] = el; });
   const cups = {}; $$('.cup').forEach((el) => { cups[el.dataset.c] = el; });
   const chars = {}; $$('.ch').forEach((el) => { chars[el.dataset.ch] = el; });
@@ -184,6 +186,8 @@
     const ty = L.narrow ? L.stripY + L.stripH + 28 : L.vh * 0.5;
     const tw = L.narrow ? L.vw - 2 * L.m : L.vw - 2 * L.m - L.phoneW - 48;
     ['te-2', 'te-3', 'te-4', 'te-5'].forEach((k) => place(k, L.m, ty, tw));
+    pv.el.style.left = L.m + 'px'; pv.el.style.width = tw + 'px';
+    pv.el.style.top = (ty + lines['te-5'].el.offsetHeight + (L.narrow ? 16 : 36)) + 'px';
     const tpy = L.narrow ? L.vh * 0.66 : L.vh * 0.42;
     setImg('te-ph1', L.phoneX, tpy, L.phoneW);
     setImg('te-ph2', L.phoneX, tpy, L.phoneW);
@@ -518,6 +522,24 @@
     cat.cap.style.opacity = ease.outCubic(prog(b, t0 + 0.4, t0 + 0.7)).toFixed(3);
   }
 
+  // 데이터가 가는 곳: 줄마다 상자가 솟고, 화살표가 그어진 뒤 가는 곳이 뜬다
+  function privacyIn(b, t0, tOut) {
+    const v = ease.inCubic(prog(b, tOut, tOut + 0.35));
+    pv.el.style.opacity = (1 - v).toFixed(3);
+    pv.el.style.transform = `translateY(${(-v * 40).toFixed(2)}px)`;
+    pv.rows.forEach(([box, ar, to], i) => {
+      const t = t0 + i * 0.1;
+      const u = ease.outExpo(prog(b, t, t + 0.4));
+      box.style.opacity = u.toFixed(3);
+      box.style.transform = `translateY(${((1 - u) * 12).toFixed(2)}px)`;
+      const a = ease.inOutCubic(prog(b, t + 0.1, t + 0.3));
+      ar.style.opacity = a > 0 ? '1' : '0';
+      ar.style.transform = `scaleX(${a.toFixed(4)})`;
+      to.style.opacity = ease.outCubic(prog(b, t + 0.25, t + 0.45)).toFixed(3);
+    });
+    pv.cap.style.opacity = ease.outCubic(prog(b, t0 + 0.4, t0 + 0.65)).toFixed(3);
+  }
+
   // 링크 줄 밑줄 사각형 (단어 실측)
   function underline(linksKey) {
     const ln = lines[linksKey]; const el = ln.el;
@@ -615,6 +637,7 @@
     words('te-1', b, 0.1, 1.2);
     words('te-6', b, 1.9, 3.8, 0.03);
     ['te-2', 'te-3', 'te-4', 'te-5'].forEach((k, i) => words(k, b, TS0 + i * TC + 0.1, TS0 + i * TC + 1.0, 0.025));
+    privacyIn(b, TS0 + 3 * TC + 0.2, TS0 + 3 * TC + 1.0);
     words('te-7', b, TE + 0.95, TE + 2.0, 0.03);
     flowIn('te-flow', b, [0, 1, 2, 3, 4].map((i) => TM + 0.85 + i * 0.13), TM + 1.5, TM + 2.0);
     const p1in = ease.outExpo(prog(b, TS0 + 0.4, TS0 + 1.1)), p1out = ease.inCubic(prog(b, TS0 + 2 * TC, TS0 + 2 * TC + 0.5));

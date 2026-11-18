@@ -43,7 +43,7 @@
 | 3 | 주기의 네 단계를 겨울·봄·여름·가을로. | pf |
 | 4 | 평균을 내면 패턴이 사라진다. 그래서 정답 대신 본인 기록을 돌려준다. | q1 두 문장 압축 |
 | 5 | "기록상 이때 에너지가 높았어요" 단정 대신 관찰한 사실만. | q1 |
-| 6 | 생리 기록은 내 기기와 개인 iCloud에만 저장된다. Apple 건강 앱 연동은 선택. | TR-README 프라이버시 "기기(SwiftData)와 사용자 개인 iCloud(CloudKit private DB)에만 저장", "HealthKit 연동은 선택". 11-14 교체. iCloud 동기화가 있어 "기기 밖으로 안 나간다"는 틀림 |
+| 6 | 생리 기록은 iCloud 동기화에서 뺐다. | 11-18 교체. `PlannerSync.swift` 7-8행: CKSyncEngine 동기 범위 = 일정·Input·Output·완료·체크인·리듬 설문·씨앗 원장, PeriodDay는 "절대 미동기"(사용자 토글, 기본 켬). HealthKit은 menstrualFlow 읽기·쓰기, 연동 선택. 예측 엔진 = TempoCore(Foundation만) 기기 안. 외부 통신은 GitHub 공지·테마 영상, WeatherKit, StoreKit, CloudKit뿐이라 "자체 서버와 분석 도구는 없다". ⚠ `ModelContainer(for:)`에 `cloudKitDatabase: .none`이 없어 SwiftData 자동 미러 여부 미확인 → "기기에만"이라고 쓰지 않는다 |
 | 2.5 | 어떤 주는 술술 되고, 어떤 주는 유난히 버겁다. 몸에도 계절이 있어서다. | 템포루틴 `marketing/ad-teaser/SCRIPT.md` 자막 "어떤 주는 술술 되고, / 어떤 주는 유난히 버거워요.", 완성본 자막 "여자의 몸엔 계절이 있다는 걸". 11-14 "출시 티저도 만들었다"를 대표님 지시로 개념 설명으로 교체 |
 | 보조 | 개념 영상: `ad-teaser/final/temporoutine-teaser-4k.mp4`를 540x960·무음으로 줄임, 장 앞쪽(제목 다음) | 같은 폴더 |
 | 6.2 | 체크인할 때마다 씨앗이 모이고, 그 씨앗으로 테마를 연다. | TR-README "체크인으로 모으는 씨앗으로 잠금 해제하는 테마". 테마 수는 코드와 촬영본이 달라 쓰지 않음 |
