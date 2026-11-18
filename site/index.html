@@ -6,7 +6,16 @@
 <meta name="color-scheme" content="light">
 <title>한예원 · SK AIGEN 1기 지원 포트폴리오</title>
 <meta name="description" content="한예원 포트폴리오. 템포루틴, 빛뜰 데스크, 짐살라빔, 슈가캡과 AI와 일하는 방식.">
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://aigen-site.vercel.app/">
+<meta property="og:title" content="한예원 · SK AIGEN 1기 지원 포트폴리오">
+<meta property="og:description" content="템포루틴, 빛뜰 데스크, 짐살라빔, 슈가캡과 AI와 일하는 방식.">
+<meta property="og:image" content="https://aigen-site.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect"href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -20,6 +29,7 @@
 <!-- 검은 띠: 페이지 전체를 관통하는 단 하나의 오브젝트. 안의 흰 글자는 띠가 지나갈 때만 드러난다. -->
 <div id="bar" aria-hidden="true">
   <span class="bt" data-bt="name">한예원</span>
+  <span class="bt" data-bt="toc">목차</span>
   <span class="bt" data-bt="sugar">슈가캡</span>
   <span class="bt count" data-bt="count" data-nosplit><span>2,057종</span></span>
   <span class="bt" data-bt="made1">만든 방법</span>
@@ -48,7 +58,7 @@
 
 <main id="main">
 
-<section class="scene" data-scene="hero" data-beats="3" data-label="">
+<section class="scene" data-scene="hero" data-beats="2.2" data-label="">
   <div class="stage">
     <h1 class="static-h">한예원</h1>
     <p class="ln st" data-k="hero-sub">Portfolio</p>
@@ -56,7 +66,20 @@
   </div>
 </section>
 
-<section class="scene" data-scene="tempo" data-beats="18.6" data-label="템포루틴">
+<section class="scene" id="toc" data-scene="toc" data-beats="2.6" data-label="목차">
+  <div class="stage">
+    <h2 class="static-h">목차</h2>
+    <ul class="list toc" data-k="toc-list">
+      <li><a class="toc-ch" href="#tempo">템포루틴</a><span class="toc-d">생리 주기를 네 계절로 보는 iOS 앱</span><span class="toc-l"><a href="https://apps.apple.com/kr/app/id6791803620" target="_blank" rel="noopener">App Store</a><a href="https://github.com/Yewon419/TempoRoutine" target="_blank" rel="noopener">GitHub</a></span></li>
+      <li><a class="toc-ch" href="#desk">빛뜰 데스크</a><span class="toc-d">Claude Code 세션을 사무실 직원으로 보는 오픈소스 포크</span><span class="toc-l"><a href="https://github.com/Yewon419/bitteul-desk" target="_blank" rel="noopener">GitHub</a></span></li>
+      <li><a class="toc-ch" href="#gim">짐살라빔</a><span class="toc-d">웹캠 스쿼트·댄스 채점, AI 동아리 4인 팀</span><span class="toc-l"><a href="assets/gimsalabim-panel.pdf" target="_blank" rel="noopener">판넬 PDF</a></span></li>
+      <li><a class="toc-ch" href="#sugar">슈가캡</a><span class="toc-d">당과 카페인을 즐겁게 줄이는 iOS 앱, 한국·미국·대만 출시</span><span class="toc-l"><a href="https://apps.apple.com/kr/app/id6814832068" target="_blank" rel="noopener">App Store</a><a href="https://github.com/Yewon419/sugarcap" target="_blank" rel="noopener">GitHub</a><a href="https://sugarcap.vercel.app/" target="_blank" rel="noopener">소개 페이지</a></span></li>
+      <li><a class="toc-ch" href="#method">AI와 일하는 방식</a><span class="toc-d">이 페이지도 같은 방식으로 만들었다</span><span class="toc-l"><a href="https://github.com/Yewon419/aigen-site" target="_blank" rel="noopener">GitHub</a></span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="scene" id="tempo" data-scene="tempo" data-beats="17.7" data-label="템포루틴">
   <div class="stage">
     <img class="sphoto" data-s="0" src="assets/season-winter.webp" width="1280" height="853" alt="" aria-hidden="true">
     <img class="sphoto" data-s="1" src="assets/season-spring.webp" width="1280" height="853" alt="" aria-hidden="true">
@@ -102,7 +125,7 @@
   </div>
 </section>
 
-<section class="scene" data-scene="desk" data-beats="13.9" data-label="빛뜰 데스크">
+<section class="scene" id="desk" data-scene="desk" data-beats="12.8" data-label="빛뜰 데스크">
   <div class="stage">
     <h2 class="static-h">빛뜰 데스크</h2>
     <p class="ln st" data-k="de-1">맞는 도구가 없어서, 직접 만들었다.</p>
@@ -131,7 +154,7 @@
   </div>
 </section>
 
-<section class="scene" data-scene="gim" data-beats="9.8" data-label="짐살라빔">
+<section class="scene" id="gim" data-scene="gim" data-beats="9.8" data-label="짐살라빔">
   <div class="stage">
     <h2 class="static-h">짐살라빔</h2>
     <p class="ln st" data-k="gi-1">웹캠 하나로 스쿼트를 채점한다.</p>
@@ -139,7 +162,19 @@
     <img class="crop lit" data-g="smlit" src="assets/gim-sm.webp" width="1110" height="250" alt="" aria-hidden="true">
     <img class="crop" data-g="skel" src="assets/gim-skel.webp" width="940" height="550" alt="체크포인트: 몸통, 엉덩이, 무릎 각도와 무릎 모임 거리">
     <img class="crop" data-g="arch" src="assets/gim-arch.webp" width="1600" height="347" alt="아키텍처: 웹캠, FastAPI 백엔드, MediaPipe AI 엔진, React 프론트엔드">
-    <img class="crop" data-g="table" src="assets/gim-table.webp" width="656" height="548" alt="기준값: 몸통 32.59도, 엉덩이 110.11도, 무릎 108.35도, 무릎 모임 49.13px">
+    <svg class="crop dtw" data-g="dtw" viewBox="0 0 640 400" role="img" aria-label="댄스 모드 DTW: 빠르기가 다른 기준 동작과 따라 한 동작의 시간 축을 맞춘 뒤, 팔꿈치와 무릎 각도를 비교해 점수를 낸다">
+      <rect width="640" height="400" fill="#fff"/>
+      <path class="dtw-m" d="M189.2 54.5 L249.5 204.5 M228.3 44.0 L303.4 194.0 M267.5 54.5 L347.6 204.5 M306.7 80.0 L386.5 230.0 M345.8 105.5 L421.9 255.5 M385.0 116.0 L454.8 266.0 M424.2 105.5 L485.6 255.5 M463.3 80.0 L514.8 230.0 M502.5 54.5 L542.7 204.5 M541.7 44.0 L569.4 194.0 M580.8 54.5 L595.1 204.5"/>
+      <path class="dtw-c" d="M150.0 80.0 L159.8 73.0 L169.6 66.2 L179.4 60.0 L189.2 54.5 L199.0 50.1 L208.8 46.7 L218.5 44.7 L228.3 44.0 L238.1 44.7 L247.9 46.7 L257.7 50.1 L267.5 54.5 L277.3 60.0 L287.1 66.2 L296.9 73.0 L306.7 80.0 L316.5 87.0 L326.2 93.8 L336.0 100.0 L345.8 105.5 L355.6 109.9 L365.4 113.3 L375.2 115.3 L385.0 116.0 L394.8 115.3 L404.6 113.3 L414.4 109.9 L424.2 105.5 L434.0 100.0 L443.8 93.8 L453.5 87.0 L463.3 80.0 L473.1 73.0 L482.9 66.2 L492.7 60.0 L502.5 54.5 L512.3 50.1 L522.1 46.7 L531.9 44.7 L541.7 44.0 L551.5 44.7 L561.2 46.7 L571.0 50.1 L580.8 54.5 L590.6 60.0 L600.4 66.2 L610.2 73.0 L620.0 80.0"/>
+      <path class="dtw-c" d="M150.0 230.0 L159.8 229.3 L169.6 227.9 L179.4 226.0 L189.2 223.7 L199.0 221.0 L208.8 218.1 L218.5 214.9 L228.3 211.6 L238.1 208.3 L247.9 205.0 L257.7 202.0 L267.5 199.2 L277.3 196.9 L287.1 195.2 L296.9 194.2 L306.7 194.1 L316.5 194.9 L326.2 196.7 L336.0 199.7 L345.8 203.7 L355.6 208.8 L365.4 214.8 L375.2 221.5 L385.0 228.8 L394.8 236.3 L404.6 243.8 L414.4 250.7 L424.2 256.7 L434.0 261.5 L443.8 264.7 L453.5 266.0 L463.3 265.2 L473.1 262.2 L482.9 257.2 L492.7 250.2 L502.5 241.8 L512.3 232.5 L522.1 222.8 L531.9 213.5 L541.7 205.3 L551.5 198.9 L561.2 195.1 L571.0 194.0 L580.8 196.1 L590.6 201.3 L600.4 209.1 L610.2 218.9 L620.0 230.0"/>
+      <path class="dtw-d" d="M189.2 54.5 h0.01 M249.5 204.5 h0.01 M228.3 44.0 h0.01 M303.4 194.0 h0.01 M267.5 54.5 h0.01 M347.6 204.5 h0.01 M306.7 80.0 h0.01 M386.5 230.0 h0.01 M345.8 105.5 h0.01 M421.9 255.5 h0.01 M385.0 116.0 h0.01 M454.8 266.0 h0.01 M424.2 105.5 h0.01 M485.6 255.5 h0.01 M463.3 80.0 h0.01 M514.8 230.0 h0.01 M502.5 54.5 h0.01 M542.7 204.5 h0.01 M541.7 44.0 h0.01 M569.4 194.0 h0.01 M580.8 54.5 h0.01 M595.1 204.5 h0.01"/>
+      <text x="20" y="86">기준 동작</text>
+      <text x="20" y="236">따라 한 동작</text>
+      <rect class="dtw-b" x="20" y="312" width="170" height="58"/><text x="105" y="348" text-anchor="middle">시간 축 맞추기</text>
+      <rect class="dtw-b" x="220" y="312" width="250" height="58"/><text x="345" y="348" text-anchor="middle">팔꿈치 · 무릎 각도 비교</text>
+      <rect class="dtw-b on" x="500" y="312" width="120" height="58"/><text class="on" x="560" y="348" text-anchor="middle">점수</text>
+      <path class="dtw-a" d="M193 341 H214 M208 336 L214 341 L208 346 M473 341 H494 M488 336 L494 341 L488 346"/>
+    </svg>
     <img class="panel" data-k="gi-panel" src="assets/panel.webp" width="1400" height="1974" alt="짐살라빔 판넬: MediaPipe 실시간 자세 분석, 5단계 스쿼트 상태 기계, 관절 각도 기준값" loading="lazy" decoding="async">
     <p class="ln st2" data-k="gi-2">스쿼트를 다섯 단계로 나눠 무릎, 몸통, 엉덩이 각도를 기준값과 비교한다.</p>
     <p class="ln st2" data-k="gi-3">정확도 대신 실시간을 골랐다. MediaPipe.</p>
@@ -151,7 +186,7 @@
   </div>
 </section>
 
-<section class="scene" data-scene="sugar" data-beats="14" data-label="슈가캡">
+<section class="scene" id="sugar" data-scene="sugar" data-beats="13.4" data-label="슈가캡">
   <div class="stage">
     <h2 class="static-h">슈가캡</h2>
     <p class="ln st" data-k="su-1">참는 대신, 즐겁게 줄인다.</p>
@@ -204,7 +239,7 @@
   </div>
 </section>
 
-<section class="scene" data-scene="method" data-beats="7.5" data-label="일하는 방식">
+<section class="scene" id="method" data-scene="method" data-beats="7.5" data-label="일하는 방식">
   <div class="stage">
     <h2 class="static-h">AI와 일하는 방식</h2>
     <div class="flow" data-k="me-flow" data-back="4>0" role="list" aria-label="AI와 일하는 흐름">

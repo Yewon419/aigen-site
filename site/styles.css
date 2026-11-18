@@ -183,6 +183,31 @@ html.snap { scroll-snap-type: y mandatory; }
   .pv-r b { padding: 0.45em 0.6em; }
 }
 
+/* 목차: 장마다 한 줄(장 이름 · 한 줄 소개 · 링크). 장 이름을 누르면 그 장으로 간다 */
+.toc li:last-child { border-bottom: 1.5px solid var(--ink); }
+.toc li { display: grid; grid-template-columns: 11em 1fr auto; column-gap: 2em; align-items: baseline;
+  margin: 0; padding: 0.85em 0; border-top: 1.5px solid var(--ink); }
+.toc-ch { font-size: var(--S2); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+.toc-d { color: var(--gray); font-weight: 500; }
+.toc-l { display: flex; gap: 1.3em; font-weight: 600; white-space: nowrap; }
+.toc-l a { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 0.22em; }
+@media (max-width: 719px) {
+  .toc { font-size: 14px; }
+  .toc li { grid-template-columns: 1fr auto; row-gap: 0.3em; padding: 0.7em 0; }
+  .toc-ch { font-size: 19px; }
+  .toc-d { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* 짐살라빔 댄스 모드 DTW 그림 */
+.dtw text { font-family: var(--font); font-size: 20px; font-weight: 700; fill: var(--ink); }
+.dtw text.on { fill: var(--bg); }
+.dtw-c { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.dtw-m { fill: none; stroke: var(--gray); stroke-width: 1.5; }
+.dtw-d { fill: none; stroke: var(--ink); stroke-width: 9; stroke-linecap: round; }
+.dtw-b { fill: var(--bg); stroke: var(--ink); stroke-width: 2; }
+.dtw-b.on { fill: var(--ink); }
+.dtw-a { fill: none; stroke: var(--ink); stroke-width: 2; }
+
 .ph { position: absolute; will-change: transform; box-shadow: 0 0 0 1px rgba(10,10,10,0.08); border-radius: 2.4%; }
 .panel { position: absolute; will-change: transform; box-shadow: 0 0 0 1px rgba(10,10,10,0.12); }
 
@@ -225,3 +250,5 @@ html.static .ln, html.static .list, html.static .ph, html.static .panel {
 html.static .ln .w, html.static .list li { transform: none !important; opacity: 1 !important; filter: none !important; }
 html.static .ph { width: min(60vw, 320px); }
 html.static .panel { width: min(90vw, 560px); }
+html.static .crop.dtw { height: auto; }
+html.static .toc { position: static; }
