@@ -102,7 +102,7 @@
   </div>
 </section>
 
-<section class="scene" data-scene="desk" data-beats="11.7" data-label="빛뜰 데스크">
+<section class="scene" data-scene="desk" data-beats="13.9" data-label="빛뜰 데스크">
   <div class="stage">
     <h2 class="static-h">빛뜰 데스크</h2>
     <p class="ln st" data-k="de-1">맞는 도구가 없어서, 직접 만들었다.</p>
@@ -115,6 +115,16 @@
     <p class="ln st2" data-k="de-3">직원을 누르면 그 세션의 대화 창. 답장도 도구 승인도 거기서 한다.</p>
     <p class="ln st2" data-k="de-4">밖에서는 폰으로. 사무실을 보고 지시와 승인까지 한다.</p>
     <p class="ln st2" data-k="de-5">답을 기다리거나 일을 마치면 폰으로 알림이 온다.</p>
+    <p class="ln st2" data-k="de-6">PC에 띄운 서버 하나가 세션과 사무실, 폰을 잇는다.</p>
+    <figure class="ac" aria-label="빛뜰 데스크 구조">
+      <div class="nd og" data-a="term"><b>터미널 세션</b><span>hook으로 상태를 알린다</span></div>
+      <div class="nd" data-a="sdk"><b>데스크에서 연 세션</b><span>Agent SDK로 대화 · 승인</span></div>
+      <div class="nd" data-a="srv"><b>로컬 서버</b><span>내 PC · 127.0.0.1</span></div>
+      <div class="nd og" data-a="pc"><b>PC 사무실 화면</b><span>실시간 상태</span></div>
+      <div class="nd" data-a="ph"><b>폰</b><span>Tailscale로 접속</span></div>
+      <div class="nd" data-a="push"><b>폰 알림</b><span>Web Push</span></div>
+      <figcaption>점선은 원본 Pixel Agents에서 온 부분, 실선은 포크로 더한 부분.</figcaption>
+    </figure>
     <p class="ln links" data-k="de-links">
       <a href="https://github.com/Yewon419/bitteul-desk" target="_blank" rel="noopener">GitHub</a>
     </p>

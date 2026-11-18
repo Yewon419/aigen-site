@@ -73,6 +73,7 @@
 | 4 | 직원을 누르면 그 세션의 대화 창. 답장도 도구 승인도 거기서 한다. | BD-README "누르면 대화 창", "대시보드에서 바로 답장" |
 | 5 | 밖에서는 폰으로. 사무실을 보고 지시와 승인까지 한다. | BD-README "폰으로 밖에서도" |
 | 6 | 답을 기다리거나 일을 마치면 폰으로 알림이 온다. | 리포 커밋 10-24 `Push phone alerts over Web Push when something waits on the user`, `feat(push): alert when a session finishes its turn` |
+| 6.5 | PC에 띄운 서버 하나가 세션과 사무실, 폰을 잇는다. + 구조도 | 11-18 추가. 터미널 세션 → hook POST `/api/hooks/:providerId` → 로컬 서버(Fastify, 127.0.0.1) / 서버 → Agent SDK `query({resume})` + `canUseTool` → 데스크에서 연 세션(`managedSessions.ts`) / 서버 → `/ws` → 사무실 화면 / Tailscale Serve → 폰 PWA(`phoneAccess.ts`) / `web-push` VAPID → 폰 알림(`pushNotifier.ts`). 점선(원본 Pixel Agents) = hook·JSONL 감지, 사무실 화면. 실선(포크, 09-25~) = SDK 대화, 폰 접속, 알림, `/api/dashboard/*`·`/api/push/*` |
 | 7 | GitHub | `github.com/Yewon419/bitteul-desk` |
 | 보조 | 첫 문장 옆 그림: 큐브 사무실 여섯 칸(Kayla 릴스 000 에셋 `컷/company/gen/cube_1.png` 위 두 줄 크롭, 11-14 대표님 허가) | 장식 그림, 실제 화면 아님 |
 | 보조 | 챕터 아이콘: 빛뜰 컴퍼니 큐브 사무실(Kayla 릴스 000 에셋 `컷/company/gen/box_3.png`, 11-14 대표님 허가) | 정사각 크롭 |

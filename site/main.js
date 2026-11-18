@@ -76,6 +76,17 @@
   // 슈가캡 주간 기준 막대와 나라별 카탈로그
   const wk = { el: $('.wk'), bars: $$('.wk-b'), marks: $$('.wk-b i, .wk-b u'), cap: $('.wk figcaption') };
   const cat = { el: $('.cat'), boxes: $$('.cn'), cap: $('.cat figcaption') };
+  // 빛뜰 데스크 구조: 서버 상자는 띠가 칠하므로 #over 층에 둔다. 화살표 = [보내는 쪽, 받는 쪽]
+  const acEl = $('.ac'); over.appendChild(acEl);
+  const ac = { el: acEl, n: {}, cap: $('figcaption', acEl), svg: document.createElementNS(SVGNS, 'svg') };
+  $$('.nd', acEl).forEach((el) => { ac.n[el.dataset.a] = el; });
+  ac.svg.setAttribute('class', 'fl-ar'); ac.svg.setAttribute('aria-hidden', 'true'); acEl.prepend(ac.svg);
+  ac.arrows = [['term', 'srv'], ['srv', 'sdk'], ['srv', 'pc'], ['srv', 'ph'], ['srv', 'push']].map(([from, to]) => {
+    const line = document.createElementNS(SVGNS, 'path'); line.setAttribute('class', 'ar'); line.setAttribute('pathLength', '1');
+    const head = document.createElementNS(SVGNS, 'path'); head.setAttribute('class', 'hd');
+    ac.svg.append(line, head);
+    return { from, to, line, head };
+  });
   // 템포루틴 데이터가 가는 곳
   const pv = { el: $('.pv'), rows: $$('.pv-r').map((r) => [...r.children]), cap: $('.pv figcaption') };
   const chi = {}; $$('.chi').forEach((el) => { chi[el.dataset.i] = el; });
@@ -282,6 +293,34 @@
     L.dk.cubes = { x: L.narrow ? (L.vw - cw) / 2 : L.m + L.fp, y: cy0, w: cw, h: cw * (1050 / 1200) };
     put(dks.cubes, L.dk.cubes);
     put(dks['phone-office'], L.dk.phone); put(dks['phone-chat'], L.dk.phone);
+    // 구조도: 윗단 세션 둘, 가운데 서버(띠가 칠함), 아랫단 화면·폰·알림
+    place('de-6', L.m, under, L.vw - 2 * L.m);
+    const AW = L.narrow ? L.vw - 2 * L.m : Math.min(L.vw - 2 * L.m, 1040);
+    const ag = L.narrow ? 10 : 24, agy = L.narrow ? 34 : clamp(0.07 * L.vh, 40, 72);
+    const w2 = (AW - ag) / 2, w3 = (AW - 2 * ag) / 3;
+    const an = ac.n;
+    [[an.term, w2], [an.sdk, w2], [an.srv, AW], [an.pc, w3], [an.ph, w3], [an.push, w3]].forEach(([el, w]) => { el.style.width = w + 'px'; el.style.height = 'auto'; });
+    const h1 = Math.max(an.term.offsetHeight, an.sdk.offsetHeight), hs = an.srv.offsetHeight;
+    const h3 = Math.max(an.pc.offsetHeight, an.ph.offsetHeight, an.push.offsetHeight);
+    const ys = h1 + agy, y3 = ys + hs + agy;
+    const AR3 = {
+      term: { x: 0, y: 0, w: w2, h: h1 }, sdk: { x: w2 + ag, y: 0, w: w2, h: h1 }, srv: { x: 0, y: ys, w: AW, h: hs },
+      pc: { x: 0, y: y3, w: w3, h: h3 }, ph: { x: w3 + ag, y: y3, w: w3, h: h3 }, push: { x: 2 * (w3 + ag), y: y3, w: w3, h: h3 },
+    };
+    Object.entries(AR3).forEach(([k, r]) => putR(an[k], r));
+    ac.arrows.forEach((a) => {
+      const up = a.to === 'sdk', o = up ? AR3[a.to] : AR3[a.from === 'srv' ? a.to : a.from], cx = o.x + o.w / 2;
+      const y0 = a.from === 'srv' ? (up ? ys - 3 : ys + hs + 3) : h1 + 3;
+      const y1 = up ? h1 + 3 : (a.from === 'srv' ? y3 - 3 : ys - 3);
+      a.line.setAttribute('d', pathD([[cx, y0], [cx, y1]])); a.head.setAttribute('d', headD([cx, y1], up ? 'u' : 'd'));
+    });
+    ac.cap.style.top = (y3 + h3 + 14) + 'px'; ac.cap.style.width = L.narrow ? AW + 'px' : '';
+    const ah3 = y3 + h3 + 14 + ac.cap.offsetHeight;
+    const acY = under + lines['de-6'].el.offsetHeight + (L.narrow ? 24 : 40);
+    L.ac = { x: L.m, y: L.narrow ? acY : Math.max(acY, (acY + L.safeB - ah3) / 2) };
+    ac.el.style.left = L.ac.x + 'px'; ac.el.style.top = L.ac.y + 'px'; ac.el.style.width = AW + 'px'; ac.el.style.height = ah3 + 'px';
+    ac.svg.setAttribute('width', AW); ac.svg.setAttribute('height', ah3);
+    L.srvR = { x: L.ac.x, y: L.ac.y + ys, w: AW, h: hs };
 
     placeList('end-list', L.m, sub);
   }
@@ -430,6 +469,9 @@
       el.style.transform = `translate(${r.x}px, ${r.y + (1 - u) * (L.vh - r.y + 20) + out * (L.vh - r.y + 20)}px)`;
     });
   }
+  const pathD = (pts) => 'M' + pts.map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L');
+  const HD = { r: [[-7, -4.5], [-7, 4.5]], d: [[-4.5, -7], [4.5, -7]], u: [[-4.5, 7], [4.5, 7]], l: [[7, -4.5], [7, 4.5]] };
+  const headD = (p, dir) => { const [a, c] = HD[dir]; return pathD([[p[0] + a[0], p[1] + a[1]], p, [p[0] + c[0], p[1] + c[1]]]); };
   // 도표 배치: 가로 한 줄(좁으면 세로 한 줄). 되돌이 화살표는 가로면 아래로, 세로면 오른쪽으로 돈다
   function layoutFlow(f, x, w, vert) {
     const n = f.nodes.length;
@@ -440,9 +482,7 @@
     const nh = Math.max(...f.nodes.map((el) => el.offsetHeight));
     f.R = f.nodes.map((el, i) => (vert ? { x: 0, y: i * (nh + g), w: nw, h: nh } : { x: i * (nw + g), y: 0, w: nw, h: nh }));
     f.nodes.forEach((el, i) => putR(el, f.R[i]));
-    const d = (pts) => 'M' + pts.map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L');
-    const HD = { r: [[-7, -4.5], [-7, 4.5]], d: [[-4.5, -7], [4.5, -7]], u: [[-4.5, 7], [4.5, 7]], l: [[7, -4.5], [7, 4.5]] };
-    const head = (p, dir) => { const [a, c] = HD[dir]; return d([[p[0] + a[0], p[1] + a[1]], p, [p[0] + c[0], p[1] + c[1]]]); };
+    const d = pathD, head = headD;
     f.arrows.forEach((a, i) => {
       const r = f.R[i];
       const pts = vert ? [[nw / 2, r.y + nh + 3], [nw / 2, r.y + nh + g - 3]] : [[r.x + nw + 3, nh / 2], [r.x + nw + g - 3, nh / 2]];
@@ -746,11 +786,11 @@
     }
   }
 
-  // 빛뜰 데스크 11.7비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
+  // 빛뜰 데스크 13.9비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
   // 이름표 글자가 빠지면(0~0.7) 이름표가 큐브 사무실 그림의 액자가 되고(0.55~0.95) 첫 문장이 뜬다(0.75). 1.7~2.05 PC 화면 테두리로
   // 본문: 선언(0.1) → 선언이 빠진 뒤 이름표가 PC 화면 테두리가 되고 사무실이 드러난다(1.4~2.6)
   // → 테두리가 대화 창 크기로(3.6) → 폰 몸체로 줄어든다(5.2) → 폰 사무실, 폰 대화 창과 승인 요청
-  // 7.95~8.45 폰 몸체가 링크 밑줄 / 9.4 밑줄이 화면을 덮고 「짐살라빔」
+  // 7.95~8.45 폰 몸체가 구조도의 서버 상자 / 10.15~10.65 서버 상자가 링크 밑줄 / 11.6 밑줄이 화면을 덮고 「짐살라빔」
   const DESK_OFF = 1.3;
   const frameR = (r, p, ky = 1) => ({ x: r.x - p, y: r.y - p * ky, w: r.w + 2 * p, h: r.h + 2 * p * ky });
   // 화면 하나: [i0, i1]에 아래에서 위(또는 왼쪽에서 오른쪽)로 드러나고, [f0, f1]에 아래에서 위로 접힌다
@@ -779,6 +819,8 @@
     screenIn(dks.chat, b, 3.95, 4.55, 4.85, 5.2);
     screenIn(dks['phone-office'], b, 5.6, 6.2, 7.1, 7.11);
     screenIn(dks['phone-chat'], b, 6.5, 7.1, 7.6, 7.95, 'right');
+    words('de-6', b, 8.2, 9.75);
+    archIn(b, A);
     if (!A) { words('de-links', b, NEVER); return; }
     glyphsIn('desk', b, -10, 0.0);
     const phoneF = frameR(L.dk.phone, L.fp * 1.4, 2.2);
@@ -791,12 +833,36 @@
       if (b < 1.7) setBarR(lerpR(plateR('desk', L.topY), cubesF, ease.inOutCubic(prog(b, 0.55, 0.95))));
       else setBarR(lerpR(cubesF, dev, ease.inOutCubic(prog(b, 1.7, 2.05))));
       words('de-links', b, NEVER);
+    } else if (b < 10.15) {
+      setBarR(lerpR(phoneF, L.srvR, ease.inOutCubic(prog(b, 7.95, 8.45))));
+      words('de-links', b, NEVER);
     } else {
       const u = underline('de-links');
-      words('de-links', b, 8.45, 9.3);
-      if (b < 9.4) setBarR(lerpR(phoneF, u, ease.inOutCubic(prog(b, 7.95, 8.45))));
-      else floodTo(b, u, 'gim', 9.4);
+      words('de-links', b, 10.65, 11.5);
+      if (b < 11.6) setBarR(lerpR(L.srvR, u, ease.inOutCubic(prog(b, 10.15, 10.65))));
+      else floodTo(b, u, 'gim', 11.6);
     }
+  }
+  // 구조도: 띠가 서버 상자에 앉으면 서버 글이 뜨고, 세션 → 서버 → 화면·폰·알림 순으로 상자와 화살표가 생긴다
+  function archIn(b, A) {
+    const v = ease.inCubic(prog(b, 9.75, 10.1));
+    ac.el.style.opacity = (1 - v).toFixed(3);
+    ac.el.style.transform = `translateY(${(-v * 40).toFixed(2)}px)`;
+    const T = { srv: 8.35, term: 8.5, sdk: 8.6, pc: 8.8, ph: 8.9, push: 9.0 };
+    Object.entries(T).forEach(([k, t]) => {
+      const u = ease.outExpo(prog(b, t, t + 0.4));
+      ac.n[k].style.opacity = u.toFixed(3);
+      ac.n[k].style.transform = `translateY(${((1 - u) * 12).toFixed(2)}px)`;
+    });
+    ac.n.srv.classList.toggle('on', A && b >= 8.4 && b < 10.15);
+    ac.arrows.forEach((a) => {
+      const t = Math.max(T[a.from], T[a.to]) - 0.05;
+      const u = ease.inOutCubic(prog(b, t, t + 0.25));
+      a.line.style.strokeDashoffset = (1 - u).toFixed(4);
+      a.line.style.opacity = u > 0 ? '1' : '0';
+      a.head.style.opacity = u > 0.98 ? '1' : '0';
+    });
+    ac.cap.style.opacity = ease.outCubic(prog(b, 9.15, 9.4)).toFixed(3);
   }
 
   // 방식 7.5비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
@@ -859,7 +925,7 @@
     sugar: [0.3, 2.0, 3.85, 5.85, 7.7, 9.75, 11.8, 12.95],
     tempo: [0.3, 2.0, 5.0, ...[0, 1, 2, 3].map((i) => TEMPO_OFF + TS0 + i * TC + 0.95), TEMPO_OFF + TE + 1.95, TEMPO_OFF + TM + 1.95, TEMPO_OFF + TM + 3.75],
     gim: [0.3, ...[0.85, 2.55, 3.55, 4.55, 5.9, 7.35].map((x) => GIM_OFF + x)],
-    desk: [0.3, ...[1.45, 3.25, 4.8, 6.25, 7.55, 9.3].map((x) => DESK_OFF + x)],
+    desk: [0.3, ...[1.45, 3.25, 4.8, 6.25, 7.55, 9.6, 11.5].map((x) => DESK_OFF + x)],
     method: [0.3, ...[1.5, 2.45, 3.5, 4.5, 5.45].map((x) => METHOD_OFF + x)],
     end: [0.98],
   };
