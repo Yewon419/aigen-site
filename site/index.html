@@ -46,8 +46,15 @@
   @keyframes up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
   .nm span { animation: rise 0.9s cubic-bezier(0.16,1,0.3,1) both; }
   .pf span { animation: rise 0.8s cubic-bezier(0.16,1,0.3,1) 0.35s both; }
-  .gh { animation: up 0.7s cubic-bezier(0.16,1,0.3,1) 0.6s both; }
-  .toc li { animation: up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+  .gh { animation: up 0.7s cubic-bezier(0.16,1,0.3,1) 0.6s both; }  .toc li { animation: up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+  /* 목차가 서기 전, 같은 자리에서 프로젝트 이름이 하나씩 솟았다 빠진다 */
+  .rt { position: relative; }
+  #tk { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); pointer-events: none; }
+  #tk .tn { position: absolute; left: 0; top: 0; transform: translateY(-50%); overflow: hidden; white-space: nowrap; padding-bottom: 0.06em;
+    font-size: clamp(48px, 6.4vw, 124px); font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; }
+  #tk .tn span { display: inline-block; transform: translateY(105%); }
+  @keyframes tkin { from { transform: translateY(105%); } to { transform: none; } }
+  @keyframes tkout { from { transform: none; } to { transform: translateY(-105%); } }
   @media (max-aspect-ratio: 1/1) {
     #intro { grid-template-columns: 1fr; align-content: center; row-gap: 44px; padding: 0 34px; }
     .nm { font-size: 80px; }
@@ -59,7 +66,7 @@
     .toc .lk { gap: 14px; grid-row: 1; }
     .toc .lk a { font-size: 14px; }
   }
-  @media (prefers-reduced-motion: reduce) { .nm span, .pf span, .gh, .toc li { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .nm span, .pf span, .gh, .toc li { animation: none; } #tk { display: none; } }
 </style>
 </head>
 <body>
@@ -69,7 +76,7 @@
     <p class="pf mk"><span>Portfolio</span></p>
     <a class="gh" href="https://github.com/Yewon419" target="_blank" rel="noopener">github.com/Yewon419</a>
   </div>
-  <ul class="toc" id="toc"></ul>
+  <div class="rt"><div id="tk" aria-hidden="true"></div><ul class="toc" id="toc"></ul></div>
 </section>
 <main id="main"></main>
 <script>
@@ -90,8 +97,30 @@ const main = document.getElementById('main');
 const toc = document.getElementById('toc');
 const ext = (h) => (h.startsWith('http') || h.endsWith('.pdf') ? ' target="_blank" rel="noopener"' : '');
 
+// 인트로: 이름이 선 뒤 프로젝트 이름이 목차 자리에서 차례로 솟았다 빠지고, 마지막이 빠질 때 목차가 올라온다
+// 나가는 단어는 다음 단어가 솟는 순간 같은 곡선으로 함께 밀려 올라간다(글자 지연은 들어오는 쪽만 둬서 둘이 겹치지 않는다)
+const TK0 = 0.6, TK_GAP = 0.5, TK_DUR = 0.45, TK_STAG = 0.03;
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const tk = document.getElementById('tk');
+const TOC0 = calm ? 0 : TK0 + CH.length * TK_GAP + 0.1;
 CH.forEach((c, i) => {
-  const li = document.createElement('li'); li.style.animationDelay = (0.45 + i * 0.08) + 's';
+  const tn = document.createElement('div'); tn.className = 'tn';
+  const glyphs = [...c.name];
+  tn.innerHTML = glyphs.map((g) => `<span>${g === ' ' ? '&nbsp;' : g}</span>`).join('');
+  [...tn.children].forEach((s, j) => {
+    const tin = TK0 + i * TK_GAP + j * TK_STAG, tout = TK0 + (i + 1) * TK_GAP;
+    s.style.animation = `tkin ${TK_DUR}s cubic-bezier(0.16,1,0.3,1) ${tin}s forwards, tkout ${TK_DUR}s cubic-bezier(0.16,1,0.3,1) ${tout}s forwards`;
+  });
+  tk.append(tn);
+});
+// 긴 이름은 칸 폭에 맞게 줄인다
+const fitTicker = () => [...tk.children].forEach((tn) => { tn.style.fontSize = ''; const w = tk.clientWidth; if (tn.scrollWidth > w) tn.style.fontSize = (parseFloat(getComputedStyle(tn).fontSize) * w / tn.scrollWidth) + 'px'; });
+document.fonts.ready.then(fitTicker);
+addEventListener('resize', fitTicker);
+setTimeout(() => tk.remove(), (TOC0 + 1) * 1000);
+
+CH.forEach((c, i) => {
+  const li = document.createElement('li'); li.style.animationDelay = (TOC0 + i * 0.07) + 's';
   li.innerHTML = `<a class="nmc" href="#${c.id}">${c.name}</a><span class="ds">${c.desc}</span><span class="lk">${c.links.map(([t, h]) => `<a href="${h}"${ext(h)}>${t}</a>`).join('')}</span>`;
   li.querySelector('.nmc').addEventListener('click', (e) => { e.preventDefault(); go(c.rest.length ? c.rest[0] : c.sec.offsetTop); });
   toc.append(li);
@@ -196,12 +225,16 @@ function kick() { if (!raf) raf = requestAnimationFrame(frame); }
 // 스냅: 스크롤이 멈추면 움직이던 방향의 다음 정지 지점까지 넘어간다. 글이 바뀌는 중간에는 서지 않는다
 const IDLE = 160;
 let anim = null, idle = 0, dir = 1, lastY = scrollY, touching = false;
-const inOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-function go(y) {
+const inOut = (x) => (1 - Math.cos(Math.PI * x)) / 2;
+// 점프(목차)는 거리만큼 짧게, 스냅은 그 사이 장면이 제 속도로 재생되는 시간만큼
+const jumpMs = (d) => Math.min(1100, Math.max(420, 380 + (Math.abs(d) / innerHeight) * 160));
+const PLAY_RATE = 1;   // 스냅 중 재생 배속
+const playMs = (d) => Math.min(4500, Math.max(500, (Math.abs(d) / (innerHeight * VH_PER_SEC / 100)) * 1000 / PLAY_RATE));
+function go(y, msFor = jumpMs) {
   y = Math.max(0, Math.min(document.documentElement.scrollHeight - innerHeight, y));
   const y0 = scrollY, d = y - y0;
   if (Math.abs(d) < 2) return;
-  const dur = Math.min(1100, Math.max(420, 380 + (Math.abs(d) / innerHeight) * 160));
+  const dur = msFor(d);
   const t0 = performance.now();
   const id = {};
   anim = id;
@@ -219,7 +252,7 @@ function snap() {
   if (R.some((r) => Math.abs(r - y) < 3)) return;
   const next = R.find((r) => r > y), prev = [...R].reverse().find((r) => r < y);
   const to = dir > 0 ? (next ?? prev) : (prev ?? next);
-  if (to !== undefined) go(to);
+  if (to !== undefined) go(to, playMs);
 }
 const cancel = () => { anim = null; };
 addEventListener('wheel', cancel, { passive: true });
