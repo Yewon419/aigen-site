@@ -12,8 +12,6 @@ body { font-family: 'Wanted Sans Variable', 'Wanted Sans', sans-serif; color: va
 .t2 { font-size: 38px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.34; }
 .cap { font-size: 22px; font-weight: 500; color: var(--gray); line-height: 1.4; }
 .r { text-align: right; }
-#grid { position: absolute; inset: 0; }
-#grid i { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.06); transform-origin: 50% 0; }
 .dev { overflow: hidden; background: #FBFBFD; border: 14px solid #050506; border-radius: 66px; box-shadow: 0 0 0 1.5px rgba(255,255,255,0.18); }
 .dev > * { position: absolute; }
 .scr { left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }

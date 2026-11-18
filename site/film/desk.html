@@ -12,6 +12,13 @@
   #bar { position: absolute; left: 0; right: 0; top: 0; background: #1A1A1E; display: flex; align-items: center; gap: 8px; padding-left: 14px; overflow: hidden; }
   #bar i { width: 11px; height: 11px; border-radius: 50%; background: #3A3A40; flex: none; }
   #view { position: absolute; left: 0; right: 0; bottom: 0; overflow: hidden; }
+  #st, #sb { position: absolute; left: 0; right: 0; overflow: hidden; }
+  #st { top: 0; background: #0B1220; }
+  #st b { position: absolute; left: 50%; top: 11px; width: 122px; height: 36px; margin-left: -61px; border-radius: 18px; background: #000; }
+  #st span { position: absolute; left: 36px; top: 17px; font-size: 16px; font-weight: 700; color: #fff; }
+  #sb { bottom: 0; background: #0B1220; }
+  #sb i { position: absolute; left: 16px; right: 16px; bottom: 30px; height: 48px; border-radius: 16px; background: #1F2533; box-shadow: 0 0 0 1px rgba(255,255,255,0.08); }
+  #sb u { position: absolute; left: 50%; bottom: 8px; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: #fff; }
   #view img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
   #view #chat { left: auto; right: 0; width: auto; height: 100%; object-fit: contain; box-shadow: -12px 0 30px rgba(0,0,0,0.45); }
   #cubes { object-fit: cover; object-position: 50% 50%; }
@@ -27,7 +34,6 @@
 </style>
 </head>
 <body>
-<div id="grid"></div>
 
 <div class="abs mask hero" data-m="h1"><span class="g">빛</span><span class="g">뜰</span></div>
 <div class="abs mask hero" data-m="h2"><span class="g">데</span><span class="g">스</span><span class="g">크</span></div>
@@ -50,6 +56,8 @@
 
 <div id="dev">
   <div id="bar"><i></i><i></i><i></i></div>
+  <div id="st"><span>9:41</span><b></b></div>
+  <div id="sb"><i></i><u></u></div>
   <div id="view">
     <img id="office" src="/assets/desk-office.webp" alt="">
     <img id="chat" src="/assets/desk-chat.webp" alt="">
@@ -71,17 +79,22 @@ document.fonts.ready.then(() => {
   window.FILM = { width: W, height: H, duration: 18 };
   K.parse();
 
-  // 상자의 세 모양 (바깥 사각형, 모서리, 테두리, 창 막대 높이)
+  // 상자의 세 모양 (바깥 사각형, 모서리, 테두리, 창 막대 높이, 폰 상태 막대, 폰 아래 브라우저 막대)
   const P = K.P;
+  // 폰은 다른 장과 같은 기기 비율(900:1956). 폰 캡처(1179x1960, 브라우저 막대를 자른 것) 위아래를 상태 막대와 사파리 막대가 채운다
+  const phone = (h, y) => {
+    const w = h * 900 / 1956, b = 14, st = 52;
+    return { x: (W - w) / 2, y: y ?? (H - h) / 2, w, h, r: 66, b, bar: 0, st, sb: h - 2 * b - st - (w - 2 * b) * 1960 / 1179 };
+  };
   // 세로판: 창은 폭 900, 폰은 높이 900으로 위쪽에. 서버 상자는 노드 그림의 맨 위
   const R = P ? {
-    win: { x: 90, y: 330, w: 900, h: 34 + 3 + 897 * 401 / 637, r: 18, b: 1.5, bar: 34 },
-    ph: { x: (1080 - 900 * 384 / 648) / 2, y: 260, w: 900 * 384 / 648, h: 900, r: 72, b: 14, bar: 0 },
-    srv: { x: 300, y: 410, w: 480, h: 120, r: 20, b: 1.5, bar: 0 },
+    win: { x: 90, y: 330, w: 900, h: 34 + 3 + 897 * 401 / 637, r: 18, b: 1.5, bar: 34, st: 0, sb: 0 },
+    ph: phone(900, 260),
+    srv: { x: 300, y: 410, w: 480, h: 120, r: 20, b: 1.5, bar: 0, st: 0, sb: 0 },
   } : {
-    win: { x: 640, y: 322, w: 640, h: 436, r: 14, b: 1.5, bar: 34 },
-    ph: { x: 768, y: 216, w: 384, h: 648, r: 52, b: 12, bar: 0 },
-    srv: { x: 760, y: 492, w: 400, h: 96, r: 16, b: 1.5, bar: 0 },
+    win: { x: 640, y: 322, w: 640, h: 436, r: 14, b: 1.5, bar: 34, st: 0, sb: 0 },
+    ph: phone(410 * 1956 / 900),
+    srv: { x: 760, y: 492, w: 400, h: 96, r: 16, b: 1.5, bar: 0, st: 0, sb: 0 },
   };
   const GR = RX + 18;
   const rowY = (k, i) => K.rowEdge(k, i)[1];
@@ -90,18 +103,18 @@ document.fonts.ready.then(() => {
   const useBox = (r) => {
     K.box = { x: r.x, y: r.y, w: r.w, h: r.h };
     K.LIM = { l: r.x - 66, r: r.x + r.w + 66 };
-    const cx = r.x + r.b, cy = r.y + r.b + r.bar, cw = r.w - 2 * r.b, ch = r.h - 2 * r.b - r.bar;
+    const cx = r.x + r.b, cy = r.y + r.b + r.bar + r.st, cw = r.w - 2 * r.b, ch = r.h - 2 * r.b - r.bar - r.st - r.sb;
     K.A = (fx, fy) => [cx + fx * cw, cy + fy * ch];
     return { cx, cy, cw, ch };
   };
-  const dev = $('#dev'), bar = $('#bar'), view = $('#view');
+  const dev = $('#dev'), bar = $('#bar'), view = $('#view'), stb = $('#st'), sbb = $('#sb');
   const setR = (r) => {
     put(dev, r.x, r.y); dev.style.width = r.w + 'px'; dev.style.height = r.h + 'px';
     dev.style.borderRadius = r.r + 'px'; dev.style.borderWidth = r.b + 'px';
     dev.style.borderColor = r.b > 4 ? '#050506' : 'rgba(255,255,255,0.3)';
-    bar.style.height = r.bar + 'px'; view.style.top = r.bar + 'px';
+    bar.style.height = r.bar + 'px'; stb.style.height = r.st + 'px'; sbb.style.height = r.sb + 'px';
+    view.style.top = (r.bar + r.st) + 'px'; view.style.bottom = r.sb + 'px';
   };
-  K.grid([K.MX, R.win.x - 36, R.win.x + R.win.w + 36, RX]);
 
   // 제목
   const TY1 = R.win.y + R.win.h + 100;
@@ -143,14 +156,14 @@ document.fonts.ready.then(() => {
     put(lines.de4.el, LX, TY2);
     put(lines.de5.el, LX, TY2 + lines.de4.el.offsetHeight + 80);
     c4 = K.callout(K.rowEdge('de4', 1), K.A(0.5, 0.42), 30);
-    c5 = K.callout(K.rowEdge('de4', 2), K.A(0.33, 0.865), 30);
-    c6 = K.callout([GR, rowY('de5', 1)], K.A(0.8, 0.675), 62);
+    c5 = K.callout(K.rowEdge('de4', 2), K.A(0.282, 0.806), 30);
+    c6 = K.callout([GR, rowY('de5', 1)], K.A(0.8, 0.62), 62);
   } else {
     put(lines.de4.el, LX, 330);
     c4 = K.callout(K.rowEdge('de4', 1), K.A(0.5, 0.42));
-    c5 = K.callout(K.rowEdge('de4', 2), K.A(0.33, 0.865));
+    c5 = K.callout(K.rowEdge('de4', 2), K.A(0.282, 0.806));
     K.rightAlign(lines.de5.el, 330);
-    c6 = K.callout(K.rowEdge('de5', 1), K.A(0.8, 0.675));
+    c6 = K.callout(K.rowEdge('de5', 1), K.A(0.8, 0.62));
   }
   K.check();
 
@@ -198,7 +211,6 @@ document.fonts.ready.then(() => {
   const office = $('#office'), chat = $('#chat'), pOffice = $('#pOffice'), pChat = $('#pChat'), cubes = $('#cubes'), srvL = $('#srvL');
 
   window.seek = (t) => {
-    K.drawGrid(t);
     // 상자 모양: 창 → 폰 → 서버
     const m1 = io(prog(t, 7.7, 8.4)), m2 = io(prog(t, 12.55, 13.15));
     const r = m2 > 0 ? mix(R.ph, R.srv, m2) : mix(R.win, R.ph, m1);
@@ -223,7 +235,7 @@ document.fonts.ready.then(() => {
     pChat.style.opacity = pc > 0 && m2 < 0.5 ? '1' : '0';
     pOffice.style.transform = `translateX(${(-pc * 100).toFixed(2)}%)`;
     pChat.style.transform = `translateX(${((1 - pc) * 100).toFixed(2)}%)`;
-    view.style.opacity = m2 < 0.5 ? '1' : '0';
+    view.style.opacity = stb.style.opacity = sbb.style.opacity = m2 < 0.5 ? '1' : '0';
     const sl = ease.outExpo(prog(t, 12.95, 13.4));
     srvL.style.opacity = sl.toFixed(3); srvL.style.transform = `translateY(${((1 - sl) * 12).toFixed(1)}px)`;
 

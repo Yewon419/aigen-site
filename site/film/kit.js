@@ -23,14 +23,6 @@ window.Kit = function Kit() {
     K.LIM = { l: x - 66, r: x + w + 66 };
   };
 
-  K.grid = (xs) => {
-    const g = $('#grid');
-    xs.forEach((x) => { const i = document.createElement('i'); i.style.left = x + 'px'; g.append(i); });
-  };
-  K.drawGrid = (t, t0 = 0.2) => {
-    $$('#grid i').forEach((el, i) => { el.style.transform = `scaleY(${ease.outExpo(prog(t, t0 + i * 0.05, t0 + 1 + i * 0.05)).toFixed(4)})`; });
-  };
-
   // 글: | 로 나눈 줄마다 한 덩어리, 줄 안에서는 낱말 단위로 움직인다
   K.parse = () => {
     $$('.ln').forEach((el) => {

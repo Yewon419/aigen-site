@@ -33,7 +33,6 @@
 </style>
 </head>
 <body>
-<div id="grid"></div>
 
 <div class="abs mask hero" data-m="h1"><span class="g">AI와</span></div>
 <div class="abs mask hero" data-m="h2"><span class="g">일하는 방식</span></div>
@@ -93,7 +92,6 @@ document.fonts.ready.then(() => {
     K.box = { x: r.x, y: r.y, w: r.w, h: r.h }; K.LIM = { l: r.x - 66, r: r.x + r.w + 66 };
     K.A = (fx, fy) => [r.x + 1.5 + fx * (r.w - 3), r.y + 1.5 + bar + fy * (r.h - 3 - bar)];
   };
-  K.grid([K.MX, G.x - 36, G.x + G.w + 36, RX]);
   const nodes = {}; $$('.nd').forEach((el) => { nodes[el.dataset.n] = el; });
   const nh = (k) => nodes[k].offsetHeight;
   const gm = G.y + G.h / 2;
@@ -171,7 +169,6 @@ document.fonts.ready.then(() => {
   K.check();
 
   window.seek = (t) => {
-    K.drawGrid(t);
     const m = io(prog(t, 8.55, 9.2));
     setR(Object.fromEntries(Object.keys(G).map((k) => [k, lerp(G[k], WN[k], m)])));
     const up = ease.outExpo(prog(t, 0.0, 1.0));

@@ -45,7 +45,6 @@
 </style>
 </head>
 <body>
-<div id="grid"></div>
 
 <div class="abs mask hero" id="heroM"><span class="g">템</span><span class="g">포</span><span class="g">루</span><span class="g">틴</span></div>
 <div class="abs mask t1" data-m="ti1"><span class="g">몸의 주기에 맞추는</span></div>
@@ -118,7 +117,6 @@ document.fonts.ready.then(() => {
   const PX = (W - PW) / 2, PY = P ? 90 : (H - PH) / 2;
   const win = $('#win'); K.device(win, PX, PY, PW, PH, 14);
   const { A } = K; const IW = K.box.iw, IH = K.box.ih;
-  K.grid([K.MX, PX - 36, PX + PW + 36, RX]);
   // 세로판: 기기 아래 글이 시작하는 높이, 오른쪽 여백 통로
   const TY0 = PY + PH + 100, GR = RX + 18;
   const hOf = (k) => lines[k].el.offsetHeight;
@@ -254,7 +252,6 @@ document.fonts.ready.then(() => {
   const TH0 = 15.1, THS = 0.42;
 
   window.seek = (t) => {
-    K.drawGrid(t);
     const up = ease.outExpo(prog(t, 0.0, 1.0));
     win.style.transform = `translateY(${((1 - up) * K.v(1000, 1900)).toFixed(1)}px)`;
     const launch = io(prog(t, 1.25, 1.75));
