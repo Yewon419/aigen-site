@@ -172,7 +172,9 @@
     L.cupDrop = L.narrow ? Math.max(0, catY + cat.el.offsetHeight + 12 - L.cupY) : 0;
     // 밤: 띠가 하늘이 되고, 작아진 컵 양옆에 로슈와 카인
     place('su-4', L.m, under, L.narrow ? L.vw - 2 * L.m : 0.6 * L.vw);
-    L.bandH = Math.max((L.narrow ? 0.42 : 0.46) * L.vh, under + lines['su-4'].el.offsetHeight + 0.04 * L.vh);
+    const s4c = under + lines['su-4'].el.offsetHeight + (L.narrow ? 10 : 16);
+    place('su-4c', L.m, s4c, L.narrow ? L.vw - 2 * L.m : 0.6 * L.vw);
+    L.bandH = Math.max((L.narrow ? 0.42 : 0.46) * L.vh, s4c + lines['su-4c'].el.offsetHeight + 0.04 * L.vh);
     L.cupHn = (L.narrow ? 0.26 : 0.42) * L.vh;
     L.cupWn = L.cupHn * (720 / 1292);
     L.floor = 0.93 * L.vh;
@@ -256,11 +258,29 @@
     L.angleW = L.narrow ? Math.min(0.5 * L.vw, L.smY - gtb - 24) : 0.3 * L.vw;
     L.angleCy = L.narrow ? Math.min(Math.max(L.vh * 0.36, gtb + 12 + L.angleW / 2), L.smY - 12 - L.angleW / 2) : L.vh * 0.46;
     L.angleH = L.H * 0.42;
+    // 넓고 낮은 화면: 거의 세운 각도선(무릎 108°)이 글을 덮지 않게, 이름표 아래와 글 위 사이 빈칸에 길이와 중심을 맞춘다
+    if (!L.narrow) {
+      const gTop = Math.min(...['gi-2', 'gi-3', 'gi-4', 'gi-5'].map((k) => parseFloat(lines[k].el.style.top)));
+      const span = gTop - 24 - (L.topY + L.H + 16);
+      const minW = bts.a1.w + 2 * L.pad;
+      L.angleW = Math.max(minW, Math.min(0.3 * L.vw, span - L.angleH));
+      L.angleCy = L.topY + L.H + 16 + span / 2;
+      // 그래도 모자라면 글 칸을 좁히고, 각도선은 글 오른쪽 빈칸 가운데에 세운다
+      if (span - L.angleH < minW) {
+        const tw2 = 0.58 * gw, zone = gw + 48 - tw2 - 24;
+        ['gi-2', 'gi-3', 'gi-4', 'gi-5'].forEach((k) => { place(k, L.m, gy, tw2); place(k, L.m, Math.min(gy, L.safeB - lines[k].el.offsetHeight)); });
+        const top = L.topY + L.H + 16;
+        L.angleW = Math.max(minW, Math.min(zone / 0.9, L.safeB - top - L.angleH));
+        L.angleCx = L.m + tw2 + 24 + zone / 2;
+        L.angleCy = (top + L.safeB) / 2;
+      }
+    }
 
     // 방식: 다섯 단계 도표(되돌이 화살표 포함). 띠가 지금 단계 상자를 칠한다. 아래 칸에 COPY.md 표 → 검수 스틸 → 마지막 문장
     const mf = flows['me-flow'];
     layoutFlow(mf, L.m, L.vw - 2 * L.m, L.narrow);
-    moveFlow(mf, under);
+    place('me-1', L.m, under, L.narrow ? L.vw - 2 * L.m : 0.6 * L.vw);
+    moveFlow(mf, under + lines['me-1'].el.offsetHeight + (L.narrow ? 16 : 32));
     const msX = L.m, msW = L.narrow ? L.vw - 2 * L.m : Math.min(0.6 * L.vw, L.vw - 2 * L.m);
     const msY = mf.y + mf.h + (L.narrow ? 16 : 40);
     doc.style.width = (L.narrow ? msW : Math.min(msW, 640)) + 'px';
@@ -608,20 +628,20 @@
   });
 
   // 목차 2.6비트: 이름표 아래로 장마다 한 줄씩(이름 · 한 줄 소개 · 링크), 장 이름을 누르면 그 장으로 간다
-  // 1.6 이름표가 화면 전체로 번지고 첫 장(템포루틴) 제목과 아이콘이 가운데에서 솟는다
+  // 1.6 이름표가 화면 전체로 번지고 첫 장(슈가캡) 제목과 아이콘이 가운데에서 솟는다
   scene('toc', (b, A) => {
     listIn('toc-list', b, 0.0, 1.85, 0.08);
     if (!A) return;
     glyphsIn('toc', b, -10, 1.45);
     if (b < 1.6) setBarR(plateR('toc', L.topY));
-    else floodTo(b, plateR('toc', L.topY), 'tempo', 1.6);
+    else floodTo(b, plateR('toc', L.topY), 'sugar', 1.6);
   });
 
   // 슈가캡 14비트
   // 0~1.3 챕터 막 → 이름표 / 1.3 선언과 컵 등장 / 2.1~2.8 이름표가 수면선이 된다
   // 3.0~5.7 기록할 때마다 수면선이 다음 수위로 내려가며 사진을 바꿔 닦는다
   // 5.9~6.6 수면선 → 카운터 이름표 / 7.85~8.6 카운터 → 밤하늘 / 9.85~10.55 밤하늘 → 「만든 방법」
-  // 링크는 도표 아래에 함께 뜬다 / 11.85~12.3 이름표 → 링크 밑줄 / 12.4 밑줄이 화면을 덮고 「AI와 일하는 방식」
+  // 링크는 도표 아래에 함께 뜬다 / 11.85~12.3 이름표 → 링크 밑줄 / 12.4 밑줄이 화면을 덮고 「템포루틴」
   scene('sugar', (b, A) => {
     words('su-1', b, 1.3, 2.3);
     words('su-2', b, 2.6, 3.9);
@@ -630,6 +650,7 @@
     catalogIn(b, 6.95, 7.85);
     words('su-3', b, 6.7, 7.85, 0.03);
     words('su-4', b, 8.45, 9.85);
+    words('su-4c', b, 8.75, 9.85, 0.03);
     words('su-5', b, 10.6, 11.85);
     flowIn('su-flow', b, [0, 1, 2, 3, 4, 5].map((i) => 10.75 + i * 0.12), 0, 12.6);
     words('su-links', b, 11.15, 12.6);
@@ -651,7 +672,7 @@
     else if (b < 9.85) setBarR(lerpR(cnt, band, ease.inOutCubic(prog(b, 7.85, 8.6))));
     else if (b < 11.85) setBarR(lerpR(band, made, ease.inOutCubic(prog(b, 9.85, 10.55))));
     else if (b < 12.4) setBarR(lerpR(made, underline('su-links'), ease.inOutCubic(prog(b, 11.85, 12.3))));
-    else floodTo(b, underline('su-links'), 'method', 12.4);
+    else floodTo(b, underline('su-links'), 'tempo', 12.4);
   });
 
   // 사진 여러 장을 한 칸에서 바꿔 닦는다. ins[k] = [t0, t1, 방향]. 다음 장이 다 덮으면 앞 장은 숨긴다.
@@ -742,7 +763,7 @@
   // 짐살라빔 9.8비트: 0~1.3 챕터 막 → 이름표, 이후 본문(b = 원래 비트 - 1.3)
   // 본문: 제목 → 이름표가 각도선이 된다(1.0~1.9). 각도선이 몸통→엉덩이→무릎 기준값으로 기울 때
   // 오른쪽 판넬 조각: 상태 기계는 다섯 단계가 차례로 켜지고, 아래 칸은 체크포인트 → 아키텍처 → 댄스 모드 DTW(맡은 부분)
-  // 6.0~6.5 각도선이 눕혀져 링크 밑줄, 판넬 전체가 들어온다 / 7.5 밑줄이 화면을 덮고 「슈가캡」
+  // 6.0~6.5 각도선이 눕혀져 링크 밑줄, 판넬 전체가 들어온다 / 7.5 밑줄이 화면을 덮고 「AI와 일하는 방식」
   const GIM_OFF = 1.3;
   scene('gim', (bRaw, A) => {
     const b = bRaw - GIM_OFF;
@@ -792,7 +813,7 @@
         const u0 = ease.inOutCubic(prog(b, 6.0, 6.5));
         setBar(M.lerp(ax, u.x, u0), M.lerp(ay, u.y, u0), M.lerp(L.angleW, u.w, u0), M.lerp(L.angleH, u.h, u0), M.lerp(-108.35, 0, u0));
       } else {
-        floodTo(b, u, 'sugar', 7.5);
+        floodTo(b, u, 'method', 7.5);
       }
     }
   }
@@ -885,8 +906,9 @@
   scene('method', (bRaw, A) => {
     const b = bRaw - METHOD_OFF;
     const fl = flows['me-flow'];
+    words('me-1', b, 0.1, 5.55, 0.03);
     flowIn('me-flow', b, ME_T, 4.9, 5.55);
-    words('me-5', b, 5.0, 5.6);
+    words('me-5', b, 4.95, 5.6, 0.015);
     const dIn = ease.outExpo(prog(b, 0.85, 1.5));
     const dFold = ease.inCubic(prog(b, 2.55, 2.9));
     doc.style.opacity = dIn > 0 && dFold < 1 ? '1' : '0';
@@ -936,7 +958,7 @@
     tempo: [0.3, 2.0, 5.0, ...[0, 1, 2, 3].map((i) => TEMPO_OFF + TS0 + i * TC + 0.95), TEMPO_OFF + TE + 1.95, TEMPO_OFF + TM + 1.95],
     gim: [0.3, ...[0.85, 2.55, 3.55, 4.55, 5.9, 7.35].map((x) => GIM_OFF + x)],
     desk: [0.3, ...[1.45, 3.25, 4.8, 6.25, 7.55, 9.6].map((x) => DESK_OFF + x)],
-    method: [0.3, ...[1.5, 2.45, 3.5, 4.5, 5.45].map((x) => METHOD_OFF + x)],
+    method: [0.3, ...[1.5, 2.45, 3.5, 4.5, 5.5].map((x) => METHOD_OFF + x)],
     end: [0.98],
   };
   const snaps = [];
