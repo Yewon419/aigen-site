@@ -73,6 +73,9 @@
     flows[el.dataset.k] = { el, svg, nodes, arrows, back, R: [], x: 0, y: 0, w: 0, h: 0 };
   });
   over.appendChild(flows['me-flow'].el);
+  // 슈가캡 주간 기준 막대와 나라별 카탈로그
+  const wk = { el: $('.wk'), bars: $$('.wk-b'), marks: $$('.wk-b i, .wk-b u'), cap: $('.wk figcaption') };
+  const cat = { el: $('.cat'), boxes: $$('.cn'), cap: $('.cat figcaption') };
   const chi = {}; $$('.chi').forEach((el) => { chi[el.dataset.i] = el; });
   const cups = {}; $$('.cup').forEach((el) => { cups[el.dataset.c] = el; });
   const chars = {}; $$('.ch').forEach((el) => { chars[el.dataset.ch] = el; });
@@ -143,6 +146,17 @@
     place('su-2b', L.m, under, colW);
     L.cntY = L.narrow ? under : 0.34 * L.vh;
     place('su-3', L.m, L.cntY + L.H + 24, colW);
+    // 주간 기준 막대: 기준 문장 아래, 좁으면 컵 위 빈칸에 맞춘다
+    const wkY = under + lines['su-2b'].el.offsetHeight + (L.narrow ? 16 : 40);
+    wk.el.style.left = L.m + 'px'; wk.el.style.top = wkY + 'px'; wk.el.style.width = Math.min(colW, 560) + 'px';
+    wk.el.style.setProperty('--wh', '0px');
+    const wkAvail = (L.narrow ? L.cupY - 12 : L.safeB) - wkY;
+    wk.el.style.setProperty('--wh', clamp(wkAvail - wk.el.offsetHeight, 36, L.narrow ? 120 : 240) + 'px');
+    // 나라별 카탈로그: 카탈로그 문장 아래
+    const catY = L.cntY + L.H + 24 + lines['su-3'].el.offsetHeight + (L.narrow ? 14 : 32);
+    cat.el.style.left = L.m + 'px'; cat.el.style.top = catY + 'px'; cat.el.style.width = Math.min(colW, 640) + 'px';
+    // 좁은 화면: 카탈로그가 떠 있는 동안 컵이 그 아래로 비켜난다
+    L.cupDrop = L.narrow ? Math.max(0, catY + cat.el.offsetHeight + 12 - L.cupY) : 0;
     // 밤: 띠가 하늘이 되고, 작아진 컵 양옆에 로슈와 카인
     place('su-4', L.m, under, L.narrow ? L.vw - 2 * L.m : 0.6 * L.vw);
     L.bandH = Math.max((L.narrow ? 0.42 : 0.46) * L.vh, under + lines['su-4'].el.offsetHeight + 0.04 * L.vh);
@@ -384,7 +398,8 @@
     if (exit >= 1) return;
     const n = L.nightCup;
     const x = M.lerp(L.cupX, n.x, shrink);
-    const y = M.lerp(L.cupY + (1 - enter) * (L.vh - L.cupY + 40), n.y, shrink) + exit * (L.vh - n.y + 40);
+    const drop = L.cupDrop * ease.inOutCubic(prog(b, 6.5, 6.95)) * (1 - ease.inOutCubic(prog(b, 7.85, 8.3)));
+    const y = M.lerp(L.cupY + drop + (1 - enter) * (L.vh - L.cupY + 40), n.y, shrink) + exit * (L.vh - n.y + 40);
     const s = M.lerp(1, n.s, shrink);
     const tf = `translate(${x}px, ${y}px) scale(${s})`;
     const show = (k, op, clip) => { const el = cups[k]; el.style.transform = tf; el.style.opacity = op.toFixed(3); el.style.clipPath = clip; };
@@ -477,6 +492,32 @@
     }
   }
 
+  // 주간 기준 막대: 한 주씩 왼쪽부터 솟는다. tOut에 통째로 위로 빠진다
+  function weeksIn(b, t0, tOut) {
+    const v = ease.inCubic(prog(b, tOut, tOut + 0.35));
+    wk.el.style.opacity = (1 - v).toFixed(3);
+    wk.el.style.transform = `translateY(${(-v * 40).toFixed(2)}px)`;
+    wk.bars.forEach((el, i) => {
+      const t = t0 + i * 0.08;
+      el.style.transform = `scaleY(${ease.outExpo(prog(b, t, t + 0.45)).toFixed(4)})`;
+      const m = ease.outCubic(prog(b, t + 0.2, t + 0.45)).toFixed(3);
+      wk.marks[2 * i].style.opacity = m; wk.marks[2 * i + 1].style.opacity = m;
+    });
+    wk.cap.style.opacity = ease.outCubic(prog(b, t0 + 0.6, t0 + 0.9)).toFixed(3);
+  }
+  // 나라별 카탈로그: 세 칸이 차례로 솟고 설명이 뒤따른다
+  function catalogIn(b, t0, tOut) {
+    const v = ease.inCubic(prog(b, tOut, tOut + 0.35));
+    cat.el.style.opacity = (1 - v).toFixed(3);
+    cat.el.style.transform = `translateY(${(-v * 40).toFixed(2)}px)`;
+    cat.boxes.forEach((el, i) => {
+      const u = ease.outExpo(prog(b, t0 + i * 0.12, t0 + i * 0.12 + 0.45));
+      el.style.opacity = u.toFixed(3);
+      el.style.transform = `translateY(${((1 - u) * 16).toFixed(2)}px)`;
+    });
+    cat.cap.style.opacity = ease.outCubic(prog(b, t0 + 0.4, t0 + 0.7)).toFixed(3);
+  }
+
   // 링크 줄 밑줄 사각형 (단어 실측)
   function underline(linksKey) {
     const ln = lines[linksKey]; const el = ln.el;
@@ -512,6 +553,8 @@
     words('su-1', b, 1.3, 2.3);
     words('su-2', b, 2.6, 3.9);
     words('su-2b', b, 4.55, 5.9);
+    weeksIn(b, 4.75, 5.9);
+    catalogIn(b, 6.95, 7.85);
     words('su-3', b, 6.7, 7.85, 0.03);
     words('su-4', b, 8.45, 9.85);
     words('su-5', b, 10.6, 11.85);
