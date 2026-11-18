@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<!-- 짐살라빔 장. 가운데 판넬 한 장은 그 자리에 있고, 좌우 글이 선으로 판넬 속 영역을 짚는다 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="/film/kit.css">
+<style>
+  .hero { font-size: 116px; }
+  .t2s { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.36; }
+  #pan { position: absolute; overflow: hidden; border-radius: 10px; background: #F3EEF8; box-shadow: 0 0 0 1.5px rgba(255,255,255,0.18); }
+  #pan img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .ang { position: absolute; display: flex; align-items: baseline; gap: 18px; white-space: nowrap; }
+  .ang span { font-size: 26px; font-weight: 600; color: var(--gray); width: 92px; }
+  .ang b { font-size: 60px; font-weight: 900; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .nd.sm { width: auto; padding: 14px 18px; }
+  .nd.sm b { font-size: 23px; }
+  .pt .ang { gap: 24px; }
+  .pt .ang span { font-size: 34px; width: 120px; }
+  .pt .ang b { font-size: 76px; }
+  .pt .nd.sm { padding: 20px 24px; }
+  .pt .nd.sm b { font-size: 32px; }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+
+<div class="abs mask hero" data-m="h1"><span class="g">짐</span><span class="g">살</span><span class="g">라</span><span class="g">빔</span></div>
+<div class="abs mask t1" data-m="ti1"><span class="g">웹캠으로</span></div>
+<div class="abs mask t1" data-m="ti2"><span class="g">운동 자세를</span></div>
+<div class="abs mask t1" data-m="ti3"><span class="g">채점한다</span></div>
+
+<p class="abs ln t2s" data-k="gi2">스쿼트 모드는 | 동작을 다섯 단계로 나누고, | 무릎·몸통·엉덩이 각도를 | 기준값과 비교한다.</p>
+<div class="ang" data-a="0"><span>몸통</span><b data-v="32.59">0</b></div>
+<div class="ang" data-a="1"><span>엉덩이</span><b data-v="110.11">0</b></div>
+<div class="ang" data-a="2"><span>무릎</span><b data-v="108.35">0</b></div>
+<p class="abs ln cap" data-k="angc">AI Hub 피트니스 자세 데이터의 | 기준 평균값</p>
+
+<p class="abs ln t2s r" data-k="gi3">휴대폰에서도 | 실시간으로 돌도록 | 가벼운 MediaPipe를 골랐다. | 가려진 관절은 인체 구조를 | 바탕으로 계산한다.</p>
+
+<p class="abs ln t2s r" data-k="gi4">댄스 모드는 | 속도가 다른 두 동작의 | 시간 축을 DTW로 맞춘 뒤, | 팔꿈치·무릎 각도를 비교한다.</p>
+<div class="nd sm" data-n="ref"><b>기준 동작</b></div>
+<div class="nd sm" data-n="me"><b>따라 한 동작</b></div>
+<div class="nd sm" data-n="dtw"><b>시간 축 맞추기</b></div>
+<div class="nd sm" data-n="cmp"><b>팔꿈치 · 무릎 각도 비교</b></div>
+<div class="nd sm" data-n="sc"><b>점수</b></div>
+
+<p class="abs ln t2" data-k="gi5">AI 동아리 4인 팀. | 자세 인식 모델 리서치와 | 댄스 모드 채점 구현을 | 맡았다.</p>
+
+<div id="pan"><img src="/assets/panel.webp" alt=""></div>
+
+<svg id="fx" width="1920" height="1080"></svg>
+
+<script src="/motion.js"></script>
+<script src="/film/kit.js"></script>
+<script>
+document.fonts.ready.then(() => {
+  const K = Kit();
+  const { $, $$, put, prog, ease, io, lines, masks, LX, RX, W, H, words, rise, drawC, drawA, lift } = K;
+  window.FILM = { width: W, height: H, duration: 15.5 };
+  K.parse();
+
+  const P = K.P;
+  const PH = P ? 900 : 900, PW = PH * 1400 / 1974;
+  const PX = (W - PW) / 2, PY = P ? 80 : (H - PH) / 2;
+  const pan = $('#pan'); K.device(pan, PX, PY, PW, PH, 0);
+  const { A } = K;
+  K.grid([K.MX, PX - 36, PX + PW + 36, RX]);
+  // 세로판: 판넬 아래 글이 시작하는 높이, 오른쪽 여백 통로
+  const TY = PY + PH + 100, GR = RX + 18;
+
+  // 제목
+  put(masks.h1, LX - 6, P ? TY - 20 : 420);
+  K.rightAlign(masks.ti1, P ? TY + 230 : 330); K.rightAlign(masks.ti2, P ? TY + 330 : 410); K.rightAlign(masks.ti3, P ? TY + 430 : 490);
+
+  // 1 스쿼트: 문장 → 5단계 상태 기계, 각도 → 기준값 표, 다음 문장 → AI Engine
+  const angs = $$('.ang');
+  const a0 = angs[0];
+  let c1, c2, c3;
+  if (P) {
+    // 세로판: gi2가 나간 자리에 gi3이 들어온다. 각도 줄은 오른쪽에 붙여 오른쪽 통로로 선을 올린다
+    put(lines.gi2.el, LX, TY);
+    put(lines.gi3.el, LX, TY);
+    c1 = K.callout(K.rowEdge('gi2', 1), A(0.17, 0.555), 30);
+    const ay = TY + Math.max(lines.gi2.el.offsetHeight, lines.gi3.el.offsetHeight) + 70, AG = 104;
+    // 숫자가 다 올라간 폭으로 맞춘다
+    angs.forEach((el) => { const b = el.querySelector('b'); b.textContent = parseFloat(b.dataset.v).toFixed(2) + '°'; });
+    const aw = Math.max(...angs.map((el) => el.offsetWidth));
+    angs.forEach((el, i) => put(el, RX - aw, ay + i * AG));
+    put(lines.angc.el, RX - lines.angc.el.offsetWidth, ay + 3 * AG + 20);
+    c2 = K.callout([GR, ay + a0.offsetHeight / 2], A(0.25, 0.885), 62);
+    c3 = K.callout(K.rowEdge('gi3', 2), A(0.56, 0.405), 30);
+  } else {
+    put(lines.gi2.el, LX, 190);
+    c1 = K.callout(K.rowEdge('gi2', 1), A(0.17, 0.555));
+    angs.forEach((el, i) => put(el, LX, 520 + i * 92));
+    put(lines.angc.el, LX, 520 + 3 * 92 + 14);
+    c2 = K.callout([LX + a0.offsetWidth + 150, 520 + a0.offsetHeight / 2], A(0.25, 0.885));
+    K.rightAlign(lines.gi3.el, 300);
+    c3 = K.callout(K.rowEdge('gi3', 2), A(0.56, 0.405));
+  }
+
+  // 2 댄스: 문장 → DTW, 흐름 상자
+  let c4, NY0;
+  if (P) {
+    put(lines.gi4.el, LX, TY);
+    c4 = K.callout(K.rowEdge('gi4', 2), A(0.63, 0.84), 30);
+    NY0 = TY + lines.gi4.el.offsetHeight + 80;
+  } else {
+    K.rightAlign(lines.gi4.el, 520);
+    c4 = K.callout(K.rowEdge('gi4', 2), A(0.63, 0.84));
+    NY0 = 300;
+  }
+  const nd = {}; $$('.nd').forEach((el) => { nd[el.dataset.n] = el; });
+  const NX = LX, GAP = P ? 52 : 62;
+  put(nd.ref, NX, NY0); put(nd.me, NX + nd.ref.offsetWidth + 20, NY0);
+  const nh = nd.ref.offsetHeight;
+  const ys = [NY0 + nh + GAP, NY0 + 2 * (nh + GAP), NY0 + 3 * (nh + GAP)];
+  put(nd.dtw, NX, ys[0]); put(nd.cmp, NX, ys[1]); put(nd.sc, NX, ys[2]);
+  const ax = NX + 40;
+  const ar = [
+    K.arrow([[ax, NY0 + nh], [ax, ys[0]]]),
+    K.arrow([[NX + nd.ref.offsetWidth + 20 + 40, NY0 + nh], [NX + nd.ref.offsetWidth + 20 + 40, NY0 + nh + GAP / 2], [ax + 24, NY0 + nh + GAP / 2], [ax + 24, ys[0]]]),
+    K.arrow([[ax, ys[0] + nh], [ax, ys[1]]]),
+    K.arrow([[ax, ys[1] + nh], [ax, ys[2]]]),
+  ];
+
+  // 3 팀: 문장 → 판넬의 모델 영역
+  put(lines.gi5.el, LX, P ? TY : 330);
+  const c5 = K.callout(K.rowEdge('gi5', 1), A(0.2, 0.21), P ? 30 : 36);
+  K.check();
+
+  window.seek = (t) => {
+    K.drawGrid(t);
+    const up = ease.outExpo(prog(t, 0.0, 1.1));
+    pan.style.transform = `translateY(${((1 - up) * K.v(1000, 1900)).toFixed(1)}px)`;
+
+    // 0 제목
+    rise(masks.h1, t, 0.3, 2.65, 0.08);
+    rise(masks.ti1, t, 0.95, 2.55); rise(masks.ti2, t, 1.05, 2.6); rise(masks.ti3, t, 1.15, 2.65);
+
+    // 1
+    // 세로판은 gi2가 먼저 나가고 같은 자리에 gi3이 들어온다
+    words('gi2', t, 2.9, K.v(7.9, 5.3), 0.03);
+    drawC(c1, t, 3.4, K.v(7.85, 5.25));
+    angs.forEach((el, i) => {
+      lift(el, t, 3.8 + i * 0.12, 7.85, 20);
+      const b = el.querySelector('b'), v = parseFloat(b.dataset.v);
+      b.textContent = (v * ease.outCubic(prog(t, 3.8 + i * 0.12, 4.7 + i * 0.12))).toFixed(2) + '°';
+    });
+    words('angc', t, 4.3, 7.9, 0.02);
+    drawC(c2, t, 4.4, 7.85);
+    words('gi3', t, K.v(5.0, 5.7), 7.9, 0.03);
+    drawC(c3, t, K.v(5.6, 6.2), 7.85);
+
+    // 2
+    words('gi4', t, 8.2, 11.9, 0.03);
+    drawC(c4, t, 8.8, 11.85);
+    [['ref', 8.6], ['me', 8.7], ['dtw', 9.2], ['cmp', 9.6], ['sc', 10.0]].forEach(([k, t0]) => lift(nd[k], t, t0, 11.85, 16));
+    drawA(ar[0], t, 8.95); drawA(ar[1], t, 9.0, 0.45); drawA(ar[2], t, 9.4); drawA(ar[3], t, 9.8);
+    $$('#fx .ln2, #fx .hd').forEach(() => {});
+    const fade = 1 - ease.inCubic(prog(t, 11.85, 12.2));
+    ar.forEach((a) => { if (t > 11.85) { a.p.style.opacity = fade.toFixed(3); a.h.style.opacity = fade.toFixed(3); } });
+
+    // 3
+    words('gi5', t, 12.3, 1e9, 0.035);
+    drawC(c5, t, 12.9, 1e9);
+  };
+  window.seek(0);
+});
+</script>
+</body>
+</html>

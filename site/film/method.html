@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<!-- AI와 일하는 방식 장. 가운데 게이트 상자 하나가 고리의 중심이 되고, 그대로 커져 이 페이지의 검수 기록을 연다 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="/film/kit.css">
+<style>
+  .hero { font-size: 104px; }
+  .t2s { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.36; }
+  #gate { position: absolute; overflow: hidden; border: 1.5px solid rgba(255,255,255,0.55); background: #0D0D0F; }
+  #gL { position: absolute; inset: 0; padding: 18px 22px; display: flex; flex-direction: column; gap: 6px; }
+  #gL b { font-size: 26px; font-weight: 800; }
+  #gL span { font-size: 19px; color: var(--gray); font-weight: 500; }
+  #bar { position: absolute; left: 0; right: 0; top: 0; height: 34px; background: #1A1A1E; display: flex; align-items: center; gap: 8px; padding-left: 14px; }
+  #bar i { width: 11px; height: 11px; border-radius: 50%; background: #3A3A40; }
+  #doc { position: absolute; left: 0; right: 0; top: 34px; background: #FFFFFF; color: #0A0A0A; padding: 16px 22px 14px; }
+  #doc p { font-size: 15px; font-weight: 600; color: #6A6A70; margin-bottom: 8px; }
+  #doc table { width: 100%; border-collapse: collapse; font-size: 17px; }
+  #doc th { text-align: left; font-weight: 700; padding: 6px 0; border-bottom: 1.5px solid #0A0A0A; }
+  #doc td { padding: 7px 0; border-bottom: 1px solid #E2E2E6; font-weight: 500; }
+  #doc td:last-child, #doc th:last-child { color: #6A6A70; width: 170px; }
+  #stl { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; }
+  .bk { font-size: 20px; color: var(--gray); font-weight: 500; }
+  .pt .hero { font-size: 150px; }
+  .pt #gL { padding: 22px 28px; }
+  .pt #gL b { font-size: 36px; }
+  .pt #gL span { font-size: 26px; }
+  .pt #doc { padding: 22px 26px 18px; }
+  .pt #doc p { font-size: 24px; margin-bottom: 10px; }
+  .pt #doc table { font-size: 27px; }
+  .pt #doc td:last-child, .pt #doc th:last-child { width: 240px; }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+
+<div class="abs mask hero" data-m="h1"><span class="g">AI와</span></div>
+<div class="abs mask hero" data-m="h2"><span class="g">일하는 방식</span></div>
+<div class="abs mask t1" data-m="ti1"><span class="g">스펙부터</span></div>
+<div class="abs mask t1" data-m="ti2"><span class="g">화면 검수까지</span></div>
+
+<p class="abs ln t2 r" data-k="me1">AI가 코드를 쓰고, | 검증 게이트를 통과한 | 코드만 반영한다.</p>
+<div class="nd" data-n="spec"><b>스펙 문서</b><span>단일 출처, 여기서 출발</span></div>
+<div class="nd" data-n="ai"><b>AI 구현</b><span>AI가 코드를 쓴다</span></div>
+<div class="nd" data-n="shot"><b>화면 검수</b><span>자동 촬영, 직접 확인</span></div>
+<div class="nd" data-n="tool"><b>도구 만들기</b><span>불편하면 환경을 고친다</span></div>
+<p class="abs ln bk" data-k="bk">다음 작업으로</p>
+
+<p class="abs ln t2s" data-k="me5">이 페이지도 같은 공정이다. | 문구마다 출처를 | COPY.md에 적고, | 스크롤 위치마다 | 화면을 찍어 검수했다.</p>
+
+<div id="gate">
+  <div id="win">
+    <div id="bar"><i></i><i></i><i></i></div>
+    <div id="doc">
+      <p>COPY.md: 이 페이지의 모든 문장과 출처</p>
+      <table>
+        <tr><th>문장</th><th>출처</th></tr>
+        <tr><td>카페 16곳 메뉴 2,057종과 편의점 음료 17,243종</td><td>슈가캡 README</td></tr>
+        <tr><td>생리 기록은 iCloud 동기화 대상에서 뺐다</td><td>템포루틴 동기화 코드</td></tr>
+        <tr><td>세션이 일을 마치거나 답을 기다리면 폰으로 알림</td><td>빛뜰 데스크 커밋 기록</td></tr>
+        <tr><td>몸통 32.59° · 엉덩이 110.11° · 무릎 108.35°</td><td>짐살라빔 판넬</td></tr>
+      </table>
+    </div>
+    <img id="stl" src="/assets/method-stills.webp" alt="">
+  </div>
+  <div id="gL"><b>게이트</b><span>린터 · 타입 체크 · 테스트</span></div>
+</div>
+
+<svg id="fx" width="1920" height="1080"></svg>
+
+<script src="/motion.js"></script>
+<script src="/film/kit.js"></script>
+<script>
+document.fonts.ready.then(() => {
+  const K = Kit();
+  const { $, $$, put, prog, ease, lerp, io, lines, masks, LX, RX, W, H, words, rise, drawC, drawA, lift } = K;
+  window.FILM = { width: W, height: H, duration: 14 };
+  K.parse();
+
+  const P = K.P;
+  const gate = $('#gate'), win = $('#win'), gL = $('#gL'), doc = $('#doc'), stl = $('#stl');
+  const G = P ? { x: 290, y: 840, w: 500, h: 124, r: 18 } : { x: 760, y: 490, w: 400, h: 96, r: 16 };
+  const WN = P ? { x: LX, y: 260, w: W - 2 * K.MX, h: 0, r: 16 } : { x: 610, y: 226, w: 700, h: 34 + 262 + 700 * 565 / 1200, r: 14 };
+  if (P) {
+    // 세로판: 표 높이를 재서 창 높이를 정한다
+    win.style.cssText = `position:absolute;left:0;top:0;width:${WN.w - 3}px`;
+    WN.h = 34 + doc.offsetHeight + (WN.w - 3) * 565 / 1200 + 3;
+  }
+  win.style.cssText = `position:absolute;left:0;top:0;width:${WN.w - 3}px;height:${WN.h - 3}px`;
+  const setR = (r) => { put(gate, r.x, r.y); gate.style.width = r.w + 'px'; gate.style.height = r.h + 'px'; gate.style.borderRadius = r.r + 'px'; };
+  const useBox = (r, bar) => {
+    K.box = { x: r.x, y: r.y, w: r.w, h: r.h }; K.LIM = { l: r.x - 66, r: r.x + r.w + 66 };
+    K.A = (fx, fy) => [r.x + 1.5 + fx * (r.w - 3), r.y + 1.5 + bar + fy * (r.h - 3 - bar)];
+  };
+  K.grid([K.MX, G.x - 36, G.x + G.w + 36, RX]);
+  const nodes = {}; $$('.nd').forEach((el) => { nodes[el.dataset.n] = el; });
+  const nh = (k) => nodes[k].offsetHeight;
+  const gm = G.y + G.h / 2;
+  let c1, ar;
+
+  if (P) {
+    // 제목: 위에 큰 제목, 게이트 아래 부제
+    put(masks.h1, LX - 4, 360); put(masks.h2, LX - 4, 520);
+    put(masks.ti1, LX, 1160); put(masks.ti2, LX, 1265);
+
+    // 1 고리: 위 문장 → 게이트. 스펙(오른쪽 아래) → AI 구현(오른쪽 위) → 게이트 → 화면 검수(왼쪽 위) → 도구 만들기(왼쪽 아래) → 다시 스펙
+    useBox(G, 0);
+    put(lines.me1.el, LX, 450);
+    const mb = 450 + lines.me1.el.offsetHeight;
+    const cx = G.x + G.w - 70;
+    c1 = K.callout([cx, mb + 34], [cx, G.y + 34]);
+    c1.p.setAttribute('d', `M${cx} ${mb + 34} L${cx} ${G.y + 34}`);
+    const NW = nodes.spec.offsetWidth, YA = 1160, YB = 1500;
+    const NP = { shot: [LX, YA], ai: [RX - NW, YA], tool: [LX, YB], spec: [RX - NW, YB] };
+    Object.entries(NP).forEach(([k, [x, y]]) => put(nodes[k], x, y));
+    const midB = YB + nh('tool') / 2;
+    const xr = RX - NW / 2, xl = LX + NW / 2;
+    ar = [
+      K.arrow([[xr, YB], [xr, YA + nh('ai') + 4]]),
+      K.arrow([[xr, YA - 4], [xr, gm], [G.x + G.w + 4, gm]]),
+      K.arrow([[G.x - 4, gm], [xl, gm], [xl, YA - 4]]),
+      K.arrow([[xl, YA + nh('shot')], [xl, YB - 4]]),
+      K.arrow([[LX + NW, midB], [RX - NW - 4, midB]]),
+    ];
+    put(lines.bk.el, W / 2 - lines.bk.el.offsetWidth / 2, YB + nh('tool') + 40);
+
+    // 2 게이트가 위쪽 창으로 커진다: 아래 문장 → 출처 표(왼쪽 통로), 검수 스틸(오른쪽 통로)
+    useBox(WN, 34);
+    const my = WN.y + WN.h + 110;
+    put(lines.me5.el, LX, my);
+  } else {
+    // 제목
+    put(masks.h1, LX - 4, 340); put(masks.h2, LX - 4, 460);
+    K.rightAlign(masks.ti1, 400); K.rightAlign(masks.ti2, 480);
+
+    // 1 고리: 위 문장 → 게이트, 스펙 → AI 구현 → 게이트 → 화면 검수 → 도구 만들기 → 다시 스펙
+    useBox(G, 0);
+    K.rightAlign(lines.me1.el, 110);
+    c1 = K.callout(K.rowEdge('me1', 1), [G.x + G.w - 30, G.y + 30]);
+    const NW = 400;
+    const NP = { spec: [LX, 400], ai: [LX, 580], shot: [RX - NW, 400], tool: [RX - NW, 580] };
+    Object.entries(NP).forEach(([k, [x, y]]) => put(nodes[k], x, y));
+    const mid = (k) => NP[k][1] + nh(k) / 2;
+    const BY = 820;
+    ar = [
+      K.arrow([[LX + 40, 400 + nh('spec')], [LX + 40, 580]]),
+      K.arrow([[LX + NW, mid('ai')], [700, mid('ai')], [700, gm], [G.x - 4, gm]]),
+      K.arrow([[G.x + G.w + 4, gm], [1220, gm], [1220, mid('shot')], [RX - NW - 4, mid('shot')]]),
+      K.arrow([[RX - NW + 40, 400 + nh('shot')], [RX - NW + 40, 580]]),
+      K.arrow([[RX - NW / 2, 580 + nh('tool')], [RX - NW / 2, BY], [LX - 40, BY], [LX - 40, mid('spec')], [LX - 4, mid('spec')]]),
+    ];
+    put(lines.bk.el, W / 2 - lines.bk.el.offsetWidth / 2, BY - 36);
+
+    // 2 게이트가 창으로 커져 이 페이지의 검수 기록을 연다: 왼쪽 문장 → 출처 표, 검수 스틸
+    useBox(WN, 34);
+    put(lines.me5.el, LX, 300);
+  }
+  const docH = doc.offsetHeight;
+  const ch = WN.h - 3 - 34;
+  let c2, c3;
+  if (P) {
+    const rows = [...lines.me5.el.querySelectorAll('.row')], last = rows[rows.length - 1];
+    const ly = parseFloat(lines.me5.el.style.top) + last.offsetTop + last.offsetHeight / 2;
+    c2 = K.callout(K.rowEdge('me5', 0), K.A(0.12, (docH * 0.55) / ch), 40);
+    c3 = K.callout([RX + 18, ly], K.A(0.88, (docH + (ch - docH) * 0.4) / ch), 72);
+  } else {
+    c2 = K.callout(K.rowEdge('me5', 2), K.A(0.12, (docH * 0.55) / ch));
+    c3 = K.callout(K.rowEdge('me5', 4), K.A(0.12, (docH + (ch - docH) * 0.4) / ch));
+  }
+  K.check();
+
+  window.seek = (t) => {
+    K.drawGrid(t);
+    const m = io(prog(t, 8.55, 9.2));
+    setR(Object.fromEntries(Object.keys(G).map((k) => [k, lerp(G[k], WN[k], m)])));
+    const up = ease.outExpo(prog(t, 0.0, 1.0));
+    gate.style.transform = `translateY(${((1 - up) * K.v(700, 1600)).toFixed(1)}px)`;
+    gL.style.opacity = (1 - Math.min(1, m * 3)).toFixed(3);
+    // 창 내용: 커지는 동안 위에서 아래로 열린다
+    const wv = io(prog(t, 8.9, 9.45));
+    win.style.opacity = wv > 0 ? '1' : '0';
+    win.style.clipPath = `inset(0 0 ${((1 - wv) * 100).toFixed(2)}% 0)`;
+
+    // 0 제목
+    rise(masks.h1, t, 0.3, 2.6, 0.08); rise(masks.h2, t, 0.42, 2.65, 0.05);
+    rise(masks.ti1, t, 1.0, 2.6); rise(masks.ti2, t, 1.12, 2.65);
+
+    // 1
+    const out1 = 8.2;
+    words('me1', t, 2.9, out1, 0.03);
+    drawC(c1, t, 3.4, out1);
+    [['spec', 4.1], ['ai', 4.45], ['shot', 5.15], ['tool', 5.5]].forEach(([k, t0]) => lift(nodes[k], t, t0, out1, 16));
+    drawA(ar[0], t, 4.3); drawA(ar[1], t, 4.7, 0.45); drawA(ar[2], t, 5.0, 0.45); drawA(ar[3], t, 5.7); drawA(ar[4], t, 6.0, 0.9);
+    words('bk', t, 6.6, out1);
+    const fo = 1 - ease.inCubic(prog(t, out1, out1 + 0.35));
+    if (t > out1) ar.forEach((a) => { a.p.style.opacity = fo.toFixed(3); a.h.style.opacity = fo.toFixed(3); });
+
+    // 2
+    words('me5', t, 9.3, 1e9, 0.03);
+    drawC(c2, t, 9.9, 1e9);
+    drawC(c3, t, 10.5, 1e9);
+  };
+  window.seek(0);
+});
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="dark">
 <title>한예원 · SK AIGEN 1기 지원 포트폴리오</title>
 <meta name="description" content="한예원 포트폴리오. 슈가캡, 템포루틴, 빛뜰 데스크, 짐살라빔과 AI와 일하는 방식.">
 <meta property="og:type" content="website">
@@ -15,276 +15,228 @@
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect"href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
-<link rel="stylesheet" href="styles.css">
+<style>
+  :root { --ink: #F5F5F7; --gray: #8E8E93; --rule: rgba(245,245,247,0.16); }
+  html, body { margin: 0; background: #0D0D0F; color: var(--ink); font-family: 'Wanted Sans Variable', sans-serif; -webkit-font-smoothing: antialiased; word-break: keep-all; }
+  a { color: inherit; }
+  .ch { position: relative; }
+  .stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  iframe { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; border: 0; transform-origin: 0 0; pointer-events: none; }
+  .links { position: absolute; display: flex; gap: 24px; }
+  .links a { text-decoration: none; font-size: 15px; font-weight: 600; padding-bottom: 3px; border-bottom: 1px solid var(--ink); opacity: 0; transform: translateY(12px); white-space: nowrap; }
+
+  /* 첫 화면: 왼쪽 이름, 오른쪽 목차 */
+  #intro { height: 100vh; box-sizing: border-box; padding: 0 6.25vw; display: grid; grid-template-columns: 1fr minmax(0, 44vw); column-gap: 5vw; align-items: center; }
+  .nm { margin: 0; font-size: clamp(64px, 11.5vw, 220px); font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+  .nm span, .pf span { display: inline-block; }
+  .mk { overflow: hidden; padding-bottom: 0.06em; }
+  .pf { margin: 0.35em 0 0; font-size: clamp(24px, 2.6vw, 50px); font-weight: 700; letter-spacing: -0.02em; color: var(--gray); }
+  .gh { display: inline-block; margin-top: 2.2em; font-size: 15px; font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 3px; }
+  .toc { list-style: none; margin: 0; padding: 0; }
+  .toc li { display: grid; grid-template-columns: 1fr auto; column-gap: 24px; row-gap: 6px; padding: 20px 0; border-top: 1px solid var(--rule); }
+  .toc li:last-child { border-bottom: 1px solid var(--rule); }
+  .toc .nmc { font-size: clamp(20px, 1.6vw, 30px); font-weight: 800; letter-spacing: -0.02em; text-decoration: none; }
+  .toc .ds { grid-column: 1; font-size: clamp(14px, 0.95vw, 17px); color: var(--gray); font-weight: 500; }
+  .toc .lk { grid-column: 2; grid-row: 1 / span 2; align-self: center; display: flex; gap: 18px; }
+  .toc .lk a { font-size: 15px; font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px; white-space: nowrap; }
+  .toc .nmc:hover, .toc .lk a:hover, .gh:hover, .links a:hover { color: #fff; opacity: 0.75; }
+  /* 들어올 때: 이름 글자는 마스크 아래에서 솟고, 목차 줄은 차례로 올라온다 */
+  @keyframes rise { from { transform: translateY(105%); } to { transform: none; } }
+  @keyframes up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  .nm span { animation: rise 0.9s cubic-bezier(0.16,1,0.3,1) both; }
+  .pf span { animation: rise 0.8s cubic-bezier(0.16,1,0.3,1) 0.35s both; }
+  .gh { animation: up 0.7s cubic-bezier(0.16,1,0.3,1) 0.6s both; }
+  .toc li { animation: up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+  @media (max-aspect-ratio: 1/1) {
+    #intro { grid-template-columns: 1fr; align-content: center; row-gap: 44px; padding: 0 34px; }
+    .nm { font-size: 80px; }
+    .pf { font-size: 26px; }
+    .gh { margin-top: 1.2em; }
+    .toc li { padding: 14px 0; }
+    .toc .nmc { font-size: 20px; }
+    .toc .ds { font-size: 13px; grid-column: 1 / -1; grid-row: 2; }
+    .toc .lk { gap: 14px; grid-row: 1; }
+    .toc .lk a { font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .nm span, .pf span, .gh, .toc li { animation: none; } }
+</style>
 </head>
 <body>
-
-<div class="corner tl">한예원 · SK AIGEN 1기 지원</div>
-<div class="corner tr">2026</div>
-<div class="corner bl" id="cornerSection"></div>
-<div class="corner br">창업/비즈니스</div>
-
-<!-- 검은 띠: 페이지 전체를 관통하는 단 하나의 오브젝트. 안의 흰 글자는 띠가 지나갈 때만 드러난다. -->
-<div id="bar" aria-hidden="true">
-  <span class="bt" data-bt="name">한예원</span>
-  <span class="bt" data-bt="toc">목차</span>
-  <span class="bt" data-bt="sugar">슈가캡</span>
-  <span class="bt count" data-bt="count" data-nosplit><span>2,057종</span></span>
-  <span class="bt" data-bt="made1">만든 방법</span>
-  <span class="bt" data-bt="tempo">템포루틴</span>
-  <span class="bt season" data-bt="s0">겨울</span>
-  <span class="bt season" data-bt="s1">봄</span>
-  <span class="bt season" data-bt="s2">여름</span>
-  <span class="bt season" data-bt="s3">가을</span>
-  <span class="tick" id="tick"></span>
-  <span class="bt" data-bt="made2">만든 방법</span>
-  <span class="bt" data-bt="gim">짐살라빔</span>
-  <span class="bt small" data-bt="a0">몸통 32.59°</span>
-  <span class="bt small" data-bt="a1">엉덩이 110.11°</span>
-  <span class="bt small" data-bt="a2">무릎 108.35°</span>
-  <span class="bt" data-bt="desk">빛뜰 데스크</span>
-  <span class="bt" data-bt="method">AI와 일하는 방식</span>
-</div>
-
-<!-- 띠 위에 올라가는 층: 챕터 아이콘, 밤 장면의 흰 글줄 -->
-<div id="over">
-  <img class="chi" data-i="sugar" src="assets/icon-sugarcap.webp" width="360" height="360" alt="" aria-hidden="true">
-  <img class="chi" data-i="tempo" src="assets/icon-tempo.webp" width="360" height="360" alt="" aria-hidden="true">
-  <img class="chi wide" data-i="gim" src="assets/gim-logo.webp" width="855" height="207" alt="" aria-hidden="true">
-  <img class="chi" data-i="desk" src="assets/icon-desk.webp" width="360" height="360" alt="" aria-hidden="true">
-</div>
-
-<main id="main">
-
-<section class="scene" data-scene="hero" data-beats="2.2" data-label="">
-  <div class="stage">
-    <h1 class="static-h">한예원</h1>
-    <p class="ln st" data-k="hero-sub">Portfolio</p>
-    <p class="ln lb" data-k="hero-list">슈가캡 · 템포루틴 · 빛뜰 데스크 · 짐살라빔</p>
+<section id="intro">
+  <div>
+    <h1 class="nm mk"><span>한</span><span>예</span><span>원</span></h1>
+    <p class="pf mk"><span>Portfolio</span></p>
+    <a class="gh" href="https://github.com/Yewon419" target="_blank" rel="noopener">github.com/Yewon419</a>
   </div>
+  <ul class="toc" id="toc"></ul>
 </section>
+<main id="main"></main>
+<script>
+// 장 파일의 seek(t)를 스크롤 위치로 직접 부른다. 구운 그림이 없어 어느 해상도에서도 선명하다
+const CH = [
+  { id: 'sugar', name: '슈가캡', desc: '당·카페인을 즐겁게 줄이는 iOS 앱, 1인 개발', dur: 17, at: [1280, 860], links: [['App Store', 'https://apps.apple.com/kr/app/id6814832068'], ['GitHub', 'https://github.com/Yewon419/sugarcap']] },
+  { id: 'tempo', name: '템포루틴', desc: '생리 주기에 맞춰 한 달을 짜는 iOS 플래너, 1인 개발', dur: 20, at: [1400, 620], links: [['App Store', 'https://apps.apple.com/kr/app/id6791803620'], ['GitHub', 'https://github.com/Yewon419/TempoRoutine']] },
+  { id: 'desk', name: '빛뜰 데스크', desc: 'Claude Code 세션 관리 웹 대시보드, 1인 개발', dur: 18, at: [1400, 790], links: [['GitHub', 'https://github.com/Yewon419/bitteul-desk']] },
+  { id: 'gim', name: '짐살라빔', desc: '웹캠으로 스쿼트·댄스 자세를 채점하는 웹, 4인 팀', dur: 15.5, at: [1400, 520], links: [['판넬 PDF', '/assets/gimsalabim-panel.pdf']] },
+  { id: 'method', name: 'AI와 일하는 방식', desc: '스펙부터 화면 검수까지, 만드는 공정', dur: 14, at: [1400, 520], links: [['GitHub', 'https://github.com/Yewon419/aigen-site']] },
+];
+const VH_PER_SEC = matchMedia('(pointer: coarse)').matches ? 38 : 50;   // 영상 1초에 드는 스크롤 거리. 터치는 짧게
+const TAU = 0.14;   // 재생 위치가 스크롤 위치를 따라붙는 시간 상수(초)
+const V = '5';   // 장 파일을 고치면 올린다. 브라우저가 옛 장 파일을 캐시에서 꺼내 쓰지 않게
+const portrait = () => innerHeight > innerWidth;
+let PORT = portrait();
+const main = document.getElementById('main');
+const toc = document.getElementById('toc');
+const ext = (h) => (h.startsWith('http') || h.endsWith('.pdf') ? ' target="_blank" rel="noopener"' : '');
 
-<section class="scene" id="toc" data-scene="toc" data-beats="2.6" data-label="목차">
-  <div class="stage">
-    <h2 class="static-h">목차</h2>
-    <ul class="list toc" data-k="toc-list">
-      <li><a class="toc-ch" href="#sugar">슈가캡</a><span class="toc-d">당·카페인을 즐겁게 줄이는 iOS 앱, 1인 개발</span><span class="toc-l"><a href="https://apps.apple.com/kr/app/id6814832068" target="_blank" rel="noopener">App Store</a><a href="https://github.com/Yewon419/sugarcap" target="_blank" rel="noopener">GitHub</a><a href="https://sugarcap.vercel.app/" target="_blank" rel="noopener">소개 페이지</a></span></li>
-      <li><a class="toc-ch" href="#tempo">템포루틴</a><span class="toc-d">생리 주기에 맞춰 한 달을 짜는 iOS 플래너, 1인 개발</span><span class="toc-l"><a href="https://apps.apple.com/kr/app/id6791803620" target="_blank" rel="noopener">App Store</a><a href="https://github.com/Yewon419/TempoRoutine" target="_blank" rel="noopener">GitHub</a></span></li>
-      <li><a class="toc-ch" href="#desk">빛뜰 데스크</a><span class="toc-d">Claude Code 세션 관리 웹 대시보드, 1인 개발</span><span class="toc-l"><a href="https://github.com/Yewon419/bitteul-desk" target="_blank" rel="noopener">GitHub</a></span></li>
-      <li><a class="toc-ch" href="#gim">짐살라빔</a><span class="toc-d">웹캠으로 스쿼트·댄스 자세를 채점하는 웹, 4인 팀</span><span class="toc-l"><a href="assets/gimsalabim-panel.pdf" target="_blank" rel="noopener">판넬 PDF</a></span></li>
-      <li><a class="toc-ch" href="#method">AI와 일하는 방식</a><span class="toc-d">스펙부터 화면 검수까지, 만드는 공정</span><span class="toc-l"><a href="https://github.com/Yewon419/aigen-site" target="_blank" rel="noopener">GitHub</a></span></li>
-    </ul>
-  </div>
-</section>
+CH.forEach((c, i) => {
+  const li = document.createElement('li'); li.style.animationDelay = (0.45 + i * 0.08) + 's';
+  li.innerHTML = `<a class="nmc" href="#${c.id}">${c.name}</a><span class="ds">${c.desc}</span><span class="lk">${c.links.map(([t, h]) => `<a href="${h}"${ext(h)}>${t}</a>`).join('')}</span>`;
+  li.querySelector('.nmc').addEventListener('click', (e) => { e.preventDefault(); go(c.rest.length ? c.rest[0] : c.sec.offsetTop); });
+  toc.append(li);
 
-<section class="scene" id="sugar" data-scene="sugar" data-beats="13.4" data-label="슈가캡">
-  <div class="stage">
-    <h2 class="static-h">슈가캡</h2>
-    <p class="ln st" data-k="su-1">당과 카페인을 즐겁게 줄이는 앱</p>
-    <p class="ln st2" data-k="su-2">오늘 마실 수 있는 당·카페인 양이 컵에 담기고, 한 잔 기록할 때마다 그만큼 줄어든다.</p>
-    <p class="ln st2" data-k="su-2b">5일 이상 지킨 주가 끝나면 하루 기준이 한 칸 내려가고, 선물이 온다.</p>
-    <figure class="wk" data-k="su-wk" aria-label="기본 설정 예: 하루 당류 50g에서 25g까지 8주 계획, 매주 지켰을 때 50, 45, 45, 40, 35, 35, 30, 30, 25g">
-      <div class="wk-bars" aria-hidden="true">
-        <div class="wk-b" style="--v:50"><i>50</i><u>1주</u></div>
-        <div class="wk-b" style="--v:45"><i>45</i><u>2</u></div>
-        <div class="wk-b" style="--v:45"><i>45</i><u>3</u></div>
-        <div class="wk-b" style="--v:40"><i>40</i><u>4</u></div>
-        <div class="wk-b" style="--v:35"><i>35</i><u>5</u></div>
-        <div class="wk-b" style="--v:35"><i>35</i><u>6</u></div>
-        <div class="wk-b" style="--v:30"><i>30</i><u>7</u></div>
-        <div class="wk-b" style="--v:30"><i>30</i><u>8</u></div>
-        <div class="wk-b" style="--v:25"><i>25g</i><u>목표</u></div>
-      </div>
-      <figcaption>기본 설정 예: 하루 당류 50g에서 25g까지, 8주 계획</figcaption>
-    </figure>
-    <img class="cup" data-c="30" src="assets/cup-30.webp" width="720" height="1292" alt="" aria-hidden="true">
-    <img class="cup" data-c="50" src="assets/cup-50.webp" width="720" height="1292" alt="" aria-hidden="true">
-    <img class="cup" data-c="80" src="assets/cup-80.webp" width="720" height="1292" alt="" aria-hidden="true">
-    <img class="cup" data-c="100" src="assets/cup-100.webp" width="720" height="1292" alt="슈가캡의 컵: 한 잔 기록할 때마다 딸기 라떼가 줄어든다">
-    <p class="static-h sm">2,057종</p>
-    <p class="ln st2" data-k="su-3">카페 16곳 메뉴 2,057종과 편의점 음료 17,243종을 검색해 기록한다. 고르는 순간, 마시면 얼마가 남는지 보여 준다.</p>
-    <figure class="cat" data-k="su-cat" aria-label="나라별 카탈로그">
-      <div class="cn"><b>한국</b><span>카페 16곳 · 편의점</span><em>2,057종 · 17,243종</em></div>
-      <div class="cn"><b>미국</b><span>Starbucks · Dutch Bros</span><em>467종</em></div>
-      <div class="cn"><b>대만</b><span>cama café · 可不可</span><em>143종</em></div>
-      <figcaption>한국·미국·대만 출시. 기기 지역에 따라 카탈로그가 바뀐다.</figcaption>
-    </figure>
-    <p class="ln st inv" data-k="su-4">남은 양은 밤에 캐릭터에게 먹인다</p>
-    <p class="ln lb inv" data-k="su-4c">로슈는 당을, 카인은 카페인을 먹는다. 먹일수록 호감도가 쌓인다.</p>
-    <img class="ch" data-ch="kain" src="assets/kain.webp" width="408" height="614" alt="카인">
-    <img class="ch" data-ch="roshu" src="assets/roshu.webp" width="560" height="613" alt="로슈">
-    <p class="ln st2" data-k="su-5">기획부터 메뉴 데이터 수집, 캐릭터 원화, 개발, 3개국 출시까지 혼자 했다.</p>
-    <h3 class="static-h sm">만든 방법</h3>
-    <div class="flow" data-k="su-flow" role="list" aria-label="슈가캡을 만든 흐름">
-      <div class="nd" role="listitem"><b>카페 홈페이지</b><span>브랜드가 공개한 수치</span></div>
-      <div class="nd" role="listitem"><b>Python 수집기</b><span>린터·타입·테스트 통과</span></div>
-      <div class="nd" role="listitem"><b>catalog.json</b><span>손으로 고치지 않는다</span></div>
-      <div class="nd" role="listitem"><b>iOS 앱</b><span>SwiftUI · 직접 그린 원화</span></div>
-      <div class="nd" role="listitem"><b>GitHub Actions</b><span>빌드·UI 테스트·스크린샷</span></div>
-      <div class="nd" role="listitem"><b>App Store</b><span>한국 · 미국 · 대만</span></div>
-    </div>
-    <p class="ln links" data-k="su-links">
-      <a href="https://apps.apple.com/kr/app/id6814832068" target="_blank" rel="noopener">App Store</a>
-      <a href="https://github.com/Yewon419/sugarcap" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://sugarcap.vercel.app/" target="_blank" rel="noopener">sugarcap.vercel.app</a>
-    </p>
-  </div>
-</section>
+  const sec = document.createElement('section'); sec.className = 'ch'; sec.id = c.id;
+  sec.style.height = `${c.dur * VH_PER_SEC + 100}vh`;
+  sec.innerHTML = `<div class="stage"><iframe tabindex="-1" title="${c.name}"></iframe><nav class="links">${c.links.map(([t, h]) => `<a href="${h}"${ext(h)}>${t}</a>`).join('')}</nav></div>`;
+  main.append(sec);
+  c.sec = sec; c.fr = sec.querySelector('iframe'); c.nav = sec.querySelector('.links'); c.as = [...c.nav.children];
+  c.cur = -1; c.shown = -1; c.ready = false; c.holds = []; c.rest = [];
+  c.fr.addEventListener('load', () => {
+    c.ready = false;
+    const wait = () => (typeof c.fr.contentWindow.seek === 'function' ? (findHolds(c), c.ready = true, c.shown = -1, kick()) : requestAnimationFrame(wait));
+    wait();
+  });
+});
+const load = () => CH.forEach((c) => { c.ready = false; c.holds = []; c.rest = []; c.fr.src = `/film/${c.id}.html?v=${V}${PORT ? '&p' : ''}`; });
 
-<section class="scene" id="tempo" data-scene="tempo" data-beats="17.7" data-label="템포루틴">
-  <div class="stage">
-    <img class="sphoto" data-s="0" src="assets/season-winter.webp" width="1280" height="853" alt="" aria-hidden="true">
-    <img class="sphoto" data-s="1" src="assets/season-spring.webp" width="1280" height="853" alt="" aria-hidden="true">
-    <img class="sphoto" data-s="2" src="assets/season-summer.webp" width="1280" height="853" alt="" aria-hidden="true">
-    <img class="sphoto" data-s="3" src="assets/season-autumn.webp" width="1280" height="853" alt="" aria-hidden="true">
-    <h2 class="static-h">템포루틴</h2>
-    <p class="ln st" data-k="te-1">몸의 주기에 맞추는 iOS 플래너</p>
-    <video class="tv" src="assets/tempo-teaser.mp4" poster="assets/tempo-teaser-poster.webp" width="540" height="960" muted loop playsinline preload="metadata" aria-label="템포루틴 개념 영상: 몸의 한 달을 겨울, 봄, 여름, 가을로 보여 주는 40초 세로 영상"></video>
-    <p class="ln st2" data-k="te-6">대부분의 플래너는 매일 컨디션이 같다고 가정한다. 템포루틴은 한 달의 흐름에 맞춰 할 일을 나눈다.</p>
-    <p class="static-h sm" aria-hidden="false">겨울 · 봄 · 여름 · 가을</p>
-    <p class="ln st2" data-k="te-2">생리 주기의 네 단계를 겨울·봄·여름·가을로 나타내, 캘린더 날짜 아래 띠로 보여 준다.</p>
-    <p class="ln st2" data-k="te-3">주기 패턴은 사람마다 달라 평균으로는 드러나지 않는다. 그래서 에너지·기분 기록으로 각자의 경향을 보여 준다.</p>
-    <p class="ln st2" data-k="te-4">"기록을 보면 이때 에너지가 높았어요." 진단하지 않고, 관찰한 사실만 말한다.</p>
-    <p class="ln st2" data-k="te-5">계정과 자체 서버가 없고, 생리 기록은 iCloud 동기화 대상에서 뺐다.</p>
-    <figure class="pv" data-k="te-pv" aria-label="템포루틴 데이터가 가는 곳">
-      <div class="pv-r"><b>생리 기록</b><i></i><p>iCloud 동기화 제외<span>건강 앱 연동은 선택</span></p></div>
-      <div class="pv-r"><b>일정 · 체크인</b><i></i><p>개인 iCloud<span>설정에서 끄기 가능</span></p></div>
-      <div class="pv-r"><b>주기 예측</b><i></i><p>기기 안에서 계산<span>서버 전송 없음</span></p></div>
-      <figcaption>분석 도구도 넣지 않았다.</figcaption>
-    </figure>
-    <p class="ln st2" data-k="te-7">체크인할 때마다 씨앗이 모이고, 씨앗으로 화면 테마 6종을 잠금 해제한다.</p>
-    <img class="th" data-t="0" src="assets/theme-standard.webp" width="480" height="968" alt="템포루틴 오늘 화면, Standard 테마" decoding="async">
-    <img class="th" data-t="1" src="assets/theme-plain.webp" width="480" height="968" alt="템포루틴 오늘 화면, Plain 테마" decoding="async">
-    <img class="th" data-t="2" src="assets/theme-modern.webp" width="480" height="968" alt="템포루틴 오늘 화면, Modern 테마" decoding="async">
-    <img class="th" data-t="3" src="assets/theme-letterpress.webp" width="480" height="968" alt="템포루틴 오늘 화면, Letterpress 테마" decoding="async">
-    <img class="th" data-t="4" src="assets/theme-ticket.webp" width="480" height="968" alt="템포루틴 오늘 화면, Ticket 테마" decoding="async">
-    <img class="th" data-t="5" src="assets/theme-weather.webp" width="480" height="968" alt="템포루틴 오늘 화면, Weather 테마" decoding="async">
-    <img class="ph" data-k="te-ph1" src="assets/tempo-3.webp" width="900" height="1950" alt="템포루틴 캘린더: 날짜 아래 계절 밑줄 띠" loading="lazy" decoding="async">
-    <img class="ph" data-k="te-ph2" src="assets/tempo-2.webp" width="900" height="1950" alt="템포루틴 나의 템포: 계절별 에너지와 기분" loading="lazy" decoding="async">
-    <h3 class="static-h sm">만든 방법</h3>
-    <div class="flow" data-k="te-flow" data-back="3>0" role="list" aria-label="템포루틴을 만든 흐름">
-      <div class="nd" role="listitem"><b>Windows PC</b><span>맥 없이 개발, push</span></div>
-      <div class="nd" role="listitem"><b>엔진 테스트</b><span>GitHub Actions · Linux</span></div>
-      <div class="nd" role="listitem"><b>앱 빌드</b><span>GitHub Actions · macOS</span></div>
-      <div class="nd" role="listitem"><b>TestFlight</b><span>실기기 베타</span></div>
-      <div class="nd" role="listitem"><b>App Store</b><span>출시 · 4개 언어</span></div>
-      <span class="fl-bk">베타 피드백 반영</span>
-    </div>
-    <p class="ln links" data-k="te-links">
-      <a href="https://apps.apple.com/kr/app/id6791803620" target="_blank" rel="noopener">App Store</a>
-      <a href="https://github.com/Yewon419/TempoRoutine" target="_blank" rel="noopener">GitHub</a>
-    </p>
-  </div>
-</section>
+// 정지 지점: 장면 글이 전부 떠 있고 막 나가기 직전인 순간. seek로 훑으며 다 올라온 낱말 수를 세고,
+// 그 수가 줄기 시작하는 시각(나가는 물결의 첫 칸)을 잡는다. 장 끝(링크가 뜨는 자리)도 하나
+const STEP = 0.05;
+function findHolds(c) {
+  const w = c.fr.contentWindow, d = c.fr.contentDocument;
+  const ws = [...d.querySelectorAll('.w')], gs = [...d.querySelectorAll('.g')];
+  const full = () => ws.filter((e) => (e.style.opacity === '' || +e.style.opacity > 0.99) && !e.style.filter.includes('blur')).length
+    + gs.filter((e) => e.style.transform.includes('translateY(0px)')).length;
+  const n = Math.round(c.dur / STEP);
+  const v = [];
+  for (let i = 0; i <= n; i++) { w.seek(Math.min(c.dur, i * STEP)); v.push(full()); }
+  const holds = [];
+  let lastDrop = -9;
+  for (let i = 0; i < n; i++) {
+    if (v[i + 1] >= v[i]) continue;
+    const t = i * STEP;
+    if (t - lastDrop > 0.6 && v[i] > 0) holds.push(t);
+    lastDrop = t;
+  }
+  holds.push(c.dur);
+  c.holds = holds;
+  place();
+}
+function place() {
+  CH.forEach((c) => {
+    const top = c.sec.offsetTop, span = c.sec.offsetHeight - innerHeight;
+    c.rest = c.holds.map((t) => Math.round(top + (t / c.dur) * span));
+  });
+}
+const rests = () => [0, ...CH.flatMap((c) => c.rest)].sort((a, b) => a - b);
 
-<section class="scene" id="desk" data-scene="desk" data-beats="12.8" data-label="빛뜰 데스크">
-  <div class="stage">
-    <h2 class="static-h">빛뜰 데스크</h2>
-    <p class="ln st" data-k="de-1">AI 코딩 세션 관리 대시보드</p>
-    <img class="dk" data-d="cubes" src="assets/desk-cubes.webp" width="1200" height="1050" alt="" aria-hidden="true">
-    <img class="dk" data-d="office" src="assets/desk-office.webp" width="1440" height="904" alt="빛뜰 데스크 사무실: 방 세 개에 Claude Code 세션이 직원으로 앉아 있고, 모니터와 머리 위에 하는 일이 뜬다">
-    <img class="dk" data-d="chat" src="assets/desk-chat.webp" width="760" height="700" alt="직원을 눌러 연 세션 대화 창">
-    <img class="dk dkp" data-d="phone-office" src="assets/desk-phone-office.webp" width="390" height="664" alt="폰으로 본 사무실">
-    <img class="dk dkp" data-d="phone-chat" src="assets/desk-phone-chat.webp" width="390" height="664" alt="폰 대화 창과 도구 사용 승인 요청">
-    <p class="ln st2" data-k="de-2">Claude Code 세션을 여러 개 띄우면 어느 세션이 답을 기다리는지 찾기 어렵다. 그래서 세션 하나가 사무실 직원 한 명이 된다.</p>
-    <p class="ln st2" data-k="de-3">머리 위에 지금 하는 일이 뜨고, 직원을 누르면 대화 창이 열린다. 답장과 도구 승인은 여기서 한다.</p>
-    <p class="ln st2" data-k="de-4">자리를 비워도 폰 브라우저로 사무실을 보고 지시와 승인을 이어 간다.</p>
-    <p class="ln st2" data-k="de-5">세션이 일을 마치거나 답을 기다리면 폰으로 알림이 온다.</p>
-    <p class="ln st2" data-k="de-6">PC에서 도는 서버 하나가 세션, 사무실 화면, 폰을 잇는다. 명령 한 줄로 켠다.</p>
-    <figure class="ac" aria-label="빛뜰 데스크 구조">
-      <div class="nd og" data-a="term"><b>터미널 세션</b><span>상태를 서버에 알림</span></div>
-      <div class="nd" data-a="sdk"><b>데스크 세션</b><span>대화와 승인 주고받기</span></div>
-      <div class="nd" data-a="srv"><b>로컬 서버</b><span>내 PC에서 실행</span></div>
-      <div class="nd og" data-a="pc"><b>PC 사무실</b><span>실시간 상태 표시</span></div>
-      <div class="nd" data-a="ph"><b>폰</b><span>암호화 연결(Tailscale)</span></div>
-      <div class="nd" data-a="push"><b>폰 알림</b><span>완료·승인 요청</span></div>
-      <figcaption>점선은 원본 Pixel Agents, 실선은 포크해 더한 기능.</figcaption>
-    </figure>
-    <p class="ln links" data-k="de-links">
-      <a href="https://github.com/Yewon419/bitteul-desk" target="_blank" rel="noopener">GitHub</a>
-    </p>
-  </div>
-</section>
+function resize() {
+  const p = portrait();
+  if (p !== PORT) { PORT = p; load(); }
+  const SW = PORT ? 1080 : 1920, SH = PORT ? 1920 : 1080;
+  const k = Math.min(innerWidth / SW, innerHeight / SH);
+  const ox = (innerWidth - SW * k) / 2, oy = (innerHeight - SH * k) / 2;
+  CH.forEach((c) => {
+    c.fr.style.width = SW + 'px'; c.fr.style.height = SH + 'px';
+    c.fr.style.transform = `translate(${ox}px, ${oy}px) scale(${k})`;
+    if (PORT) {
+      // 세로: 무대 아래 남는 띠에 링크를 둔다. 띠가 좁으면 무대 아랫단에 겹친다
+      c.nav.style.left = (ox + 100 * k) + 'px';
+      c.nav.style.top = (oy >= 44 ? oy + SH * k + 12 : oy + (SH - 70) * k) + 'px';
+    } else {
+      c.nav.style.left = (ox + c.at[0] * k) + 'px'; c.nav.style.top = (oy + c.at[1] * k) + 'px';
+    }
+  });
+  place();
+  kick();
+}
 
-<section class="scene" id="gim" data-scene="gim" data-beats="9.8" data-label="짐살라빔">
-  <div class="stage">
-    <h2 class="static-h">짐살라빔</h2>
-    <p class="ln st" data-k="gi-1">웹캠으로 운동 자세를 채점한다</p>
-    <img class="crop" data-g="sm" src="assets/gim-sm.webp" width="1110" height="250" alt="5단계 스쿼트 상태 기계: Stand, Descend, Hold, Ascend, Rest">
-    <img class="crop lit" data-g="smlit" src="assets/gim-sm.webp" width="1110" height="250" alt="" aria-hidden="true">
-    <img class="crop" data-g="skel" src="assets/gim-skel.webp" width="940" height="550" alt="체크포인트: 몸통, 엉덩이, 무릎 각도와 무릎 모임 거리">
-    <img class="crop" data-g="arch" src="assets/gim-arch.webp" width="1600" height="347" alt="아키텍처: 웹캠, FastAPI 백엔드, MediaPipe AI 엔진, React 프론트엔드">
-    <svg class="crop dtw" data-g="dtw" viewBox="0 0 640 400" role="img" aria-label="댄스 모드 DTW: 빠르기가 다른 기준 동작과 따라 한 동작의 시간 축을 맞춘 뒤, 팔꿈치와 무릎 각도를 비교해 점수를 낸다">
-      <rect width="640" height="400" fill="#fff"/>
-      <path class="dtw-m" d="M189.2 54.5 L249.5 204.5 M228.3 44.0 L303.4 194.0 M267.5 54.5 L347.6 204.5 M306.7 80.0 L386.5 230.0 M345.8 105.5 L421.9 255.5 M385.0 116.0 L454.8 266.0 M424.2 105.5 L485.6 255.5 M463.3 80.0 L514.8 230.0 M502.5 54.5 L542.7 204.5 M541.7 44.0 L569.4 194.0 M580.8 54.5 L595.1 204.5"/>
-      <path class="dtw-c" d="M150.0 80.0 L159.8 73.0 L169.6 66.2 L179.4 60.0 L189.2 54.5 L199.0 50.1 L208.8 46.7 L218.5 44.7 L228.3 44.0 L238.1 44.7 L247.9 46.7 L257.7 50.1 L267.5 54.5 L277.3 60.0 L287.1 66.2 L296.9 73.0 L306.7 80.0 L316.5 87.0 L326.2 93.8 L336.0 100.0 L345.8 105.5 L355.6 109.9 L365.4 113.3 L375.2 115.3 L385.0 116.0 L394.8 115.3 L404.6 113.3 L414.4 109.9 L424.2 105.5 L434.0 100.0 L443.8 93.8 L453.5 87.0 L463.3 80.0 L473.1 73.0 L482.9 66.2 L492.7 60.0 L502.5 54.5 L512.3 50.1 L522.1 46.7 L531.9 44.7 L541.7 44.0 L551.5 44.7 L561.2 46.7 L571.0 50.1 L580.8 54.5 L590.6 60.0 L600.4 66.2 L610.2 73.0 L620.0 80.0"/>
-      <path class="dtw-c" d="M150.0 230.0 L159.8 229.3 L169.6 227.9 L179.4 226.0 L189.2 223.7 L199.0 221.0 L208.8 218.1 L218.5 214.9 L228.3 211.6 L238.1 208.3 L247.9 205.0 L257.7 202.0 L267.5 199.2 L277.3 196.9 L287.1 195.2 L296.9 194.2 L306.7 194.1 L316.5 194.9 L326.2 196.7 L336.0 199.7 L345.8 203.7 L355.6 208.8 L365.4 214.8 L375.2 221.5 L385.0 228.8 L394.8 236.3 L404.6 243.8 L414.4 250.7 L424.2 256.7 L434.0 261.5 L443.8 264.7 L453.5 266.0 L463.3 265.2 L473.1 262.2 L482.9 257.2 L492.7 250.2 L502.5 241.8 L512.3 232.5 L522.1 222.8 L531.9 213.5 L541.7 205.3 L551.5 198.9 L561.2 195.1 L571.0 194.0 L580.8 196.1 L590.6 201.3 L600.4 209.1 L610.2 218.9 L620.0 230.0"/>
-      <path class="dtw-d" d="M189.2 54.5 h0.01 M249.5 204.5 h0.01 M228.3 44.0 h0.01 M303.4 194.0 h0.01 M267.5 54.5 h0.01 M347.6 204.5 h0.01 M306.7 80.0 h0.01 M386.5 230.0 h0.01 M345.8 105.5 h0.01 M421.9 255.5 h0.01 M385.0 116.0 h0.01 M454.8 266.0 h0.01 M424.2 105.5 h0.01 M485.6 255.5 h0.01 M463.3 80.0 h0.01 M514.8 230.0 h0.01 M502.5 54.5 h0.01 M542.7 204.5 h0.01 M541.7 44.0 h0.01 M569.4 194.0 h0.01 M580.8 54.5 h0.01 M595.1 204.5 h0.01"/>
-      <text x="20" y="86">기준 동작</text>
-      <text x="20" y="236">따라 한 동작</text>
-      <rect class="dtw-b" x="20" y="312" width="170" height="58"/><text x="105" y="348" text-anchor="middle">시간 축 맞추기</text>
-      <rect class="dtw-b" x="220" y="312" width="250" height="58"/><text x="345" y="348" text-anchor="middle">팔꿈치 · 무릎 각도 비교</text>
-      <rect class="dtw-b on" x="500" y="312" width="120" height="58"/><text class="on" x="560" y="348" text-anchor="middle">점수</text>
-      <path class="dtw-a" d="M193 341 H214 M208 336 L214 341 L208 346 M473 341 H494 M488 336 L494 341 L488 346"/>
-    </svg>
-    <img class="panel" data-k="gi-panel" src="assets/panel.webp" width="1400" height="1974" alt="짐살라빔 판넬: MediaPipe 실시간 자세 분석, 5단계 스쿼트 상태 기계, 관절 각도 기준값" loading="lazy" decoding="async">
-    <p class="ln st2" data-k="gi-2">스쿼트 모드는 동작을 다섯 단계로 나누고, 무릎·몸통·엉덩이 각도를 기준값과 비교한다.</p>
-    <p class="ln st2" data-k="gi-3">휴대폰에서도 실시간으로 돌도록 가벼운 MediaPipe를 골랐다. 가려진 관절은 인체 구조를 바탕으로 계산한다.</p>
-    <p class="ln st2" data-k="gi-4">댄스 모드는 속도가 다른 두 동작의 시간 축을 DTW로 맞춘 뒤, 팔꿈치·무릎 각도를 비교한다.</p>
-    <p class="ln st2" data-k="gi-5">AI 동아리 4인 팀. 자세 인식 모델 리서치와 댄스 모드 채점 구현을 맡았다.</p>
-    <p class="ln links" data-k="gi-links">
-      <a href="assets/gimsalabim-panel.pdf" target="_blank" rel="noopener">판넬 PDF 보기</a>
-    </p>
-  </div>
-</section>
+const target = (c) => {
+  const top = c.sec.offsetTop, span = c.sec.offsetHeight - innerHeight;
+  return Math.min(1, Math.max(0, (scrollY - top) / span)) * c.dur;
+};
+const near = (c) => scrollY > c.sec.offsetTop - innerHeight && scrollY < c.sec.offsetTop + c.sec.offsetHeight;
 
-<section class="scene" id="method" data-scene="method" data-beats="7.5" data-label="일하는 방식">
-  <div class="stage">
-    <h2 class="static-h">AI와 일하는 방식</h2>
-    <p class="ln st2" data-k="me-1">AI가 코드를 쓰고, 검증 게이트를 통과한 코드만 반영한다.</p>
-    <div class="flow" data-k="me-flow" data-back="4>0" role="list" aria-label="AI와 일하는 흐름">
-      <div class="nd" role="listitem"><b>스펙 문서</b><span>단일 출처, 여기서 출발</span></div>
-      <div class="nd" role="listitem"><b>AI 구현</b><span>AI가 코드를 쓴다</span></div>
-      <div class="nd" role="listitem"><b>게이트</b><span>린터 · 타입 체크 · 테스트</span></div>
-      <div class="nd" role="listitem"><b>화면 검수</b><span>자동 촬영, 직접 확인</span></div>
-      <div class="nd" role="listitem"><b>도구 만들기</b><span>불편하면 환경을 고친다</span></div>
-      <span class="fl-bk">다음 작업으로</span>
-    </div>
-    <p class="ln st2" data-k="me-5">이 페이지도 같은 공정이다. 문구마다 출처를 COPY.md에 적고, 스크롤 위치마다 화면을 찍어 검수했다. <a href="https://github.com/Yewon419/aigen-site" target="_blank" rel="noopener">GitHub에서 보기</a></p>
-    <div class="doc" data-k="me-doc">
-      <p class="doc-h">COPY.md: 이 페이지의 모든 문장과 출처</p>
-      <table>
-        <tr><th>문장</th><th>출처</th></tr>
-        <tr><td>카페 16곳 메뉴 2,057종과 편의점 음료 17,243종</td><td>슈가캡 README</td></tr>
-        <tr><td>생리 기록은 iCloud 동기화 대상에서 뺐다</td><td>템포루틴 동기화 코드</td></tr>
-        <tr><td>세션이 일을 마치거나 답을 기다리면 폰으로 알림</td><td>빛뜰 데스크 커밋 기록</td></tr>
-        <tr><td>몸통 32.59° · 엉덩이 110.11° · 무릎 108.35°</td><td>짐살라빔 판넬</td></tr>
-      </table>
-    </div>
-    <img class="crop" data-g="stills" src="assets/method-stills.webp" width="1200" height="565" alt="이 페이지의 비트별 검수 스틸: 컵 수위 장면">
-  </div>
-</section>
+let raf = 0, last = 0;
+function frame(now) {
+  raf = 0;
+  const dt = last ? Math.min(0.1, (now - last) / 1000) : 1 / 60; last = now;
+  let moving = false;
+  CH.forEach((c) => {
+    if (!near(c)) { c.cur = -1; return; }
+    const g = target(c);
+    // 처음 보이거나 멀리 건너뛰면 바로 맞추고, 아니면 지수 감쇠로 따라붙는다
+    if (c.cur < 0 || Math.abs(g - c.cur) > 4) c.cur = g;
+    else c.cur += (g - c.cur) * (1 - Math.exp(-dt / TAU));
+    if (Math.abs(g - c.cur) < 0.002) c.cur = g; else moving = true;
+    const t = +c.cur.toFixed(4);
+    if (c.ready && t !== c.shown) { c.fr.contentWindow.seek(t); c.shown = t; }
+    const p = c.cur / c.dur;
+    c.as.forEach((a, i) => {
+      const e = 1 - Math.pow(1 - Math.min(1, Math.max(0, (p - 0.94 - i * 0.012) / 0.03)), 4);
+      a.style.opacity = e; a.style.transform = `translateY(${12 * (1 - e)}px)`;
+      a.style.pointerEvents = e > 0.5 ? 'auto' : 'none';
+    });
+  });
+  if (moving) kick(); else last = 0;
+}
+function kick() { if (!raf) raf = requestAnimationFrame(frame); }
 
-<section class="scene" data-scene="end" data-beats="1" data-label="">
-  <div class="stage">
-    <h2 class="static-h">한예원</h2>
-    <ul class="list links-list" data-k="end-list">
-      <li><a href="https://apps.apple.com/kr/app/id6814832068" target="_blank" rel="noopener">슈가캡 App Store</a></li>
-      <li><a href="https://github.com/Yewon419/sugarcap" target="_blank" rel="noopener">슈가캡 GitHub</a></li>
-      <li><a href="https://apps.apple.com/kr/app/id6791803620" target="_blank" rel="noopener">템포루틴 App Store</a></li>
-      <li><a href="https://github.com/Yewon419/TempoRoutine" target="_blank" rel="noopener">템포루틴 GitHub</a></li>
-      <li><a href="https://github.com/Yewon419/bitteul-desk" target="_blank" rel="noopener">빛뜰 데스크 GitHub</a></li>
-      <li><a href="assets/gimsalabim-panel.pdf" target="_blank" rel="noopener">짐살라빔 판넬 PDF</a></li>
-      <li><a href="https://github.com/Yewon419" target="_blank" rel="noopener">github.com/Yewon419</a></li>
-    </ul>
-  </div>
-</section>
-
-</main>
-
-<script src="motion.js"></script>
-<script src="main.js"></script>
+// 스냅: 스크롤이 멈추면 움직이던 방향의 다음 정지 지점까지 넘어간다. 글이 바뀌는 중간에는 서지 않는다
+const IDLE = 160;
+let anim = null, idle = 0, dir = 1, lastY = scrollY, touching = false;
+const inOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+function go(y) {
+  y = Math.max(0, Math.min(document.documentElement.scrollHeight - innerHeight, y));
+  const y0 = scrollY, d = y - y0;
+  if (Math.abs(d) < 2) return;
+  const dur = Math.min(1100, Math.max(420, 380 + (Math.abs(d) / innerHeight) * 160));
+  const t0 = performance.now();
+  const id = {};
+  anim = id;
+  const step = (now) => {
+    if (anim !== id) return;
+    const u = Math.min(1, (now - t0) / dur);
+    scrollTo(0, y0 + d * inOut(u));
+    if (u < 1) requestAnimationFrame(step); else anim = null;
+  };
+  requestAnimationFrame(step);
+}
+function snap() {
+  if (anim || touching) return;
+  const y = scrollY, R = rests();
+  if (R.some((r) => Math.abs(r - y) < 3)) return;
+  const next = R.find((r) => r > y), prev = [...R].reverse().find((r) => r < y);
+  const to = dir > 0 ? (next ?? prev) : (prev ?? next);
+  if (to !== undefined) go(to);
+}
+const cancel = () => { anim = null; };
+addEventListener('wheel', cancel, { passive: true });
+addEventListener('touchstart', () => { touching = true; cancel(); }, { passive: true });
+addEventListener('touchend', () => { touching = false; clearTimeout(idle); idle = setTimeout(snap, IDLE); }, { passive: true });
+addEventListener('keydown', cancel);
+addEventListener('scroll', () => {
+  kick();
+  const y = scrollY;
+  if (y !== lastY) dir = y > lastY ? 1 : -1;
+  lastY = y;
+  if (anim) return;
+  clearTimeout(idle); idle = setTimeout(snap, IDLE);
+}, { passive: true });
+addEventListener('resize', resize);
+load();
+resize();
+</script>
 </body>
 </html>

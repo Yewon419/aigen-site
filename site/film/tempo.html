@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<!-- 템포루틴 장. 가운데 폰은 그 자리에 있고, 좌우 글이 선으로 화면 속 요소를 짚는다 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="/film/kit.css">
+<style>
+  :root { --sp: #C9AE5C; --su: #93A566; --au: #CB6E62; --wi: #A3A9B8; }
+  .hero { font-size: 176px; }
+  .dev { background: #EBE8DE; }
+  .splash { background: #EBE8DE; }
+  .tile { position: absolute; width: 250px; }
+  .tile img { display: block; width: 250px; height: 167px; object-fit: cover; border-radius: 14px; }
+  .tile p { margin-top: 12px; font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .tile p i { width: 22px; height: 6px; border-radius: 3px; }
+  .lg { position: absolute; display: flex; align-items: center; gap: 18px; font-size: 28px; font-weight: 700; }
+  .lg i { width: 240px; height: 14px; border-radius: 7px; transform-origin: 100% 50%; }
+  .t2q { font-size: 50px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.22; }
+  .pv { position: absolute; width: 560px; padding: 20px 0; border-top: 1.5px solid rgba(255,255,255,0.24); display: grid; grid-template-columns: 190px 1fr; gap: 4px 20px; }
+  .pv b { font-size: 27px; font-weight: 800; grid-row: span 2; }
+  .pv p { font-size: 26px; font-weight: 600; }
+  .pv span { font-size: 20px; color: var(--gray); font-weight: 500; }
+  .th { position: absolute; width: 150px; }
+  .th img { display: block; width: 150px; height: 302px; object-fit: cover; object-position: 50% 0; border-radius: 16px; }
+  .th p { margin-top: 10px; font-size: 19px; font-weight: 600; color: var(--gray); }
+  .th u { position: absolute; left: -7px; top: -7px; width: 164px; height: 316px; border: 2px solid var(--ink); border-radius: 22px; }
+  .dev .thm { top: 44px; height: calc(100% - 44px); }
+  .bk { font-size: 20px; color: var(--gray); font-weight: 500; }
+  .pt .tile { width: 219px; }
+  .pt .tile img { width: 219px; height: 146px; }
+  .pt .tile p { font-size: 32px; }
+  .pt .tile p i { width: 28px; height: 8px; }
+  .pt .lg { font-size: 36px; gap: 22px; }
+  .pt .lg i { width: 300px; height: 18px; border-radius: 9px; }
+  .pt .t2q { font-size: 64px; }
+  .pt .pv { width: 936px; grid-template-columns: 300px 1fr; padding: 22px 0; }
+  .pt .pv b { font-size: 34px; }
+  .pt .pv p { font-size: 34px; }
+  .pt .pv span { font-size: 27px; }
+  .pt .th { width: 146px; }
+  .pt .th img { width: 146px; height: 294px; }
+  .pt .th u { width: 160px; height: 308px; }
+  .pt .th p { font-size: 24px; }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+
+<div class="abs mask hero" id="heroM"><span class="g">템</span><span class="g">포</span><span class="g">루</span><span class="g">틴</span></div>
+<div class="abs mask t1" data-m="ti1"><span class="g">몸의 주기에 맞추는</span></div>
+<div class="abs mask t1" data-m="ti2"><span class="g">iOS 플래너</span></div>
+
+<p class="abs ln t2" data-k="te6">대부분의 플래너는 | 매일 컨디션이 같다고 가정한다. | 템포루틴은 한 달의 흐름에 맞춰 | 할 일을 나눈다.</p>
+<div class="tile" data-s="0"><img src="/assets/season-winter.webp" alt=""><p><i style="background:var(--wi)"></i>겨울</p></div>
+<div class="tile" data-s="1"><img src="/assets/season-spring.webp" alt=""><p><i style="background:var(--sp)"></i>봄</p></div>
+<div class="tile" data-s="2"><img src="/assets/season-summer.webp" alt=""><p><i style="background:var(--su)"></i>여름</p></div>
+<div class="tile" data-s="3"><img src="/assets/season-autumn.webp" alt=""><p><i style="background:var(--au)"></i>가을</p></div>
+
+<p class="abs ln t2" data-k="te2">생리 주기의 네 단계를 | 겨울·봄·여름·가을로 나타내, | 캘린더 날짜 아래 띠로 보여 준다.</p>
+<div class="lg" data-l="0">겨울<i style="background:var(--wi)"></i></div>
+<div class="lg" data-l="1">봄<i style="background:var(--sp)"></i></div>
+<div class="lg" data-l="2">여름<i style="background:var(--su)"></i></div>
+<div class="lg" data-l="3">가을<i style="background:var(--au)"></i></div>
+
+<p class="abs ln t2" data-k="te3">주기 패턴은 사람마다 달라 | 평균으로는 드러나지 않는다. | 그래서 에너지·기분 기록으로 | 각자의 경향을 보여 준다.</p>
+<p class="abs ln t2q r" data-k="te4q">"기록을 보면 이때 | 에너지가 높았어요."</p>
+<p class="abs ln t2 r" data-k="te4b">진단하지 않고, | 관찰한 사실만 말한다.</p>
+
+<p class="abs ln t2" data-k="te5">계정과 자체 서버가 없고, | 생리 기록은 iCloud 동기화 | 대상에서 뺐다.</p>
+<div class="pv" data-p="0"><b>생리 기록</b><p>iCloud 동기화 제외</p><span>건강 앱 연동은 선택</span></div>
+<div class="pv" data-p="1"><b>일정 · 체크인</b><p>개인 iCloud</p><span>설정에서 끄기 가능</span></div>
+<div class="pv" data-p="2"><b>주기 예측</b><p>기기 안에서 계산</p><span>서버 전송 없음</span></div>
+<p class="abs ln cap r" data-k="pvc">분석 도구도 넣지 않았다.</p>
+
+<p class="abs ln t2 r" data-k="te7">체크인할 때마다 씨앗이 모이고, | 씨앗으로 화면 테마 6종을 | 잠금 해제한다.</p>
+<div class="th" data-t="0"><img src="/assets/theme-standard.webp" alt=""><p>Standard</p><u></u></div>
+<div class="th" data-t="1"><img src="/assets/theme-plain.webp" alt=""><p>Plain</p><u></u></div>
+<div class="th" data-t="2"><img src="/assets/theme-modern.webp" alt=""><p>Modern</p><u></u></div>
+<div class="th" data-t="3"><img src="/assets/theme-letterpress.webp" alt=""><p>Letterpress</p><u></u></div>
+<div class="th" data-t="4"><img src="/assets/theme-ticket.webp" alt=""><p>Ticket</p><u></u></div>
+<div class="th" data-t="5"><img src="/assets/theme-weather.webp" alt=""><p>Weather</p><u></u></div>
+
+<div class="abs mask t1" data-m="ma"><span class="g">만든 방법</span></div>
+<div class="nd" data-n="0"><b>Windows PC</b><span>맥 없이 개발, push</span></div>
+<div class="nd" data-n="1"><b>엔진 테스트</b><span>GitHub Actions · Linux</span></div>
+<div class="nd" data-n="2"><b>앱 빌드</b><span>GitHub Actions · macOS</span></div>
+<div class="nd" data-n="4"><b>App Store</b><span>출시 · 4개 언어</span></div>
+<p class="abs ln chl" data-k="tf">TestFlight | 실기기 베타</p>
+<p class="abs ln bk" data-k="bk">베타 피드백 반영</p>
+
+<div class="abs dev" id="win">
+  <img class="scr" id="s1" src="/assets/tempo-1.webp" alt="">
+  <img class="scr" id="s2" src="/assets/tempo-3.webp" alt="">
+  <img class="scr" id="s3" src="/assets/tempo-2.webp" alt="">
+  <img class="scr" id="s4" src="/assets/tempo-1.webp" alt="">
+  <img class="scr thm" src="/assets/theme-plain.webp" alt="">
+  <img class="scr thm" src="/assets/theme-modern.webp" alt="">
+  <img class="scr thm" src="/assets/theme-letterpress.webp" alt="">
+  <img class="scr thm" src="/assets/theme-ticket.webp" alt="">
+  <img class="scr thm" src="/assets/theme-weather.webp" alt="">
+  <div class="splash" id="splash"><img id="icon" src="/assets/icon-tempo.webp" alt=""></div>
+</div>
+
+<svg id="fx" width="1920" height="1080"></svg>
+
+<script src="/motion.js"></script>
+<script src="/film/kit.js"></script>
+<script>
+document.fonts.ready.then(() => {
+  const K = Kit();
+  const { $, $$, put, prog, ease, lerp, io, lines, masks, LX, RX, W, H, words, rise, drawC, drawA, lift } = K;
+  window.FILM = { width: W, height: H, duration: 20 };
+  K.parse();
+
+  const P = K.P;
+  const PH = P ? 900 : 410 * 1950 / 900, PW = PH * 900 / 1950;
+  const PX = (W - PW) / 2, PY = P ? 90 : (H - PH) / 2;
+  const win = $('#win'); K.device(win, PX, PY, PW, PH, 14);
+  const { A } = K; const IW = K.box.iw, IH = K.box.ih;
+  K.grid([K.MX, PX - 36, PX + PW + 36, RX]);
+  // 세로판: 기기 아래 글이 시작하는 높이, 오른쪽 여백 통로
+  const TY0 = PY + PH + 100, GR = RX + 18;
+  const hOf = (k) => lines[k].el.offsetHeight;
+
+  // 제목
+  const heroM = $('#heroM'); put(heroM, LX - 10, P ? TY0 - 20 : 350);
+  K.rightAlign(masks.ti1, P ? TY0 + 210 : 400); K.rightAlign(masks.ti2, P ? TY0 + 310 : 480);
+
+  // 1 오늘 화면: 문장 → 할 일 목록, 계절 사진 → 봄
+  const tiles = $$('.tile');
+  let c1, c2;
+  if (P) {
+    put(lines.te6.el, LX, TY0);
+    const ty = TY0 + hOf('te6') + 60, TW = (W - 2 * K.MX - 3 * 20) / 4;
+    tiles.forEach((el, i) => put(el, LX + i * (TW + 20), ty));
+    c1 = K.callout(K.rowEdge('te6', 9), A(0.3, 0.72), 30);
+    c2 = K.callout([GR, ty + 73], A(0.13, 0.2), 62);
+  } else {
+    put(lines.te6.el, LX, 280);
+    c1 = K.callout(K.rowEdge('te6', 3), A(0.3, 0.72));
+    const TX = RX - 520, TY = 300;
+    tiles.forEach((el, i) => put(el, TX + (i % 2) * 270, TY + Math.floor(i / 2) * 240));
+    c2 = K.callout([TX - 18, TY + 83], A(0.13, 0.2));
+  }
+
+  // 2 캘린더: 문장 → 날짜 아래 띠, 계절 띠 → 화면 아래 범례
+  const lgs = $$('.lg');
+  let c3, c4;
+  if (P) {
+    put(lines.te2.el, LX, TY0);
+    const ly = TY0 + hOf('te2') + 70;
+    lgs.forEach((el, i) => put(el, RX - el.offsetWidth, ly + i * 92));
+    c3 = K.callout(K.rowEdge('te2', 9), A(0.5, 0.4925), 30);
+    c4 = K.callout([GR, ly + lgs[0].offsetHeight / 2], A(0.5, 0.866), 62);
+  } else {
+    put(lines.te2.el, LX, 300);
+    c3 = K.callout(K.rowEdge('te2', 2), A(0.5, 0.4925));
+    lgs.forEach((el, i) => put(el, RX - el.offsetWidth, 380 + i * 80));
+    c4 = K.callout([RX - lgs[0].offsetWidth - 18, 380 + lgs[0].offsetHeight / 2], A(0.5, 0.866));
+  }
+
+  // 3 나의 템포: 문장 → 그래프, 인용 → 관찰 문장
+  let c5, c6;
+  if (P) {
+    put(lines.te3.el, LX, TY0);
+    const qy = TY0 + hOf('te3') + 60;
+    put(lines.te4q.el, LX, qy);
+    put(lines.te4b.el, LX, qy + hOf('te4q') + 34);
+    c5 = K.callout(K.rowEdge('te3', 9), A(0.55, 0.73), 30);
+    const q0 = lines.te4q.ws[0];
+    c6 = K.callout([GR, qy + q0.offsetTop + q0.offsetHeight / 2], A(0.86, 0.425), 62);
+  } else {
+    put(lines.te3.el, LX, 270);
+    c5 = K.callout(K.rowEdge('te3', 3), A(0.55, 0.73));
+    K.rightAlign(lines.te4q.el, 300);
+    K.rightAlign(lines.te4b.el, 300 + lines.te4q.el.offsetHeight + 34);
+    c6 = K.callout(K.rowEdge('te4q'), A(0.86, 0.425));
+  }
+
+  // 4 다시 오늘 화면: 문장, 데이터가 놓이는 곳 → 생리 기록 토글
+  const pvs = $$('.pv');
+  let c7;
+  if (P) {
+    put(lines.te5.el, LX, TY0);
+    const vy = TY0 + hOf('te5') + 60, VG = pvs[0].offsetHeight + 18;
+    pvs.forEach((el, i) => put(el, LX, vy + i * VG));
+    put(lines.pvc.el, LX, vy + 3 * VG + 24);
+    c7 = K.callout([GR, vy + 44], A(0.88, 0.42), 62);
+  } else {
+    put(lines.te5.el, LX, 330);
+    pvs.forEach((el, i) => put(el, RX - 560, 300 + i * 150));
+    K.rightAlign(lines.pvc.el, 300 + 3 * 150 + 20);
+    c7 = K.callout([RX - 560 - 18, 300 + 38], A(0.88, 0.42));
+  }
+
+  // 5 테마: 썸네일 여섯, 문장 → 씨앗 수
+  const ths = $$('.th');
+  let c8;
+  if (P) {
+    put(lines.te7.el, LX, TY0);
+    const hy = TY0 + hOf('te7') + 70, HW = ths[0].offsetWidth, HG = (W - 2 * K.MX - 6 * HW) / 5;
+    ths.forEach((el, i) => put(el, LX + i * (HW + HG), hy));
+    c8 = K.callout(K.rowEdge('te7', 0), A(0.88, 0.11), 30);
+  } else {
+    ths.forEach((el, i) => put(el, LX + (i % 3) * 186, 210 + Math.floor(i / 3) * 380));
+    K.rightAlign(lines.te7.el, 330);
+    c8 = K.callout(K.rowEdge('te7'), A(0.88, 0.11));
+  }
+
+  // 6 만든 방법: 세 상자 → 폰(TestFlight) → App Store, 폰에서 Windows PC로 되돌아가는 화살표
+  const nodes = {}; $$('.nd').forEach((el) => { nodes[el.dataset.n] = el; });
+  const nh = (i) => nodes[i].offsetHeight;
+  const tf = K.label('tf');
+  put(tf, PX + PW / 2 - tf.offsetWidth / 2, PY + PH + 14);
+  let ar;
+  if (P) {
+    put(masks.ma, LX, TY0 - 10);
+    const NWD = nodes[0].offsetWidth, ny = TY0 + 130, NG = 40;
+    const NY = { 0: ny, 1: ny + nh(0) + NG, 2: ny + nh(0) + nh(1) + 2 * NG };
+    NY[4] = NY[2];
+    [0, 1, 2].forEach((i) => put(nodes[i], LX, NY[i]));
+    put(nodes[4], RX - NWD, NY[4]);
+    // 왼쪽 여백 통로로 올라가 폰 왼쪽에 닿고, 폰 오른쪽에서 오른쪽 여백 통로로 내려온다
+    const gl = LX - 36, gr = RX + 36, py = PY + PH - 90, BX = 850, m0 = NY[0] + nh(0) / 2;
+    ar = [
+      K.arrow([[LX + 40, NY[0] + nh(0)], [LX + 40, NY[1]]]),
+      K.arrow([[LX + 40, NY[1] + nh(1)], [LX + 40, NY[2]]]),
+      K.arrow([[LX, NY[2] + nh(2) / 2], [gl, NY[2] + nh(2) / 2], [gl, py], [PX - 4, py]]),
+      K.arrow([[PX + PW + 4, py], [gr, py], [gr, NY[4] + nh(4) / 2], [RX + 4, NY[4] + nh(4) / 2]]),
+      K.arrow([[PX + PW + 4, PY + PH - 40], [BX, PY + PH - 40], [BX, m0], [LX + NWD + 4, m0]]),
+    ];
+    put(lines.bk.el, LX + NWD + 22, m0 - lines.bk.el.offsetHeight - 10);
+  } else {
+    put(masks.ma, LX, 110);
+    const NWD = 400, NY = { 0: 300, 1: 480, 2: 660, 4: 480 };
+    [0, 1, 2].forEach((i) => put(nodes[i], LX, NY[i]));
+    put(nodes[4], RX - NWD, NY[4]);
+    const BX = LX + NWD + 70, BY = 900;
+    ar = [
+      K.arrow([[LX + 40, NY[0] + nh(0)], [LX + 40, NY[1]]]),
+      K.arrow([[LX + 40, NY[1] + nh(1)], [LX + 40, NY[2]]]),
+      K.arrow([[LX + NWD, NY[2] + nh(2) / 2], [PX - 4, NY[2] + nh(2) / 2]]),
+      K.arrow([[PX + PW + 4, NY[4] + nh(4) / 2], [RX - NWD, NY[4] + nh(4) / 2]]),
+      K.arrow([[PX - 4, BY], [BX, BY], [BX, NY[0] + nh(0) / 2], [LX + NWD + 4, NY[0] + nh(0) / 2]]),
+    ];
+    put(lines.bk.el, BX + 16, BY - 34);
+  }
+  K.check();
+
+  const splash = $('#splash'), icon = $('#icon');
+  const scrs = [$('#s1'), $('#s2'), $('#s3'), $('#s4')];
+  const thm = $$('.thm');
+  const TH0 = 15.1, THS = 0.42;
+
+  window.seek = (t) => {
+    K.drawGrid(t);
+    const up = ease.outExpo(prog(t, 0.0, 1.0));
+    win.style.transform = `translateY(${((1 - up) * K.v(1000, 1900)).toFixed(1)}px)`;
+    const launch = io(prog(t, 1.25, 1.75));
+    splash.style.opacity = launch < 1 ? '1' : '0';
+    splash.style.clipPath = `circle(${((1 - launch) * 75).toFixed(2)}% at 50% 50%)`;
+    const isz = 110 * (1 + launch * 1.6);
+    icon.style.width = isz + 'px'; icon.style.left = (IW - isz) / 2 + 'px'; icon.style.top = (IH - isz) / 2 + 'px';
+    K.pager(scrs, [5.55, 8.25, 11.55], t, IW);
+    // 테마가 위에서부터 덮이며 바뀐다
+    thm.forEach((el, i) => {
+      const u = io(prog(t, TH0 + i * THS, TH0 + i * THS + 0.3));
+      el.style.opacity = u > 0 ? '1' : '0';
+      el.style.clipPath = `inset(0 0 ${((1 - u) * 100).toFixed(2)}% 0)`;
+    });
+
+    // 0 제목
+    rise(heroM, t, 0.3, 2.65, 0.08);
+    rise(masks.ti1, t, 1.0, 2.6); rise(masks.ti2, t, 1.12, 2.65);
+
+    // 1
+    words('te6', t, 2.9, 5.5, 0.03);
+    drawC(c1, t, 3.5, 5.45);
+    tiles.forEach((el, i) => { K.wipe(el, t, 3.3 + i * 0.12, 5.45 + i * 0.03, 14); });
+    drawC(c2, t, 4.1, 5.45);
+
+    // 2
+    words('te2', t, 5.85, 8.2, 0.03);
+    drawC(c3, t, 6.35, 8.15);
+    lgs.forEach((el, i) => {
+      lift(el, t, 6.3 + i * 0.12, 8.15, 16);
+      el.querySelector('i').style.transform = `scaleX(${ease.outExpo(prog(t, 6.4 + i * 0.12, 7.0 + i * 0.12)).toFixed(4)})`;
+    });
+    drawC(c4, t, 6.9, 8.15);
+
+    // 3
+    words('te3', t, 8.5, 11.5, 0.03);
+    drawC(c5, t, 9.0, 11.45);
+    words('te4q', t, 9.6, 11.5, 0.05);
+    drawC(c6, t, 10.0, 11.45);
+    words('te4b', t, 10.3, 11.5, 0.04);
+
+    // 4
+    words('te5', t, 11.85, 14.25, 0.03);
+    pvs.forEach((el, i) => lift(el, t, 12.2 + i * 0.15, 14.2, 20));
+    drawC(c7, t, 12.6, 14.2);
+    words('pvc', t, 12.9, 14.25, 0.02);
+
+    // 5
+    words('te7', t, 14.5, 16.95, 0.03);
+    drawC(c8, t, 14.9, 16.9);
+    ths.forEach((el, i) => {
+      K.wipe(el, t, 14.6 + i * 0.07, 16.9 + i * 0.03, 16);
+      // 지금 폰에 깔린 테마에 테두리
+      const cur = t < TH0 ? 0 : Math.min(5, 1 + Math.floor((t - TH0) / THS));
+      el.querySelector('u').style.opacity = t > 14.9 && t < 16.9 && cur === i ? '1' : '0';
+      el.querySelector('p').style.color = t > 14.9 && t < 16.9 && cur === i ? 'var(--ink)' : '';
+    });
+
+    // 6
+    rise(masks.ma, t, 17.1);
+    [[0, 17.35], [1, 17.55], [2, 17.75], [4, 18.3]].forEach(([i, t0]) => {
+      const u = ease.outExpo(prog(t, t0, t0 + 0.45));
+      nodes[i].style.opacity = u.toFixed(3); nodes[i].style.transform = `translateY(${((1 - u) * 16).toFixed(1)}px)`;
+    });
+    words('tf', t, 18.05);
+    drawA(ar[0], t, 17.5); drawA(ar[1], t, 17.7); drawA(ar[2], t, 17.9); drawA(ar[3], t, 18.15);
+    drawA(ar[4], t, 18.6, 0.7);
+    words('bk', t, 19.0);
+  };
+  window.seek(0);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<!-- 빛뜰 데스크 장. 가운데 상자 하나가 브라우저 창 → 폰 → 로컬 서버로 모양을 바꾸며 끝까지 그 자리에 있다 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="/film/kit.css">
+<style>
+  .hero { font-size: 150px; }
+  .t2s { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.36; }
+  #dev { position: absolute; overflow: hidden; border-style: solid; border-color: #2A2A2E; background: #0B1220; box-shadow: 0 0 0 1.5px rgba(255,255,255,0.18); }
+  #bar { position: absolute; left: 0; right: 0; top: 0; background: #1A1A1E; display: flex; align-items: center; gap: 8px; padding-left: 14px; overflow: hidden; }
+  #bar i { width: 11px; height: 11px; border-radius: 50%; background: #3A3A40; flex: none; }
+  #view { position: absolute; left: 0; right: 0; bottom: 0; overflow: hidden; }
+  #view img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+  #view #chat { left: auto; right: 0; width: auto; height: 100%; object-fit: contain; box-shadow: -12px 0 30px rgba(0,0,0,0.45); }
+  #cubes { object-fit: cover; object-position: 50% 50%; }
+  #srvL { position: absolute; inset: 0; padding: 18px 22px; display: flex; flex-direction: column; gap: 6px; }
+  #srvL b { font-size: 26px; font-weight: 800; }
+  #srvL span { font-size: 19px; color: var(--gray); font-weight: 500; }
+  .nd.og { border-style: dashed; }
+  .pt #srvL { padding: 22px 28px; }
+  .pt #srvL b { font-size: 36px; }
+  .pt #srvL span { font-size: 27px; }
+  .pt #bar i { width: 15px; height: 15px; }
+  .pt [data-k="acc"] { font-size: 30px; }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+
+<div class="abs mask hero" data-m="h1"><span class="g">빛</span><span class="g">뜰</span></div>
+<div class="abs mask hero" data-m="h2"><span class="g">데</span><span class="g">스</span><span class="g">크</span></div>
+<div class="abs mask t1" data-m="ti1"><span class="g">AI 코딩 세션</span></div>
+<div class="abs mask t1" data-m="ti2"><span class="g">관리 대시보드</span></div>
+
+<p class="abs ln t2s" data-k="de2">Claude Code 세션을 | 여러 개 띄우면 | 어느 세션이 답을 기다리는지 | 찾기 어렵다. | 그래서 세션 하나가 | 사무실 직원 한 명이 된다.</p>
+<p class="abs ln t2s r" data-k="de3">머리 위에 지금 하는 일이 뜨고, | 직원을 누르면 | 대화 창이 열린다. | 답장과 도구 승인은 | 여기서 한다.</p>
+
+<p class="abs ln t2" data-k="de4">자리를 비워도 | 폰 브라우저로 사무실을 보고 | 지시와 승인을 이어 간다.</p>
+<p class="abs ln t2 r" data-k="de5">세션이 일을 마치거나 | 답을 기다리면 | 폰으로 알림이 온다.</p>
+
+<p class="abs ln t2" data-k="de6">PC에서 도는 서버 하나가 | 세션, 사무실 화면, 폰을 잇는다. | 명령 한 줄로 켠다.</p>
+<div class="nd og" data-n="term"><b>터미널 세션</b><span>상태를 서버에 알림</span></div>
+<div class="nd" data-n="sdk"><b>데스크 세션</b><span>대화와 승인 주고받기</span></div>
+<div class="nd og" data-n="pc"><b>PC 사무실</b><span>실시간 상태 표시</span></div>
+<div class="nd" data-n="ph"><b>폰</b><span>암호화 연결(Tailscale)</span></div>
+<div class="nd" data-n="push"><b>폰 알림</b><span>완료·승인 요청</span></div>
+<p class="abs ln cap" data-k="acc">점선은 원본 Pixel Agents, 실선은 포크해 더한 기능.</p>
+
+<div id="dev">
+  <div id="bar"><i></i><i></i><i></i></div>
+  <div id="view">
+    <img id="office" src="/assets/desk-office.webp" alt="">
+    <img id="chat" src="/assets/desk-chat.webp" alt="">
+    <img id="pOffice" src="/assets/desk-phone-office.webp" alt="">
+    <img id="pChat" src="/assets/desk-phone-chat.webp" alt="">
+    <img id="cubes" src="/assets/desk-cubes.webp" alt="">
+  </div>
+  <div id="srvL"><b>로컬 서버</b><span>내 PC에서 실행</span></div>
+</div>
+
+<svg id="fx" width="1920" height="1080"></svg>
+
+<script src="/motion.js"></script>
+<script src="/film/kit.js"></script>
+<script>
+document.fonts.ready.then(() => {
+  const K = Kit();
+  const { $, $$, put, prog, ease, lerp, io, lines, masks, LX, RX, W, H, words, rise, drawC, drawA, lift } = K;
+  window.FILM = { width: W, height: H, duration: 18 };
+  K.parse();
+
+  // 상자의 세 모양 (바깥 사각형, 모서리, 테두리, 창 막대 높이)
+  const P = K.P;
+  // 세로판: 창은 폭 900, 폰은 높이 900으로 위쪽에. 서버 상자는 노드 그림의 맨 위
+  const R = P ? {
+    win: { x: 90, y: 330, w: 900, h: 34 + 3 + 897 * 401 / 637, r: 18, b: 1.5, bar: 34 },
+    ph: { x: (1080 - 900 * 384 / 648) / 2, y: 260, w: 900 * 384 / 648, h: 900, r: 72, b: 14, bar: 0 },
+    srv: { x: 300, y: 410, w: 480, h: 120, r: 20, b: 1.5, bar: 0 },
+  } : {
+    win: { x: 640, y: 322, w: 640, h: 436, r: 14, b: 1.5, bar: 34 },
+    ph: { x: 768, y: 216, w: 384, h: 648, r: 52, b: 12, bar: 0 },
+    srv: { x: 760, y: 492, w: 400, h: 96, r: 16, b: 1.5, bar: 0 },
+  };
+  const GR = RX + 18;
+  const rowY = (k, i) => K.rowEdge(k, i)[1];
+  const mix = (a, c, u) => Object.fromEntries(Object.keys(a).map((k) => [k, lerp(a[k], c[k], u)]));
+  // 선이 꺾이는 자리와 화면 속 비율 좌표를 지금 모양 기준으로
+  const useBox = (r) => {
+    K.box = { x: r.x, y: r.y, w: r.w, h: r.h };
+    K.LIM = { l: r.x - 66, r: r.x + r.w + 66 };
+    const cx = r.x + r.b, cy = r.y + r.b + r.bar, cw = r.w - 2 * r.b, ch = r.h - 2 * r.b - r.bar;
+    K.A = (fx, fy) => [cx + fx * cw, cy + fy * ch];
+    return { cx, cy, cw, ch };
+  };
+  const dev = $('#dev'), bar = $('#bar'), view = $('#view');
+  const setR = (r) => {
+    put(dev, r.x, r.y); dev.style.width = r.w + 'px'; dev.style.height = r.h + 'px';
+    dev.style.borderRadius = r.r + 'px'; dev.style.borderWidth = r.b + 'px';
+    dev.style.borderColor = r.b > 4 ? '#050506' : 'rgba(255,255,255,0.3)';
+    bar.style.height = r.bar + 'px'; view.style.top = r.bar + 'px';
+  };
+  K.grid([K.MX, R.win.x - 36, R.win.x + R.win.w + 36, RX]);
+
+  // 제목
+  const TY1 = R.win.y + R.win.h + 100;
+  if (P) {
+    put(masks.h1, LX - 8, TY1); put(masks.h2, LX - 8, TY1 + 200);
+    K.rightAlign(masks.ti1, TY1 + 470); K.rightAlign(masks.ti2, TY1 + 570);
+  } else {
+    put(masks.h1, LX - 8, 300); put(masks.h2, LX - 8, 460);
+    K.rightAlign(masks.ti1, 400); K.rightAlign(masks.ti2, 480);
+  }
+
+  // 1 PC 사무실: 왼쪽 문장 → 직원, 오른쪽 문장 → 머리 위 상태, 그다음 대화 창
+  const cw = useBox(R.win);
+  const chatW = cw.ch * 760 / 700;
+  // 대화 창 그림 속 보내기 버튼 (그림 비율 0.92, 0.91)
+  const chatPt = (fx, fy) => [cw.cx + cw.cw - chatW + fx * chatW, cw.cy + fy * cw.ch];
+  let c1, c2, c3;
+  if (P) {
+    // 위 문장은 왼쪽 통로, 아래 문장은 오른쪽 통로로 올라간다
+    put(lines.de2.el, LX, TY1);
+    put(lines.de3.el, LX, TY1 + lines.de2.el.offsetHeight + 80);
+    c1 = K.callout(K.rowEdge('de2', 5), K.A(0.165, 0.86), 30);
+    c2 = K.callout([GR, rowY('de3', 0)], K.A(0.6, 0.525), 62);
+    c3 = K.callout([GR, rowY('de3', 3)], chatPt(0.5, 0.42), 62);
+  } else {
+    put(lines.de2.el, LX, 330);
+    c1 = K.callout(K.rowEdge('de2', 5), K.A(0.165, 0.86));
+    K.rightAlign(lines.de3.el, 330);
+    c2 = K.callout(K.rowEdge('de3'), K.A(0.6, 0.525));
+    c3 = K.callout(K.rowEdge('de3', 3), chatPt(0.5, 0.42));
+  }
+  K.check();
+
+  // 2 폰: 왼쪽 문장 → 폰 사무실, 이어서 승인 버튼. 오른쪽 문장 → 승인 요청
+  useBox(R.ph);
+  let c4, c5, c6;
+  if (P) {
+    const TY2 = R.ph.y + R.ph.h + 100;
+    put(lines.de4.el, LX, TY2);
+    put(lines.de5.el, LX, TY2 + lines.de4.el.offsetHeight + 80);
+    c4 = K.callout(K.rowEdge('de4', 1), K.A(0.5, 0.42), 30);
+    c5 = K.callout(K.rowEdge('de4', 2), K.A(0.33, 0.865), 30);
+    c6 = K.callout([GR, rowY('de5', 1)], K.A(0.8, 0.675), 62);
+  } else {
+    put(lines.de4.el, LX, 330);
+    c4 = K.callout(K.rowEdge('de4', 1), K.A(0.5, 0.42));
+    c5 = K.callout(K.rowEdge('de4', 2), K.A(0.33, 0.865));
+    K.rightAlign(lines.de5.el, 330);
+    c6 = K.callout(K.rowEdge('de5', 1), K.A(0.8, 0.675));
+  }
+  K.check();
+
+  // 3 구조: 상자가 로컬 서버가 되고, 왼쪽 두 세션·오른쪽 세 화면과 잇는다
+  useBox(R.srv);
+  const nodes = {}; $$('.nd').forEach((el) => { nodes[el.dataset.n] = el; });
+  const S = R.srv, sm = S.y + S.h / 2;
+  let ar;
+  if (P) {
+    // 서버 아래 두 줄 기둥: 왼쪽 세션 둘, 오른쪽 화면 셋. 문장은 맨 아래
+    const NW = nodes.term.offsetWidth, nh = nodes.term.offsetHeight, NG = 52;
+    const y0 = S.y + S.h + 130, ys = [y0, y0 + nh + NG, y0 + 2 * (nh + NG)];
+    const NP = { term: [LX, ys[0]], sdk: [LX, ys[1]], pc: [RX - NW, ys[0]], ph: [RX - NW, ys[1]], push: [RX - NW, ys[2]] };
+    Object.entries(NP).forEach(([k, [x, y]]) => put(nodes[k], x, y));
+    const mid = (k) => NP[k][1] + nodes[k].offsetHeight / 2;
+    const lx = LX + NW / 2, rx = RX - NW / 2, hy = S.y + S.h + 60;
+    const g1 = RX + 24, g2 = RX + 50;
+    ar = [
+      K.arrow([[lx, ys[0] - 4], [lx, hy], [S.x + 60, hy], [S.x + 60, S.y + S.h + 4]]),
+      K.arrow([[S.x - 4, sm], [LX - 36, sm], [LX - 36, mid('sdk')], [LX - 4, mid('sdk')]]),
+      K.arrow([[S.x + S.w - 60, S.y + S.h + 4], [S.x + S.w - 60, hy], [rx, hy], [rx, ys[0] - 4]]),
+      K.arrow([[S.x + S.w + 4, sm + 16], [g1, sm + 16], [g1, mid('ph')], [RX + 4, mid('ph')]]),
+      K.arrow([[S.x + S.w + 4, sm - 16], [g2, sm - 16], [g2, mid('push')], [RX + 4, mid('push')]]),
+    ];
+    const ty = ys[2] + nh + 120;
+    put(lines.de6.el, LX, ty);
+    put(lines.acc.el, LX, ty + lines.de6.el.offsetHeight + 50);
+  } else {
+    put(lines.de6.el, LX, 110);
+    const NW = 400;
+    const NP = { term: [LX, 420], sdk: [LX, 600], pc: [RX - NW, 330], ph: [RX - NW, 492], push: [RX - NW, 654] };
+    Object.entries(NP).forEach(([k, [x, y]]) => put(nodes[k], x, y));
+    const mid = (k) => NP[k][1] + nodes[k].offsetHeight / 2;
+    ar = [
+      K.arrow([[LX + NW, mid('term')], [700, mid('term')], [700, sm - 18], [S.x - 4, sm - 18]]),
+      K.arrow([[S.x - 4, sm + 18], [680, sm + 18], [680, mid('sdk')], [LX + NW + 4, mid('sdk')]]),
+      K.arrow([[S.x + S.w + 4, sm - 18], [1220, sm - 18], [1220, mid('pc')], [RX - NW - 4, mid('pc')]]),
+      K.arrow([[S.x + S.w + 4, sm], [RX - NW - 4, sm]]),
+      K.arrow([[S.x + S.w + 4, sm + 18], [1220, sm + 18], [1220, mid('push')], [RX - NW - 4, mid('push')]]),
+    ];
+    put(lines.acc.el, W / 2 - lines.acc.el.offsetWidth / 2, 860);
+  }
+  K.check();
+
+  const office = $('#office'), chat = $('#chat'), pOffice = $('#pOffice'), pChat = $('#pChat'), cubes = $('#cubes'), srvL = $('#srvL');
+
+  window.seek = (t) => {
+    K.drawGrid(t);
+    // 상자 모양: 창 → 폰 → 서버
+    const m1 = io(prog(t, 7.7, 8.4)), m2 = io(prog(t, 12.55, 13.15));
+    const r = m2 > 0 ? mix(R.ph, R.srv, m2) : mix(R.win, R.ph, m1);
+    setR(r);
+    const up = ease.outExpo(prog(t, 0.0, 1.0));
+    dev.style.transform = `translateY(${((1 - up) * K.v(900, 1900)).toFixed(1)}px)`;
+    dev.style.background = m2 > 0.5 ? '#0D0D0F' : '#0B1220';
+
+    // 화면: 큐브가 원으로 열리며 사무실이 나온다
+    const launch = io(prog(t, 1.3, 1.85));
+    cubes.style.opacity = launch < 1 ? '1' : '0';
+    cubes.style.clipPath = `circle(${((1 - launch) * 75).toFixed(2)}% at 50% 50%)`;
+    const ci = io(prog(t, 5.55, 6.0)), co = io(prog(t, 7.35, 7.7));
+    chat.style.opacity = ci > 0 && co < 1 ? '1' : '0';
+    chat.style.transform = `translateX(${((1 - ci + co) * 105).toFixed(2)}%)`;
+    // 폰 화면: 창이 폰으로 줄어드는 동안 위에서 아래로 덮인다
+    const pw = io(prog(t, 7.95, 8.4));
+    pOffice.style.opacity = pw > 0 && m2 < 0.5 ? '1' : '0';
+    pOffice.style.clipPath = `inset(0 0 ${((1 - pw) * 100).toFixed(2)}% 0)`;
+    office.style.opacity = pw < 1 ? '1' : '0';
+    const pc = io(prog(t, 10.15, 10.6));
+    pChat.style.opacity = pc > 0 && m2 < 0.5 ? '1' : '0';
+    pOffice.style.transform = `translateX(${(-pc * 100).toFixed(2)}%)`;
+    pChat.style.transform = `translateX(${((1 - pc) * 100).toFixed(2)}%)`;
+    view.style.opacity = m2 < 0.5 ? '1' : '0';
+    const sl = ease.outExpo(prog(t, 12.95, 13.4));
+    srvL.style.opacity = sl.toFixed(3); srvL.style.transform = `translateY(${((1 - sl) * 12).toFixed(1)}px)`;
+
+    // 0 제목
+    rise(masks.h1, t, 0.3, 2.6, 0.08); rise(masks.h2, t, 0.42, 2.65, 0.08);
+    rise(masks.ti1, t, 1.0, 2.6); rise(masks.ti2, t, 1.12, 2.65);
+
+    // 1
+    words('de2', t, 2.9, 7.5, 0.025);
+    drawC(c1, t, 3.6, 7.45);
+    words('de3', t, 4.3, 7.5, 0.03);
+    drawC(c2, t, 4.8, 5.5);
+    drawC(c3, t, 6.0, 7.45);
+
+    // 2
+    words('de4', t, 8.55, 12.3, 0.03);
+    drawC(c4, t, 8.95, 10.05);
+    drawC(c5, t, 10.65, 12.25);
+    words('de5', t, 10.9, 12.3, 0.03);
+    drawC(c6, t, 11.3, 12.25);
+
+    // 3
+    words('de6', t, 13.2, 1e9, 0.03);
+    [['term', 13.55], ['sdk', 13.7], ['pc', 14.2], ['ph', 14.35], ['push', 14.5]].forEach(([k, t0]) => lift(nodes[k], t, t0, 1e9, 16));
+    drawA(ar[0], t, 13.85); drawA(ar[1], t, 14.0); drawA(ar[2], t, 14.45); drawA(ar[3], t, 14.6); drawA(ar[4], t, 14.75);
+    words('acc', t, 15.1, 1e9, 0.02);
+  };
+  window.seek(0);
+});
+</script>
+</body>
+</html>

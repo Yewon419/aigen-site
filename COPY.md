@@ -50,7 +50,7 @@
 | su-4c | 로슈는 당을, 카인은 카페인을 먹는다. 먹일수록 호감도가 쌓인다. | FS 슈가캡 기능(로슈 = 당, 카인 = 카페인, 먹여 호감도를 쌓는다) |
 | su-5 | 기획부터 메뉴 데이터 수집, 캐릭터 원화, 개발, 3개국 출시까지 혼자 했다. | pf 마지막 문장, 출시 국가 11-17 정정 |
 | 띠 + 도표 | 만든 방법: 카페 홈페이지(브랜드가 공개한 수치) → Python 수집기(린터·타입·테스트 통과) → catalog.json(손으로 고치지 않는다) → iOS 앱(SwiftUI · 직접 그린 원화) → GitHub Actions(빌드·UI 테스트·스크린샷) → App Store(한국 · 미국 · 대만) | SC-README "데이터"·"만든 방법" 표(ruff·mypy·pytest, macOS 러너 빌드·UI 테스트·스토어 스크린샷) |
-| 링크 | App Store · GitHub · sugarcap.vercel.app | `apps.apple.com/kr/app/id6814832068` · `github.com/Yewon419/sugarcap` · `sugarcap.vercel.app` |
+| 링크 | App Store · GitHub | `apps.apple.com/kr/app/id6814832068` · `github.com/Yewon419/sugarcap` |
 
 ## 2. 템포루틴
 
